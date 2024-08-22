@@ -9,7 +9,9 @@ import Swal from "sweetalert2";
 export const ListarProductosPage = () => {
   const [db, setDb] = useState([]);
   const [dataToEdit, setDataToEdit] = useState(null);
+  const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+
 
   const { get, post, put, deleted } = helpHttp();
 
@@ -20,9 +22,11 @@ export const ListarProductosPage = () => {
       if (!res.error) {
         setDb(res);
         setError(null);
+        setLoading(false)
       } else {
         setDb(null);
         setError(res);
+        setLoading(false)
       }
     });
   }, []);
@@ -108,6 +112,9 @@ export const ListarProductosPage = () => {
     });
   };
 
+
+  
+
   return (
     <>
       <div className="container">
@@ -122,6 +129,7 @@ export const ListarProductosPage = () => {
           data={db}
           setDataToEdit={setDataToEdit}
           deleteData={deleteData}
+          loading = {loading}
         />
       </div>
     </>

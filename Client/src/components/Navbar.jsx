@@ -26,7 +26,7 @@ export const Navbar = () => {
         </button>
 
         <div className="collapse navbar-collapse" id="navbarSupportedContent">
-          <Link className="navbar-brand mt-2 mt-lg-0" to={"/"}>
+          <Link className="navbar-brand mt-2 mt-lg-0" to={"/panel/ventas"}>
             <i className="fa-solid fa-code" style={{ color: "#00fca8" }}></i>{" "}
             <b>
               Abraham<b style={{ color: "#00fca8" }}>Tech</b>
@@ -36,9 +36,9 @@ export const Navbar = () => {
             <li className="nav-item">
               <Link
                 className={`nav-link ${
-                  location.pathname === "/ventas" ? "active" : ""
+                  location.pathname === "/panel/ventas" ? "active" : ""
                 }`}
-                to={"/ventas"}
+                to={"/panel/ventas"}
               >
                 Ventas
               </Link>
@@ -46,9 +46,9 @@ export const Navbar = () => {
             <li className="nav-item">
               <Link
                 className={`nav-link ${
-                  location.pathname === "/productos/listar" ? "active" : ""
+                  location.pathname === "/panel/productos/listar" ? "active" : ""
                 }`}
-                to={"/productos/listar"}
+                to={"/panel/productos/listar"}
               >
                 Stock
               </Link>
@@ -56,9 +56,9 @@ export const Navbar = () => {
             <li className="nav-item">
               <Link
                 className={`nav-link ${
-                  location.pathname === "/informes" ? "active" : ""
+                  location.pathname === "/panel/informes" ? "active" : ""
                 }`}
-                to={"/informes"}
+                to={"/panel/informes"}
               >
                 Informes
               </Link>
@@ -66,9 +66,9 @@ export const Navbar = () => {
             <li className="nav-item">
               <Link
                 className={`nav-link ${
-                  location.pathname === "/clientes/listar" ? "active" : ""
+                  location.pathname === "/panel/clientes/listar" ? "active" : ""
                 }`}
-                to={"/clientes/listar"}
+                to={"/panel/clientes/listar"}
               >
                 Clientes
               </Link>
@@ -76,9 +76,9 @@ export const Navbar = () => {
             <li className="nav-item">
               <Link
                 className={`nav-link ${
-                  location.pathname === "/proveedores/listar" ? "active" : ""
+                  location.pathname === "/panel/proveedores/listar" ? "active" : ""
                 }`}
-                to={"/proveedores/listar"}
+                to={"/panel/proveedores/listar"}
               >
                 Proveedores
               </Link>
@@ -86,9 +86,9 @@ export const Navbar = () => {
             <li className="nav-item">
               <Link
                 className={`nav-link ${
-                  location.pathname === "/configuracion" ? "active" : ""
+                  location.pathname === "/panel/configuracion" ? "active" : ""
                 }`}
-                to={"/configuracion"}
+                to={"/panel/configuracion"}
               >
                 Configuración
               </Link>
@@ -96,9 +96,9 @@ export const Navbar = () => {
             <li className="nav-item">
               <Link
                 className={`nav-link ${
-                  location.pathname === "/negocio" ? "active" : ""
+                  location.pathname === "/panel/negocio" ? "active" : ""
                 }`}
-                to={"/negocio"}
+                to={"/panel/negocio"}
               >
                 Mi Negocio
               </Link>
@@ -139,13 +139,13 @@ export const Navbar = () => {
               aria-labelledby="navbarDropdownMenuAvatar"
             >
               <li>
-                <Link className="dropdown-item" to="/configuracion">
+                <Link className="dropdown-item" to="/panel/configuracion">
                   Configuración
                 </Link>
               </li>
               {negocios && (
                 <li>
-                  <Link className="dropdown-item" to="/negocio">
+                  <Link className="dropdown-item" to="/panel/negocio">
                     Mi Negocio
                   </Link>
                 </li>

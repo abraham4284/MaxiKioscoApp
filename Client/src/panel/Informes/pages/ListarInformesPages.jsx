@@ -22,6 +22,8 @@ export const ListarInformesPages = () => {
   const [dataToEdit, setDataToEdit] = useState(null);
   const [stockCri, setStockCri] = useState("10");
   const [error, setError] = useState(null);
+  const [loadingMovimientos, setLoadingMovimientos] = useState(true);
+  const [loadingRegistraciones, setLoadingRegistraciones] = useState(true);
   const { get } = helpHttp();
   const { productos, getProductos, updateProductos } = useProductos();
 
@@ -33,9 +35,11 @@ export const ListarInformesPages = () => {
         setDb(res);
         setRegistraciones(res);
         setError(null);
+        setLoadingRegistraciones(false);
       } else {
         setDb(null);
         setError(res);
+        setLoadingRegistraciones(false);
       }
     });
 
@@ -45,9 +49,11 @@ export const ListarInformesPages = () => {
       if (!res.error) {
         setMovimientos(res);
         setError(null);
+        setLoadingMovimientos(false);
       } else {
         setMovimientos(null);
         setError(res);
+        setLoadingMovimientos(false);
       }
     });
   }, []);
@@ -243,7 +249,14 @@ export const ListarInformesPages = () => {
                             </tr>
                           </thead>
                           <tbody className="table-group-divider">
-                            {movimientos.length > 0 ? (
+                            {loadingMovimientos ? (
+                              <tr>
+                                <td colSpan="3">
+                                  {" "}
+                                  <Spiner />{" "}
+                                </td>
+                              </tr>
+                            ) : movimientos.length > 0 ? (
                               movimientos.map((datos) => (
                                 <TableMovientosStockRegistros
                                   key={datos.idMovimientoStock}
@@ -252,9 +265,7 @@ export const ListarInformesPages = () => {
                               ))
                             ) : (
                               <tr>
-                                <td colSpan="3">
-                                  <Spiner />
-                                </td>
+                                <td colSpan="3"> No hay datos</td>
                               </tr>
                             )}
                           </tbody>
@@ -352,19 +363,27 @@ export const ListarInformesPages = () => {
                             </tr>
                           </thead>
                           <tbody className="table-group-divider">
-                            {inputFactura === ""
-                              ? mostrarRegistroFiltradoPorRango.map((datos) => (
-                                  <TableRegistraciones
-                                    key={datos.idRegistraciones}
-                                    data={datos}
-                                  />
-                                ))
-                              : filterVentas.map((datos) => (
-                                  <TableRegistraciones
-                                    key={datos.idRegistraciones}
-                                    data={datos}
-                                  />
-                                ))}
+                            {loadingRegistraciones ? (
+                              <tr>
+                                <td colSpan="3">
+                                  <Spiner />{" "}
+                                </td>
+                              </tr>
+                            ) : inputFactura === "" ? (
+                              mostrarRegistroFiltradoPorRango.map((datos) => (
+                                <TableRegistraciones
+                                  key={datos.idRegistraciones}
+                                  data={datos}
+                                />
+                              ))
+                            ) : (
+                              filterVentas.map((datos) => (
+                                <TableRegistraciones
+                                  key={datos.idRegistraciones}
+                                  data={datos}
+                                />
+                              ))
+                            )}
                           </tbody>
                         </table>
                       </div>

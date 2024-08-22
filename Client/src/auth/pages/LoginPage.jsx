@@ -29,7 +29,7 @@ export const LoginPage = () => {
 
   useEffect(() => {
     if (isAutenticated) {
-      navigation("/ventas");
+      navigation("/panel/ventas");
     }
   }, [isAutenticated]);
 

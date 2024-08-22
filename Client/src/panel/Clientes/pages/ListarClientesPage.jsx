@@ -8,6 +8,7 @@ import { helpHttp } from "../../../helpers/helpHttp.js";
 export const ListarClientesPage = () => {
   const [db, setDb] = useState([]);
   const [dataToEdit, setDataToEdit] = useState(null);
+  const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   
 
@@ -20,9 +21,11 @@ export const ListarClientesPage = () => {
       if (!res.error) {
         setDb(res);
         setError(null);
+        setLoading(false)
       } else {
         setDb(null);
         setError(res);
+        setLoading(false)
       }
     });
   }, []);
@@ -57,8 +60,10 @@ export const ListarClientesPage = () => {
       if (!res.error) {
         setDb([...db, res]);
         setError(null);
+        setLoading(false)
       } else {
         setError(res);
+        setLoading(false)
       }
     });
   };
@@ -76,8 +81,10 @@ export const ListarClientesPage = () => {
         );
         setDb(newData);
         setError(null);
+        setLoading(false)
       } else {
         setError(res);
+        setLoading(false)
       }
     });
   };
@@ -99,8 +106,10 @@ export const ListarClientesPage = () => {
           if (!res.error) {
             let newData = db.filter((el) => el.idClientes !== id);
             setDb(newData);
+            setLoading(false)
           } else {
             setError(res);
+            setLoading(false)
           }
         });
         Swal.fire({
@@ -111,6 +120,8 @@ export const ListarClientesPage = () => {
       }
     });
   };
+
+ 
 
   return (
     <>
@@ -128,6 +139,7 @@ export const ListarClientesPage = () => {
           data={db}
           setDataToEdit={setDataToEdit}
           deleteData={deleteData}
+          loading = {loading}
         />
       </div>
     </>

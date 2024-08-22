@@ -7,9 +7,9 @@ import { AutentificacionRoutes } from "../auth/routes/AutentificacionRoutes.jsx"
 export const AppRouter = () => {
   return (
     <Routes>
-      <Route path="/home/*" element={<AutentificacionRoutes />} />
+      <Route path="/*" element={<AutentificacionRoutes />} />
       <Route element ={<RutasProtegidas />}>
-        <Route path="/*" element={<PanelRoutes />} />
+        <Route path="/panel/*" element={<PanelRoutes />} />
       </Route>
     </Routes>
   );

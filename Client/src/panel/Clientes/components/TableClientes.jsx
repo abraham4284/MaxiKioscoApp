@@ -2,7 +2,7 @@ import React from "react";
 import { TableClientesRows } from "./TableClientesRows";
 import { Spiner } from "../../../components/Spiner";
 
-export const TableClientes = ({ data, setDataToEdit, deleteData }) => {
+export const TableClientes = ({ data, setDataToEdit, deleteData, loading }) => {
   return (
     <div className="row">
       <div className="col-sm-12">
@@ -19,21 +19,26 @@ export const TableClientes = ({ data, setDataToEdit, deleteData }) => {
                 </tr>
               </thead>
               <tbody className="table-group-divider">
-                {
-                    data.length > 0 ? (
-                        data.map((datos, index) => (
-                            <TableClientesRows
-                              key={index}
-                              data={datos}
-                              setDataToEdit={setDataToEdit}
-                              deleteData={deleteData}
-                            />
-                          ))
-                    ):
-                    <tr>
-                        <td colSpan="3"><Spiner/></td>
-                    </tr>
-                }
+                {loading ? (
+                  <tr>
+                    <td colSpan="3">
+                      <Spiner />
+                    </td>
+                  </tr>
+                ) : data.length > 0 ? (
+                  data.map((datos) => (
+                    <TableClientesRows
+                      key={datos.idClientes}
+                      data={datos}
+                      setDataToEdit={setDataToEdit}
+                      deleteData={deleteData}
+                    />
+                  ))
+                ) : (
+                  <tr>
+                    <td colSpan="3"> No hay datos </td>
+                  </tr>
+                )}
               </tbody>
             </table>
           </div>

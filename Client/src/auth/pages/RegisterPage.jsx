@@ -33,7 +33,7 @@ export const RegisterPage = () => {
 
   useEffect(()=>{
     if(isAutenticated){
-      navigation("/crearNegocio")
+      navigation("/panel/crearNegocio")
     }
   },[isAutenticated])
 

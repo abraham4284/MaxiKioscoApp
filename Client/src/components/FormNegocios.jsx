@@ -44,7 +44,7 @@ export const FormNegocios = () => {
       return;
     }
     createNegocio(form);
-    navigate("/");
+    navigate("/panel/ventas");
     handleReset();
 
     // console.log(form)

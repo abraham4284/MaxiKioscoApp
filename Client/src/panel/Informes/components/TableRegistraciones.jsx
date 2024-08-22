@@ -12,7 +12,7 @@ export const TableRegistraciones = ({ data }) => {
       <td>
         <Link 
         className="btn btn-info"
-        to={`/informes/${idRegistraciones}`}
+        to={`/panel/informes/${idRegistraciones}`}
          >Ver</Link>
       </td>
     </tr>
