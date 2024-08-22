@@ -6,7 +6,7 @@ export const RutasProtegidas = () => {
   const { isAutenticated } = useAuth();
 
   if (!isAutenticated) {
-    return <Navigate to={"/descripcion"} />;
+    return <Navigate to={"/"} />;
   }
   return <Outlet />;
 };

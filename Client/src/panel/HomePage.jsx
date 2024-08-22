@@ -1,8 +1,11 @@
 import React from "react";
 import { DescripcionSistema } from "./HomeDescription/DescripcionSistema";
+import { NavbarSocial } from "../components/NavbarSocial";
 
 export const HomePage = () => {
   return (
+    <> 
+    <NavbarSocial/>
     <div className="container">
        <DescripcionSistema />
       <div className="row ">
@@ -11,5 +14,6 @@ export const HomePage = () => {
         </div>
       </div>
     </div>
+    </>
   );
 };

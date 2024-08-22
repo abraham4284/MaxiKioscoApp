@@ -12,7 +12,7 @@ export const NavbarSocial = () => {
     <nav className="navbar navbar-expand-lg navbar-dark bg-primary">
       {/* Container wrapper */}
       <div className="container">
-        <Link className="navbar-brand text mb-1" to="/descripcion">
+        <Link className="navbar-brand text mb-1" to="/">
           <i className="fa-solid fa-code" style={{ color: "#00fca8" }}></i>{" "}
           <b>
             Abraham<b style={{ color: "#00fca8" }}>Tech</b>
