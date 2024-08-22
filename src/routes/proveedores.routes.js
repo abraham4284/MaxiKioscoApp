@@ -11,8 +11,8 @@ import { authRequired } from "../middlewares/ValidarToken.js";
 
 const router = Router();
 
-router.get('/proveedores', getProvedores);
-router.get('/proveedores/:id', getProvedorestId);
+router.get('/proveedores', authRequired,getProvedores);
+router.get('/proveedores/:id', authRequired, getProvedorestId);
 
 router.post('/proveedores',  createProvedores);
 router.put('/proveedores/:id',  updateProvedores);
