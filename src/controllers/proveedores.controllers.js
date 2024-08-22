@@ -8,7 +8,11 @@ export const getProvedores = async (req, res) => {
     const proveedores = await pool.query("SELECT * FROM proveedores WHERE idUsuarios = ?",[idUsuarios]);
     res.send(proveedores[0]);
   } catch (error) {
-    res.status(500).json({ error: "Error en el servidor" });
+    res.status(500).json({ 
+      error: true,
+      message: "Ocurrio un error al traer los proveedores",
+      details: error.message
+     });
     console.log({ error: error.message });
   }
 };
@@ -32,7 +36,11 @@ export const createProvedores = async (req, res) => {
     };
     res.status(201).json(newProveedor);
   } catch (error) {
-    res.status(500).json({ error: "Error en el servidor" });
+    res.status(500).json({ 
+      error: true,
+      message: "Ocurrio un error al crear un proveedor",
+      details: error.message
+     });
     console.log({ error: error.message });
   }
 };
@@ -49,7 +57,11 @@ export const getProvedorestId = async (req, res) => {
 
     res.json(rows[0]);
   } catch (error) {
-    res.status(500).json({ error: "Error en el servidor" });
+    res.status(500).json({ 
+      error: true,
+      message: "Ocurrio un error al traer un proveedor en particular",
+      details: error.message
+     });
     console.log({ error: error.message });
   }
 };
@@ -75,7 +87,11 @@ export const updateProvedores = async (req, res) => {
     console.log(rowsSelect[0]);
     res.json(rowsSelect[0]);
   } catch (error) {
-    res.status(500).json({ error: "Error en el servidor" });
+    res.status(500).json({ 
+      error: true,
+      message: "Ocurrio un error al editar un proveedor",
+      details: error.message
+     });
     console.log({ error: error.message });
   }
 };
@@ -90,7 +106,11 @@ export const deleteProvedores = async (req, res) => {
     }
     res.sendStatus(204);
   } catch (error) {
-    res.status(500).json({ error: "Error en el servidor" });
+    res.status(500).json({ 
+      error: true,
+      message: "Ocurrio un error al eliminar un proveedor",
+      details: error.message
+     });
     console.log({ error: error.message });
   }
 };

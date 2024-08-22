@@ -11,10 +11,10 @@ export const ListarProveedoresPage = () => {
   const [error, setError] = useState(null);
 
   let { get, post, put, deleted } = helpHttp();
-  let url = "http://localhost:3000/api/proveedores";
+  const URL = import.meta.env.VITE_BACKEND_URL;
 
   useEffect(() => {
-    get(url).then((res) => {
+    get(`${URL}/proveedores`).then((res) => {
       if (!res.error) {
         setDb(res);
         console.log(res);
@@ -31,7 +31,7 @@ export const ListarProveedoresPage = () => {
       body: data,
       headers: { "Content-Type": "application/json" },
     };
-    post(url, options).then((res) => {
+    post(`${URL}/proveedores`, options).then((res) => {
       if (!res.error) {
         setDb([...db, res]);
         setError(null);
@@ -42,7 +42,7 @@ export const ListarProveedoresPage = () => {
   };
 
   const updateData = (data) => {
-    let endpoint = `${url}/${data.idProveedores}`;
+    let endpoint = `${URL}/proveedores/${data.idProveedores}`;
     let options = {
       body: data,
       headers: { "Content-Type": "application/json" },
@@ -87,7 +87,7 @@ export const ListarProveedoresPage = () => {
       confirmButtonText: "Si!",
     }).then((result) => {
       if (result.isConfirmed) {
-        let endpoint = `${url}/${id}`;
+        let endpoint = `${URL}/proveedores/${id}`;
         deleted(endpoint).then((res) => {
           if (!res.error) {
             let newData = db.filter((el) => el.idProveedores !== id);
