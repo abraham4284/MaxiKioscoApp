@@ -6,7 +6,6 @@ import { FormNegocios } from "../components/FormNegocios.jsx";
 import { VentasPage } from "./Ventas/pages/VentasPage.jsx";
 import { ListarInformesPages } from "./Informes/pages/ListarInformesPages.jsx";
 import { InformeDetallePages } from "./Informes/pages/InformeDetallePages.jsx";
-import { Comprobante } from "./Ventas/components/Comprobante.jsx";
 import { ListarProductosPage } from "./Stock/index.js";
 import { ListarClientesPage } from "./Clientes/pages/ListarClientesPage.jsx";
 import { ListarProveedoresPage } from "./Proveedores/pages/ListarProveedoresPage.jsx";
@@ -27,7 +26,6 @@ export const PanelRoutes = () => {
           <Route path="/ventas" element={<VentasPage />} />
           <Route path="/informes" element={<ListarInformesPages />} />
           <Route path="/informes/:id" element={<InformeDetallePages />} />
-          <Route path="/comprobante" element={<Comprobante />} />
           {/*Panel de pruductos */}
           <Route path="/productos/listar" element={<ListarProductosPage />} />
           {/* Panel de Clientes */}

@@ -243,7 +243,6 @@ export const VentasPage = () => {
         subTotal: parseFloat(subTotal),
       };
       setCarrito([...carrito, data]);
-      <Comprobante carrito={carrito} />;
     }
 
     inputCodeBarRef.current.focus();
@@ -266,6 +265,8 @@ export const VentasPage = () => {
   };
 
   const handleResetDetalle = () => {
+    setCliente("");
+    setInputDNI("");
     setProductos("");
     setStock("");
     setPrecio("");
@@ -277,15 +278,15 @@ export const VentasPage = () => {
 
   const handleResetCarrito = () => {
     setCarrito([]);
-    setCliente("");
-    setInputDNI("");
-    setProductos("");
-    setStock("");
-    setPrecio("");
-    setCantidad("");
-    setSubTotal("");
-    setInputProductos("");
   };
+
+  const ventaData = carrito.map((item) => ({
+    Producto: item.producto,
+    PrecioU: item.precio,
+    Cantidad: item.cantidad,
+    idClientes: idClientes,
+    idProductos: item.idProductos,
+  }));
 
   const onConfirmarVenta = () => {
     if (carrito.length === 0) {
@@ -296,15 +297,6 @@ export const VentasPage = () => {
       });
       return;
     }
-
-    const ventaData = carrito.map((item) => ({
-      Producto: item.producto,
-      PrecioU: item.precio,
-      Cantidad: item.cantidad,
-      idClientes: idClientes,
-      idProductos: item.idProductos,
-    }));
-
     let options = {
       body: ventaData,
       headers: { "Content-Type": "application/json" },
