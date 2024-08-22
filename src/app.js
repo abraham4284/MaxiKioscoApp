@@ -33,6 +33,10 @@ app.use(morga('dev'));
 //  express.json() es para que convierta los req.body en formate json
 app.use(bodyParser.json());
 app.use(cookieParser());
+app.use((req,res,next)=>{
+  res.header('Access-Control-Allow-Credentials', 'true');
+  next();
+})
 app.use(express.json())
 
 app.use('/api',authRouter);
