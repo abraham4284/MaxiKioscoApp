@@ -24,7 +24,7 @@ export const ListarProveedoresPage = () => {
         setError(res);
       }
     });
-  }, [url]);
+  }, []);
 
   const createData = (data) => {
     let options = {
@@ -63,7 +63,7 @@ export const ListarProveedoresPage = () => {
       e.preventDefault();
       const searchInput = e.target.value.toLocaleLowerCase();
       if(searchInput === ""){
-        get(url).then((res)=>{
+        get(`${URL}/proveedores`).then((res)=>{
           if(!res.error){
             setDb(res)
           }
