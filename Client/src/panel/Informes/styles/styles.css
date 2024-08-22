@@ -1,0 +1,14 @@
+/* styles.css */
+.table-responsive {
+    overflow-x: auto;
+    overflow-y: auto;
+    max-height: 400px; /* Ajusta la altura máxima según tus necesidades */
+    width: 100%;
+  }
+  
+  /* Opcional: estilos adicionales para mejorar la apariencia */
+  .table-responsive table {
+    width: 100%;
+    min-width: 800px; /* Ajusta el ancho mínimo según tus necesidades */
+  }
+

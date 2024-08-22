@@ -1,0 +1,52 @@
+.bg-ventas {
+    background: rgb(9, 41, 121);
+    background: linear-gradient(
+      90deg,
+      rgba(9, 41, 121, 0.8631827731092436) 36%,
+      rgba(13, 110, 253, 1) 96%
+    );
+  }
+  
+  .bg-clientes {
+    background: rgb(13, 110, 253);
+    background: linear-gradient(
+      90deg,
+      rgba(13, 110, 253, 1) 0%,
+      rgba(11, 177, 110, 1) 48%
+    );
+  }
+  
+  .bg-productos {
+      background: #DC2424;  /* fallback for old browsers */
+      background: -webkit-linear-gradient(to right, #4A569D, #DC2424);  /* Chrome 10-25, Safari 5.1-6 */
+      background: linear-gradient(to right, #4A569D, #DC2424); /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
+      
+  }
+  
+  
+  .table-responsive {
+    overflow-x: auto;
+    overflow-y: auto;
+    max-height: 400px; /* Ajusta la altura máxima según tus necesidades */
+    width: 100%;
+  }
+  
+  /* Opcional: estilos adicionales para mejorar la apariencia */
+  .table-responsive table {
+    width: 100%;
+    min-width: 800px; /* Ajusta el ancho mínimo según tus necesidades */
+  }
+
+.img-logo{
+    border-radius: 50%;
+    width: 120px;
+}
+
+.card-negocio{
+  align-items: center;
+}
+
+.btn-editar{
+  display: flex;
+  justify-content: end;
+}
