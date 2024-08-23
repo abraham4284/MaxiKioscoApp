@@ -120,9 +120,11 @@ export const login = async (req, res) => {
 
 export const logout = async (req, res) => {
   try {
-    res.cookie("token", "", {
-      expires: 0,
-    });
+    res.clearCookie('token',{
+      httpOnly: true,
+      secure: true,
+      sameSite: 'None'
+    })
     return res.status(200).json({ message: "Se cerro la sesion" });
   } catch (error) {
     res.status(500).json({ error: "error en el servidor" });
