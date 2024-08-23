@@ -21,7 +21,6 @@ export const AuthProvider = ({ children }) => {
 
   const URL = import.meta.env.VITE_BACKEND_URL;
 
-
   const { get, post, put } = helpHttp();
 
   const register = (data) => {
@@ -118,10 +117,10 @@ export const AuthProvider = ({ children }) => {
     try {
       let endpoint = `${URL}/logout`;
       post(endpoint).then((res) => {
-        if(res){
-          setIsAutenticated(false)
-          setLoading(false)
-          setUsuario(null)
+        if (res) {
+          setIsAutenticated(false);
+          setLoading(false);
+          setUsuario(null);
         }
       });
     } catch (error) {
@@ -138,7 +137,7 @@ export const AuthProvider = ({ children }) => {
         setLoading(true);
         let endpoint = `${URL}/verify`;
         get(endpoint).then((res) => {
-          console.log(res)
+          console.log(res);
           if (res.error) {
             setIsAutenticated(false);
             setLoading(false);
@@ -159,13 +158,7 @@ export const AuthProvider = ({ children }) => {
     checkLogin();
   }, []);
 
-  if (loading) {
-    return (
-      <div className="spinner-border" role="status">
-        <span className="visually-hidden">Loading...</span>
-      </div>
-    );
-  }
+  
 
   return (
     <authContext.Provider
