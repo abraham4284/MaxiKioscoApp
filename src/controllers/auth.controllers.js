@@ -122,9 +122,9 @@ export const logout = async (req, res) => {
   try {
     res.cookie("token", "", {
       httpOnly: true,
-      secure: true, // Asegúrate de que coincide con la configuración original
-      sameSite: "None", // Asegúrate de que coincide con la configuración original
-      expires: new Date(0), // Esto forzará la expiración de la cookie
+      secure: true, 
+      sameSite: "None", 
+      expires: new Date(0), 
     });
     return res.status(200).json({ message: "Se cerro la sesion" });
   } catch (error) {
@@ -157,7 +157,7 @@ export const getUsernameUsuarios = async (req, res) => {
 export const updateUsuarios = async (req, res) => {
   try {
     const { Username, Password, img } = req.body;
-    const updateHashedPassword = await bycrypt.hash(Password, 10); // Corrección en la importación de bcrypt
+    const updateHashedPassword = await bycrypt.hash(Password, 10); 
     const { id } = req.params;
 
     // Buscar el usuario por id
