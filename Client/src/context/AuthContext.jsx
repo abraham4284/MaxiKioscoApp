@@ -138,6 +138,7 @@ export const AuthProvider = ({ children }) => {
         setLoading(true);
         let endpoint = `${URL}/verify`;
         get(endpoint).then((res) => {
+          console.log(res)
           if (res.error) {
             setIsAutenticated(false);
             setLoading(false);

@@ -22,15 +22,11 @@ export const register = async (req, res) => {
       return res.status(400).json({ message: "El usuario ya existe" });
     }
     // Creamos el registro
-    const result = await pool.query(
+    const [result] = await pool.query(
       "INSERT INTO usuarios (Username,Password,img) VALUES (?,?,?)",
       [Username, hashedPassword, img]
-    );
+    )
 
-    // Si falla detenemos el programa
-    if (result.error) {
-      throw result.error;
-    }
 
     // Liberamos la conexion
     pool.releaseConnection(conection);
@@ -38,6 +34,7 @@ export const register = async (req, res) => {
     // Creamos el token
 
     const data = {
+      idUsuarios: result.insertId,
       Username: Username,
       img: img,
     };
@@ -221,6 +218,7 @@ export const verifyToken = async (req, res) => {
       if (!usuarioEncontrado)
         return res.status(401).json({ message: "No autorizado" });
       const data = {
+        idUsuarios: user.idUsuarios,
         Username: user.Username,
         img: user.img,
       };

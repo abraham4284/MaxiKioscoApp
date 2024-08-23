@@ -7,6 +7,7 @@ import { CardDetalles } from "../components/CardDetalles";
 import { Comprobante } from "../components/Comprobante.jsx";
 import { useProductos } from "../../../context/ProductosContext.jsx";
 import { Spiner } from "../../../components/Spiner.jsx";
+import { useAuth } from "../../../context/AuthContext.jsx";
 
 export const VentasPage = () => {
   const [dbClientes, setDbClientes] = useState([]);
@@ -43,6 +44,7 @@ export const VentasPage = () => {
   const inputCantidadRef = useRef(null);
 
   const { get, post } = helpHttp();
+  const { usuario } = useAuth();
 
   const URL = import.meta.env.VITE_BACKEND_URL;
 
@@ -286,6 +288,7 @@ export const VentasPage = () => {
     Cantidad: item.cantidad,
     idClientes: idClientes,
     idProductos: item.idProductos,
+    idUsuarios : usuario.idUsuarios
   }));
 
   const onConfirmarVenta = () => {

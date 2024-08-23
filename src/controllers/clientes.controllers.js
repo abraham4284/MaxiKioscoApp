@@ -18,9 +18,8 @@ export const createClientes = async (req, res)=>{
     try {
        const { CUIT, Nombre, Apellido, Correo, Domicilio } = req.body;
        const { user } = req;
-       const idUsuarios = await busquedaIdUser(user.Username);
        const query = 'INSERT INTO clientes (CUIT, Nombre, Apellido, Correo, Domicilio, idUsuarios) VALUES (?,?,?,?,?,?)';
-       const values = [ CUIT, Nombre, Apellido, Correo, Domicilio, idUsuarios ];
+       const values = [ CUIT, Nombre, Apellido, Correo, Domicilio, user.idUsuarios ];
        await pool.query(query,values);
     
        res.status(201).json({message: 'Cliente creado correctamente'});

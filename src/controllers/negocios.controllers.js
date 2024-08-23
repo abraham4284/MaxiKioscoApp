@@ -1,15 +1,12 @@
 import { pool } from "../db.js";
-import { busquedaIdUser } from "../libs/BusquedaIdUser.js";
 import { formatearFechas } from "../libs/formatearFechas.js";
 
 export const getNegocios = async (req, res) => {
   try {
-    // Trae solo el negocio del usuario
     const { user } = req;
-    const idUsuarios = await busquedaIdUser(user.Username);
     const negocio = await pool.query(
       "SELECT * FROM negocios WHERE idUsuarios = ?",
-      [idUsuarios]
+      [user.idUsuarios]
     );
 
     if (negocio.length === 0) {
@@ -30,11 +27,10 @@ export const createNegocios = async (req, res) => {
     const { Nombre, Rubro, Descripcion, img } = req.body;
     const { user } = req;
     const fecha = formatearFechas(new Date());
-    const idusuarios = await busquedaIdUser(user.Username);
 
     const query =
       "INSERT INTO negocios (Nombre,Rubro,Descripcion,Fecha,img,idUsuarios) VALUES (?,?,?,?,?,?)";
-    const values = [Nombre, Rubro, Descripcion, fecha, img, idusuarios];
+    const values = [Nombre, Rubro, Descripcion, fecha, img, user.idusuarios];
 
     await pool.query(query, values);
 
@@ -49,7 +45,7 @@ export const updateNegocios = async (req, res) => {
   try {
     const { id } = req.params;
     const { Nombre, Rubro, Descripcion, img, idUsuarios } = req.body;
-    console.log(req.body,'Lo que llega del frontend')
+    console.log(req.body, "Lo que llega del frontend");
     const query = `
      UPDATE negocios SET Nombre = ?, Rubro = ?, Descripcion = ?, img = ?
      WHERE idNegocios = ?

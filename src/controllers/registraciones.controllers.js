@@ -24,15 +24,9 @@ export const getRegistraciones = async (req, res) => {
 export const getIdRegistraciones = async (req, res) => {
   try {
     const { id } = req.params;
-    // const query = `
-    // SELECT  Registraciones.NFactura, Registraciones.Fecha, Registraciones.Total, Clientes.Apellido, Clientes.Nombre, Clientes.idClientes
-    // FROM registraciones
-    // JOIN Clientes ON Clientes.idClientes = registraciones.idClientes
-    // WHERE Registraciones.idRegistraciones = ?;
-    // `;
     const query = `
     SELECT * FROM registraciones WHERE idRegistraciones = ?
-    `
+    `;
     const [rows] = await pool.query(query, [id]);
     if (rows.length <= 0) {
       res.status(404).json({ message: "No se encontro la venta" });
@@ -77,7 +71,6 @@ export const getRegistracionesDetalles = async (req, res) => {
   }
 };
 
-
 export const crearRegistraciones = async (req, res) => {
   try {
     const ventas = req.body;
@@ -85,10 +78,8 @@ export const crearRegistraciones = async (req, res) => {
       throw new Error("El cuerpo de la solicitud debe ser un array de ventas");
     }
 
-    const { user } = req;
-    const idUsuarios = await busquedaIdUser(user.Username);
     const numeroFactura = generarNumeroFactura();
-    const { idClientes, idProductos } = ventas[0];
+    const { idClientes, idProductos, idUsuarios } = ventas[0];
 
     const { Total } = sumarTotales(ventas);
     const Fecha = formatearFechas(new Date());
@@ -116,7 +107,7 @@ export const crearRegistraciones = async (req, res) => {
         INSERT INTO detalle_registraciones (Fecha, PrecioUni, Cantidad, Total, idProductos, idRegistraciones, idClientes)
         VALUES (?, ?, ?, ?, ?, ?, ?)
       `;
-      const TotalDetalles = PrecioU * Cantidad
+      const TotalDetalles = PrecioU * Cantidad;
       const values = [
         Fecha,
         PrecioU,
@@ -138,7 +129,7 @@ export const crearRegistraciones = async (req, res) => {
     );
 
     res.json({
-      message: "Venta registrada"
+      message: "Venta registrada",
     });
   } catch (error) {
     res.status(500).json({ error: "Error en el servidor" });

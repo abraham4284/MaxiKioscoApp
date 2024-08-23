@@ -1,11 +1,10 @@
 import { pool } from '../db.js';
-import { busquedaIdUser } from '../libs/BusquedaIdUser.js';
+
 
 export const getMovimientosStock = async (req, res) =>{
     try {
         const { user } = req;
-        const idUsuarios = await busquedaIdUser(user.Username);
-        const movimientosStock = await pool.query('SELECT * FROM movimientostock WHERE idUsuarios = ?',[idUsuarios]);
+        const movimientosStock = await pool.query('SELECT * FROM movimientostock WHERE idUsuarios = ?',[user.idUsuarios]);
         res.send(movimientosStock[0])
     } catch (error) {
         res.status(500).json({error: 'Error en el servidor'});
