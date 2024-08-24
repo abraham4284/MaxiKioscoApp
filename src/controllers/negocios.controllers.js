@@ -30,7 +30,7 @@ export const createNegocios = async (req, res) => {
 
     const query =
       "INSERT INTO negocios (Nombre,Rubro,Descripcion,Fecha,img,idUsuarios) VALUES (?,?,?,?,?,?)";
-    const values = [Nombre, Rubro, Descripcion, fecha, img, user.idusuarios];
+    const values = [Nombre, Rubro, Descripcion, fecha, img, user.idUsuarios];
 
     await pool.query(query, values);
 
