@@ -10,8 +10,7 @@ export const LoginPage = () => {
   const [Username, setUsername] = useState("");
   const [Password, setPassword] = useState("");
   const navigation = useNavigate();
-  const { login, isAutenticated, error, stateSession } = useAuth();
-  
+  const { login, isAutenticated, error, stateSession, usuario } = useAuth();
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -32,9 +31,13 @@ export const LoginPage = () => {
 
   useEffect(() => {
     if (isAutenticated) {
-      navigation("/panel/ventas");
+      if (usuario === null) {
+        navigation("/");
+      } else {
+        navigation("/panel/ventas");
+      }
     }
-  }, [isAutenticated]);
+  }, [isAutenticated, usuario]);
 
   /*
     0- Sin nada
@@ -42,7 +45,6 @@ export const LoginPage = () => {
     2- Venta completada
     3- Error
   */
-
 
   return (
     <>
@@ -77,8 +79,12 @@ export const LoginPage = () => {
               onChange={(e) => setPassword(e.target.value)}
               placeholder="Contraseña"
             />
-            <button type="submit" className="fadeIn fourth btn-login" value="Login">
-                { stateSession === 1 ? <Spiner/> : "Login"}
+            <button
+              type="submit"
+              className="fadeIn fourth btn-login"
+              value="Login"
+            >
+              {stateSession === 1 ? <Spiner /> : "Login"}
             </button>
           </form>
 
