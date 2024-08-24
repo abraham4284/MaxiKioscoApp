@@ -1,4 +1,5 @@
 import { pool } from "../db.js";
+import { busquedaIdUser } from "../libs/BusquedaIdUser.js";
 
 export const getProvedores = async (req, res) => {
   try {
@@ -19,9 +20,11 @@ export const createProvedores = async (req, res) => {
   try {
     const { CUIT, Nombre, Correo, Domicilio } = req.body;
     const { user } = req;
+    const idUsuarios = user.idUsuarios
+    console.log(idUsuarios)
     const query =
       "INSERT INTO proveedores (CUIT, Nombre, Correo, Domicilio,idUsuarios ) VALUES (?,?,?,?,?)";
-    const values = [CUIT, Nombre, Correo, Domicilio,user.idUsuarios];
+    const values = [CUIT, Nombre, Correo, Domicilio,idUsuarios];
     const [result] = await pool.query(query, values);
     const newProveedor = {
       idProveedores: result.insertId,

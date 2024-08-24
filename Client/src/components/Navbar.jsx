@@ -8,7 +8,7 @@ export const Navbar = () => {
   const { negocios } = useNegocios();
   const location = useLocation();
 
-  const negocioPath = location.pathname === "/crearNegocio" ? true : false
+  const negocioPath = location.pathname === "/panel/crearNegocio" ? true : false
 
   return (
     <nav className="navbar navbar-expand-lg navbar-light bg-body-tertiary" hidden = {negocioPath}>
