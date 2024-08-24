@@ -4,12 +4,14 @@ import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "../../context/AuthContext";
 import Swal from "sweetalert2";
 import { NavbarSocial } from "../../components/NavbarSocial";
+import { Spiner } from "../../components/Spiner";
 
 export const LoginPage = () => {
   const [Username, setUsername] = useState("");
   const [Password, setPassword] = useState("");
   const navigation = useNavigate();
-  const { login, isAutenticated, error } = useAuth();
+  const { login, isAutenticated, error, stateSession } = useAuth();
+  
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -33,6 +35,14 @@ export const LoginPage = () => {
       navigation("/panel/ventas");
     }
   }, [isAutenticated]);
+
+  /*
+    0- Sin nada
+    1- Cargando
+    2- Venta completada
+    3- Error
+  */
+
 
   return (
     <>
@@ -67,7 +77,9 @@ export const LoginPage = () => {
               onChange={(e) => setPassword(e.target.value)}
               placeholder="Contraseña"
             />
-            <input type="submit" className="fadeIn fourth" value="Login" />
+            <button type="submit" className="fadeIn fourth btn-login" value="Login">
+                { stateSession === 1 ? <Spiner/> : "Login"}
+            </button>
           </form>
 
           {/* Remind Passowrd */}

@@ -4,13 +4,14 @@ import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "../../context/AuthContext";
 import Swal from "sweetalert2";
 import { NavbarSocial } from "../../components/NavbarSocial";
+import { Spiner } from "../../components/Spiner";
 
 export const RegisterPage = () => {
   const [Username, setUsername] = useState("");
   const [Password, setPassword] = useState("");
   const [img, setImg] = useState("");
   const navigation = useNavigate();
-  const { register, isAutenticated, error } = useAuth();
+  const { register, isAutenticated, error, stateSession } = useAuth();
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -78,11 +79,13 @@ export const RegisterPage = () => {
               onChange={(e) => setImg(e.target.value)}
               placeholder="URL de imagen"
             />
-            <input
+            <button
               type="submit"
-              className="fadeIn fourth"
+              className="fadeIn fourth btn-login"
               value="Registrarse"
-            />
+            >
+             { stateSession === 1 ? <Spiner/> : "Registrarse"}
+            </button>
           </form>
 
           {/* Remind Passowrd */}

@@ -11,10 +11,10 @@ import joinsRouter from './routes/joins.routes.js'
 import negociosRoutes from './routes/negocios.routes.js'
 import cookieParser from 'cookie-parser';
 import bodyParser from 'body-parser';
-
 import cors from 'cors';
+import dotenv from 'dotenv'
 
-
+dotenv.config();
 
 const app = express();
 

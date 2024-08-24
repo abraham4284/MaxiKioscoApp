@@ -3,9 +3,15 @@ import { Link } from "react-router-dom";
 // import "./styles.css";
 import { instagram, github, linkedin, portafolio } from "../helpers/social";
 import CV from '../../public/AbrahamApasFullStackDeveloper.pdf';
+import { useAuth } from "../context/AuthContext";
 
 
 export const NavbarSocial = () => {
+
+
+  const { isAutenticated } = useAuth();
+
+   
   return (
     <nav className="navbar navbar-expand-lg navbar-dark bg-primary">
       <div className="container">

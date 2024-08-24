@@ -106,6 +106,7 @@ export const ModalProductos = ({
     } else {
       form.Motivo = dataToEdit ? form.Motivo : null;
       updateData(form);
+      
     }
   };
   return (
