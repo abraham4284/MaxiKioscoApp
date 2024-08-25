@@ -3,6 +3,7 @@ import { DescripcionSistema } from "./HomeDescription/DescripcionSistema";
 import { NavbarSocial } from "../components/NavbarSocial";
 import YoutubePlayer from "react-player/youtube";
 import maxiKioscoPng from '../../public/MaxiKiosco.png'
+import { Footer } from "../components/Footer";
 
 export const HomePage = () => {
   return (
@@ -25,6 +26,7 @@ export const HomePage = () => {
             />
           </div>
         </div>
+        <Footer/>
       </div>
     </>
   );

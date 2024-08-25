@@ -29,12 +29,13 @@ export const LoginPage = () => {
     login(user);
   };
 
+
   useEffect(() => {
-    if (isAutenticated) {
-      if (usuario === null) {
-        navigation("/");
+    if (isAutenticated && usuario !== null) {
+      if (usuario !== null) {
+        navigation("/panel/ventas")
       } else {
-        navigation("/panel/ventas");
+        navigation("/");
       }
     }
   }, [isAutenticated, usuario]);

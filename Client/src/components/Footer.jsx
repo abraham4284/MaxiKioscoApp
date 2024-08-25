@@ -1,6 +1,6 @@
 import React from "react";
 import './styles.css'
-import { github, instagram, linkedin } from "../helpers/social";
+import { github, instagram, linkedin, portafolio } from "../helpers/social";
 import CV from '../../public/AbrahamApasFullStackDeveloper.pdf'
 
 export const Footer = () => {
@@ -17,8 +17,8 @@ export const Footer = () => {
         <a href="#"><i className="fa-solid fa-briefcase"></i></a>
       </div>
       <ul className="list-inline">
-        <li className="list-inline-item"><a href="#">Portafolio</a></li>
-        <li className="list-inline-item"><a href="#">abraham4284@hotmail.com</a></li>
+        <li className="list-inline-item"><a href={portafolio} target="_blank">Portafolio</a></li>
+        <li className="list-inline-item"><span >abraham4284@hotmail.com</span></li>
         <li className="list-inline-item"><a href={CV} download="AbrahamApasFullStackDeveloper">Descargar CV</a></li>
         <li className="list-inline-item"><a href={github} target="_blank">Github</a></li>
         
