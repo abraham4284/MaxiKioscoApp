@@ -91,7 +91,7 @@ export const LoginPage = () => {
 
           {/* Remind Passowrd */}
           <div id="formFooter">
-            Aun no tiene cuenta? <Link to={"/home/register"}>Registrarse</Link>
+            Aun no tiene cuenta? <Link to={"/register"}>Registrarse</Link>
           </div>
         </div>
       </div>
