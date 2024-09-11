@@ -57,9 +57,9 @@ export const generadorTicket = async (req, res) => {
     const detallesData = detalles.map((el) => {
       return {
         Descripcion: el.descripcion,
-        PrecioUni: formatearTotal(el.PrecioUni),
-        Cantidad: el.Cantidad,
-        SubTotal: formatearTotal((el.Cantidad * el.PrecioUni).toFixed(2)),
+        PrecioUni: el.PrecioUni,
+        Cantidad: parseInt(el.Cantidad),
+        SubTotal: parseFloat(el.Cantidad * el.PrecioUni),
       };
     });
 
@@ -107,9 +107,9 @@ export const generadorTicket = async (req, res) => {
 
     doc.addTable(
       [
-        { key: "Descripcion", label: "Prod", align: "left" },
-        { key: "PrecioUni", label: "P/U", align: "left" },
-        { key: "Cantidad", label: "Cant", align: "left" },
+        { key: "Descripcion", label: "Prod", align: "left"},
+        { key: "PrecioUni", label: "P/U", align: "left", width: 50  },
+        { key: "Cantidad", label: "Cant", align: "left"},
         { key: "SubTotal", label: "SubTotal", align: "right" },
       ],
       detallesData,
@@ -118,12 +118,12 @@ export const generadorTicket = async (req, res) => {
         width: "fill_body",
         striped: true,
         cellsPadding: 2,
-        marginLeft: 5,
-        marginRight: 5,
+        marginLeft: 1,
+        marginRight: 1,
         headAlign: "center",
         headFont: "Helvetica-Bold",
-        headFontSize: 7,
-        bodyFontSize: 6,
+        headFontSize: 6,
+        bodyFontSize: 5,
         // Agrega un marginBottom para que el footer tenga espacio
       }
     );
