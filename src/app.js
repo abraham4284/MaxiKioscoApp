@@ -9,6 +9,7 @@ import proveedores from './routes/proveedores.routes.js'
 import movimientosStock from './routes/movimientosStock.routes.js';
 import joinsRouter from './routes/joins.routes.js'
 import negociosRoutes from './routes/negocios.routes.js'
+import ticketsRoutes from './routes/Tickets.routes.js'
 import cookieParser from 'cookie-parser';
 import bodyParser from 'body-parser';
 import cors from 'cors';
@@ -47,6 +48,7 @@ app.use('/api',proveedores)
 app.use('/api',movimientosStock)
 app.use('/api',joinsRouter)
 app.use('/api',negociosRoutes)
+app.use('/api',ticketsRoutes)
 
 
 

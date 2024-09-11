@@ -4,10 +4,9 @@ import { CardClientes } from "../components/CardClientes";
 import { helpHttp } from "../../../helpers/helpHttp.js";
 import { TableVentas } from "../components/TableVentas";
 import { CardDetalles } from "../components/CardDetalles";
-import { Comprobante } from "../components/Comprobante.jsx";
-import { useProductos } from "../../../context/ProductosContext.jsx";
-import { Spiner } from "../../../components/Spiner.jsx";
+import { useNavigate } from "react-router-dom";
 import { useAuth } from "../../../context/AuthContext.jsx";
+import { descargarTiket } from "../../../helpers/DescargarTicket.js";
 
 export const VentasPage = () => {
   const [dbClientes, setDbClientes] = useState([]);
@@ -43,6 +42,7 @@ export const VentasPage = () => {
   const inputCodeBarRef = useRef(null);
   const inputCantidadRef = useRef(null);
 
+  const navigate = useNavigate();
   const { get, post } = helpHttp();
   const { usuario } = useAuth();
 
@@ -288,7 +288,7 @@ export const VentasPage = () => {
     Cantidad: item.cantidad,
     idClientes: idClientes,
     idProductos: item.idProductos,
-    idUsuarios : usuario.idUsuarios
+    idUsuarios: usuario.idUsuarios,
   }));
 
   const onConfirmarVenta = () => {
@@ -313,11 +313,19 @@ export const VentasPage = () => {
           handleResetDetalle();
           setEstadoVenta(2);
           Swal.fire({
-            position: "top-end",
-            icon: "success",
-            title: "Venta registrada",
-            showConfirmButton: false,
-            timer: 1300,
+            title: "Descargar Ticket?",
+            showDenyButton: true,
+            showCancelButton: true,
+            confirmButtonText: "Descargar",
+            denyButtonText: `No descargar`,
+          }).then((result) => {
+            /* Read more about isConfirmed, isDenied below */
+            if (result.isConfirmed) {
+              descargarTiket(res.idRegistraciones, res.NFactura);
+              Swal.fire("Revise sus descargas!", "", "success");
+            } else if (result.isDenied) {
+              Swal.fire("Changes are not saved", "", "info");
+            }
           });
         } else {
           setError(res);

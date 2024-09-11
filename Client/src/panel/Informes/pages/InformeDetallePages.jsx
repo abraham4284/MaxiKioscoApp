@@ -112,7 +112,7 @@ export const InformeDetallePages = () => {
         </div>
       ) : (
         <div className="container">
-          <h3 className="mt-5">Numero Factura #{NFactura}</h3>
+          <h3 className="mt-5">Nº #{NFactura}</h3>
           <div className="row">
             <p className="mt-5">Fecha: {Fecha}</p>
             <p className="">Total: {formatearTotal(Total)}</p>

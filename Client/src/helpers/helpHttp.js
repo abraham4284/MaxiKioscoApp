@@ -24,16 +24,20 @@ export const helpHttp = () => {
     setTimeout(() => controller.abort(), 3000);
 
     return fetch(endpoint, options)
-      .then((res) =>
-        res.ok
-          ? res.json()
-          : Promise.reject({
-              error: true,
-              status: res.status || "00",
-              statusText: res.statusText || "Ocurrio un error",
-            })
-      )
-      .catch((error) => error);
+    .then((res) => {
+      // Verificar si la respuesta es un blob (binario)
+      if (options.responseType === 'blob') {
+        return res.blob(); // Retornar el archivo binario
+      }
+      return res.ok
+        ? res.json()
+        : Promise.reject({
+            error: true,
+            status: res.status || "00",
+            statusText: res.statusText || "Ocurrio un error",
+          });
+    })
+    .catch((error) => error);
   };
 
   const get = (url, options = {}) => customFech(url, options);

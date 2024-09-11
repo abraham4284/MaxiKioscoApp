@@ -16,3 +16,4 @@ export const sumarTotales = (ventas = []) => {
     console.log("Error en sumar ventas");
   }
 };
+

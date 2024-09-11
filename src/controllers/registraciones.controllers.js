@@ -128,8 +128,14 @@ export const crearRegistraciones = async (req, res) => {
       )
     );
 
+     const [ selectRegistraciones ] = await pool.query("SELECT * FROM registraciones WHERE idRegistraciones = ?",[resultRegistraciones.insertId])
+
+     const NFactura = selectRegistraciones.length > 0 ? selectRegistraciones[0].NFactura : {}
+
     res.json({
       message: "Venta registrada",
+      idRegistraciones: resultRegistraciones.insertId,
+      NFactura: NFactura
     });
   } catch (error) {
     res.status(500).json({ error: "Error en el servidor" });

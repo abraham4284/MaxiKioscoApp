@@ -15,6 +15,7 @@ router.get('/regFour',getFourTable);
 router.get('/reg/:id',getIdClientRegistraciones);
 router.get('/regFour/:id',getIdFourTable);
 
+
 router.post('/reg',buscarPorFechaRegistro);
 
 
