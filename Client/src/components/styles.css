@@ -77,3 +77,51 @@
   -webkit-box-shadow: 1px -1px 68px -22px rgba(0, 252, 168, 0.75);
   -moz-box-shadow: 1px -1px 68px -22px rgba(0, 252, 168, 0.75);
 }
+
+@media print {
+  /* Ocultar elementos que no quieras imprimir */
+  .nav-ocultar,
+  .footer-ocultar {
+    display: none;
+  }
+
+  /* Eliminar márgenes innecesarios */
+  body,
+  .cont-comporobante {
+    margin: 0;
+    padding: 0;
+  }
+
+  /* Controlar el margen de impresión */
+  @page {
+    size: auto; /* Permite que el tamaño de la página se ajuste automáticamente */
+    margin: 0; /* Márgenes mínimos en la impresión */
+  }
+
+  /* Evitar que el contenido se desborde a una segunda página */
+  .cont-comporobante {
+    page-break-inside: avoid;
+    break-inside: avoid;
+    height: 100vh; /* Asegura que el contenedor ocupe el 100% de la altura de la página */
+    overflow: hidden; /* Evita desbordamiento */
+  }
+
+  /* Evitar que la página tenga espacio adicional en blanco */
+  html,
+  body {
+    height: 100%;
+    max-height: 100vh; /* Evita que el contenido desborde verticalmente */
+    overflow: hidden;
+  }
+
+  /* Ajuste de ancho para asegurar que no haya saltos de página */
+  .container {
+    width: 100%; /* Usa el ancho completo de la página */
+    max-width: 100vw; /* Previene desbordamientos en el ancho */
+  }
+
+  table {
+    page-break-inside: avoid;
+    break-inside: avoid;
+  }
+}

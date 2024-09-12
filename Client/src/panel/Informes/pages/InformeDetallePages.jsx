@@ -18,6 +18,8 @@ export const InformeDetallePages = () => {
   const [errorClientes, setErrorClientes] = useState(null);
   const [loading, setLoading] = useState(true);
 
+  const [mostrarParaImprimir, setMostrarParaImprimir] = useState(false);
+
   const URL = import.meta.env.VITE_BACKEND_URL;
 
   useEffect(() => {
@@ -34,7 +36,7 @@ export const InformeDetallePages = () => {
           setError(null);
           setLoading(false);
         });
-        setDetalles([])
+        setDetalles([]);
       } catch (error) {
         console.log(error.message);
         setError(error.message);
@@ -54,7 +56,7 @@ export const InformeDetallePages = () => {
           setErrorRegistraciones(null);
           setLoading(false);
         });
-        setRegistraciones([])
+        setRegistraciones([]);
       } catch (error) {
         console.log(error.message);
         setErrorRegistraciones(error.message);
@@ -72,7 +74,7 @@ export const InformeDetallePages = () => {
           setErrorClientes(null);
           setLoading(false);
         });
-        setClientes([])
+        setClientes([]);
       } catch (error) {
         console.log(error);
         setErrorClientes(error.message);
@@ -100,6 +102,24 @@ export const InformeDetallePages = () => {
     }
   }
 
+  useEffect(() => {
+    const handleBeforePrint = () => {
+      setMostrarParaImprimir(true);
+    };
+
+    const handleAfterPrint = () => {
+      setMostrarParaImprimir(false);
+    };
+
+    window.addEventListener("beforeprint", handleBeforePrint);
+    window.addEventListener("afterprint", handleAfterPrint);
+
+    return () => {
+      window.removeEventListener("beforeprint", handleBeforePrint);
+      window.removeEventListener("afterprint", handleAfterPrint);
+    };
+  }, []);
+
   return (
     <>
       {loading ? (
@@ -111,13 +131,14 @@ export const InformeDetallePages = () => {
           </div>
         </div>
       ) : (
-        <div className="container">
+        <div className="container cont-comporobante">
           <h3 className="mt-5">Nº #{NFactura}</h3>
           <div className="row">
             <p className="mt-5">Fecha: {Fecha}</p>
             <p className="">Total: {formatearTotal(Total)}</p>
             <p className="">Cliente: {clienteEncontrado}</p>
           </div>
+
           <div className="row">
             <div className="col-12 mt-3">
               <div className="card-body">
@@ -148,6 +169,22 @@ export const InformeDetallePages = () => {
               </div>
             </div>
           </div>
+
+          {mostrarParaImprimir && (
+            <div className="row text-center mt-5">
+              <p className="copyright">
+                {" "}
+                <i
+                  className="fa-solid fa-code"
+                  style={{ color: "#00fca8" }}
+                ></i>{" "}
+                <b>
+                  Abraham<b style={{ color: "#00fca8" }}>Tech</b>.com |
+                  Soluciones Tecnologicas © 2024
+                </b>
+              </p>
+            </div>
+          )}
         </div>
       )}
     </>

@@ -6,7 +6,7 @@ import CV from '../../public/AbrahamApasFullStackDeveloper.pdf'
 export const Footer = () => {
   
   return (
-    <div className="footer-basic mt-5">
+    <div className="footer-basic mt-5 footer-ocultar">
     <footer>
       <div className="social">
         <a href={linkedin} target="_blank"><i className="fa-brands fa-linkedin"></i></a>

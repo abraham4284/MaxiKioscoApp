@@ -27,6 +27,7 @@ export const VentasPage = () => {
   const [cantidad, setCantidad] = useState([]);
   const [subTotal, setSubTotal] = useState([]);
   const [inputProductos, setInputProductos] = useState([]);
+  // const [idRegistraciones, setIdRegistraciones] = useState(null);
   //  End Productos
   const [carrito, setCarrito] = useState([]);
 
@@ -317,14 +318,15 @@ export const VentasPage = () => {
             showDenyButton: true,
             showCancelButton: true,
             confirmButtonText: "Descargar",
-            denyButtonText: `No descargar`,
+            denyButtonText: `Ver venta`,
           }).then((result) => {
             /* Read more about isConfirmed, isDenied below */
             if (result.isConfirmed) {
               descargarTiket(res.idRegistraciones, res.NFactura);
               Swal.fire("Revise sus descargas!", "", "success");
             } else if (result.isDenied) {
-              Swal.fire("Changes are not saved", "", "info");
+              // Swal.fire("Changes are not saved", "", "info");
+              navigate(`/panel/informes/${res.idRegistraciones}`);
             }
           });
         } else {

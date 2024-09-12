@@ -2,6 +2,7 @@ import React, { useEffect, useMemo, useState } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 import { useNegocios } from "../context/NegociosContext";
+import './styles.css'
 
 export const Navbar = () => {
   const { logout, usuario } = useAuth();
@@ -11,7 +12,7 @@ export const Navbar = () => {
   const negocioPath = location.pathname === "/panel/crearNegocio" ? true : false
 
   return (
-    <nav className="navbar navbar-expand-lg navbar-light bg-body-tertiary" hidden = {negocioPath}>
+    <nav className="navbar navbar-expand-lg navbar-light bg-body-tertiary nav-ocultar" hidden = {negocioPath}>
       <div className="container-fluid">
         <button
           className="navbar-toggler"
