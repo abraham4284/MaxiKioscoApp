@@ -128,8 +128,6 @@ export const VentasPage = () => {
     let busquedaNoEncontrada = "Consumidor final";
     if (busqueda) {
       const { idClientes, Apellido, Nombre } = busqueda;
-      // console.log(idClientes, "BuscarClienteDNI");
-      // console.log(busqueda, "Encontrado");
       let resultado = `${Apellido} ${Nombre}`;
       setIdClientes(idClientes);
       return resultado;
@@ -155,6 +153,7 @@ export const VentasPage = () => {
       const producto = busquedaProducto(CodeBar);
       if (producto) {
         const { idProductos, CodeBar, Descripcion, Precio, Stock } = producto;
+        console.log(idClientes,'Soy el idClientes en handleInputProductos')
         console.log(producto, "producto encontrado");
         setIdProductos(idProductos);
         setCodeBar(CodeBar);
@@ -186,6 +185,8 @@ export const VentasPage = () => {
       });
       return;
     }
+
+    console.log(idClientes,'Soy el idClientes en  handleBtnAgregar')
 
     const existingProductIndex = carrito.findIndex(
       (item) => item.CodeBar === CodeBar
@@ -268,8 +269,7 @@ export const VentasPage = () => {
   };
 
   const handleResetDetalle = () => {
-    setCliente("");
-    setInputDNI("");
+  
     setProductos("");
     setStock("");
     setPrecio("");
@@ -281,6 +281,9 @@ export const VentasPage = () => {
 
   const handleResetCarrito = () => {
     setCarrito([]);
+    setIdClientes("")
+    setInputDNI("")
+    setCliente("")
   };
 
   const ventaData = carrito.map((item) => ({
@@ -312,6 +315,9 @@ export const VentasPage = () => {
           setDbRegistraciones([...dbRegistraciones, res]);
           handleResetCarrito();
           handleResetDetalle();
+          setIdClientes(null)
+          setInputDNI("")
+          setCliente("");
           setEstadoVenta(2);
           Swal.fire({
             title: "Descargar Ticket?",
@@ -320,12 +326,10 @@ export const VentasPage = () => {
             confirmButtonText: "Descargar",
             denyButtonText: `Ver venta`,
           }).then((result) => {
-            /* Read more about isConfirmed, isDenied below */
             if (result.isConfirmed) {
               descargarTiket(res.idRegistraciones, res.NFactura);
               Swal.fire("Revise sus descargas!", "", "success");
             } else if (result.isDenied) {
-              // Swal.fire("Changes are not saved", "", "info");
               navigate(`/panel/informes/${res.idRegistraciones}`);
             }
           });

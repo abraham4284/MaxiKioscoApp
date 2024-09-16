@@ -47,6 +47,11 @@ export const NavbarSocial = () => {
               </Link>
             </li>
             <li className="nav-item">
+              <Link className="nav-link" to="/register">
+                Novedades
+              </Link>
+            </li>
+            <li className="nav-item">
               <a
                 className="nav-link btn btn-cv"
                 href={CV}
