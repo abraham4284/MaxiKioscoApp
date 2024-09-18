@@ -117,25 +117,18 @@ export const crearRegistraciones = async (req, res) => {
         idRegistraciones,
         idClientes,
       ];
-      await pool.query(queryDetalleRegistraciones, values);
+      await Promise.all([
+        await pool.query(queryDetalleRegistraciones, values),
+        modificarStockVenta(idProductos, Cantidad),
+      ]);
     });
 
     await Promise.all(queries);
 
-    await Promise.all(
-      ventas.map((venta) =>
-        modificarStockVenta(venta.idProductos, venta.Cantidad)
-      )
-    );
-
-     const [ selectRegistraciones ] = await pool.query("SELECT * FROM registraciones WHERE idRegistraciones = ?",[resultRegistraciones.insertId])
-
-     const NFactura = selectRegistraciones.length > 0 ? selectRegistraciones[0].NFactura : {}
-
     res.json({
       message: "Venta registrada",
       idRegistraciones: resultRegistraciones.insertId,
-      NFactura: NFactura
+      NFactura: numeroFactura,
     });
   } catch (error) {
     res.status(500).json({ error: "Error en el servidor" });

@@ -21,7 +21,7 @@ export const helpHttp = () => {
 
     options.credentials = 'include'; // Enable credentials for cookie handling
 
-    setTimeout(() => controller.abort(), 3000);
+    setTimeout(() => controller.abort(), 8000);
 
     return fetch(endpoint, options)
     .then((res) => {
