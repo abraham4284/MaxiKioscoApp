@@ -1,12 +1,12 @@
 import React from "react";
 
 export const TableVentasRows = ({ carrito, handleEliminarCarrito }) => {
-  const { idProductos,CodeBar, producto, precio, cantidad, subTotal } = carrito;
+  const { idProductos,CodeBar, Descripcion, precio, cantidad, subTotal } = carrito;
 
   return (
     <tr>
       <td>{CodeBar}</td>
-      <td> {producto}</td>
+      <td> {Descripcion}</td>
       <td> {precio} </td>
       <td>{cantidad}</td>
       <td>{subTotal}</td>

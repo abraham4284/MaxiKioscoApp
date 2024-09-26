@@ -1,8 +1,11 @@
 import React from "react";
 import { TableClientesRows } from "./TableClientesRows";
 import { Spiner } from "../../../components/Spiner";
+import { useClientes } from "../../../context/ClientesContext";
 
-export const TableClientes = ({ data, setDataToEdit, deleteData, loading }) => {
+export const TableClientes = ({ data, setDataToEdit }) => {
+  const { deleteClientes, loading } = useClientes();
+
   return (
     <div className="row">
       <div className="col-sm-12">
@@ -25,13 +28,13 @@ export const TableClientes = ({ data, setDataToEdit, deleteData, loading }) => {
                       <Spiner />
                     </td>
                   </tr>
-                ) : data.length > 0 ? (
+                ) : data ? (
                   data.map((datos) => (
                     <TableClientesRows
                       key={datos.idClientes}
                       data={datos}
                       setDataToEdit={setDataToEdit}
-                      deleteData={deleteData}
+                      deleteData={deleteClientes}
                     />
                   ))
                 ) : (

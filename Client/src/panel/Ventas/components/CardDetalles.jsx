@@ -1,20 +1,119 @@
-import React from "react";
+import React, { useState } from "react";
+import { useCarrito } from "../../../context/CarritoContext";
+import Swal from "sweetalert2";
+import { useClientes } from "../../../context/ClientesContext";
 
 export const CardDetalles = ({
-  producto,
-  stock,
-  precio,
-  cantidad,
-  handleInputCantidad,
-  subTotal,
-  handlebtnAgregar,
-  handleResetDetalle,
+  productoEncontrado,
+  inputCantidadRef,
+  inputCodeBarRef,
   btnAgregar,
   btnAnular,
-  inputCantidadRef
+  resetProductoEncontrado,
+  setInputProductos
 }) => {
-  
- 
+
+  const { idProductos,CodeBar, Descripcion = "", Stock = "", Precio = "" } = productoEncontrado || {};
+  const { carrito, agregarCarrito, setCarrito } = useCarrito();
+  const  {  clienteEncontrado  } = useClientes();
+  const [cantidad, setCantidad] = useState([]);
+  const [subTotal, setSubTotal] = useState([]);
+
+  const handleInputCantidad = (e) => {
+    const cantidadInput = e.target.value;
+    setCantidad(cantidadInput);
+    let resultado = cantidadInput * Precio;
+    setSubTotal(resultado);
+  };
+
+  const handleResetDetalle = () =>{
+    resetProductoEncontrado();
+    setCantidad("")
+    setSubTotal("")
+    setInputProductos("")
+    inputCodeBarRef.current.focus();
+  }
+
+
+  const handlebtnAgregar = () => {
+    if (!Descripcion || !Precio || !cantidad || cantidad <= 0) {
+      Swal.fire({
+        title: "Por favor ingrese un producto válido",
+        text: "La cantidad tiene que ser mayor a 0",
+        icon: "warning",
+      });
+      return;
+    }
+
+    const existingProductIndex = carrito.findIndex(
+      (item) => item.CodeBar === CodeBar
+    );
+
+    if (existingProductIndex !== -1) {
+      const updatedCarrito = [...carrito];
+      const existingProduct = updatedCarrito[existingProductIndex];
+      const newCantidad = existingProduct.cantidad + parseInt(cantidad);
+      const newSubTotal = existingProduct.precio * newCantidad;
+
+      if (Stock < newCantidad) {
+        Swal.fire({
+          title: `Stock insuficiente`,
+          icon: "warning",
+        });
+        return;
+      }
+
+      updatedCarrito[existingProductIndex] = {
+        ...existingProduct,
+        cantidad: newCantidad,
+        subTotal: newSubTotal,
+      };
+
+      setCarrito(updatedCarrito);
+    } else {
+      if (Stock <= 0) {
+        Swal.fire({
+          title: "No puedes agregar este producto porque su Stock es 0",
+          text: "Tenes que reponer este producto",
+          icon: "error",
+        });
+        return;
+      } else if (Stock <= 10) {
+        Swal.fire({
+          title: `Alerta stock bajo ${Stock}`,
+          text: "A partir de las 10 unidades se considera stock crítico",
+          icon: "warning",
+        });
+      }
+
+      if (parseInt(cantidad) > Stock) {
+        Swal.fire({
+          title: "Estas intentando vender una cantidad mayor a tu stock",
+          text: `Solo quedan ${Stock} unidades en stock`,
+          icon: "error",
+        });
+        return;
+      }
+
+      const data = {
+        idProductos,
+        idClientes: clienteEncontrado.idClientes,
+        CodeBar,
+        Descripcion,
+        precio: parseFloat(Precio),
+        cantidad: parseInt(cantidad),
+        subTotal: parseFloat(subTotal),
+      };
+      agregarCarrito(data);
+    }
+
+    inputCodeBarRef.current.focus();
+    handleResetDetalle();
+  };
+
+
+  // console.log(carrito,'Soy el carrito CardDetalles')
+
 
   return (
     <>
@@ -37,7 +136,7 @@ export const CardDetalles = ({
                   className="form-control"
                   aria-label="Sub Total"
                   disabled
-                  value={producto}
+                  value={Descripcion}
                 />
               </div>
             </div>
@@ -45,7 +144,7 @@ export const CardDetalles = ({
           <div className="row mb-2">
             <div className="col-sm-12">
               <div className="input-group input-group-sm">
-                <div className="input-group-prepend" >
+                <div className="input-group-prepend">
                   <span className="input-group-text">Stock:</span>
                 </div>
                 <input
@@ -53,7 +152,7 @@ export const CardDetalles = ({
                   className="form-control"
                   aria-label="Sub Total"
                   disabled
-                  value={stock}
+                  value={Stock}
                 />
               </div>
             </div>
@@ -69,7 +168,7 @@ export const CardDetalles = ({
                   className="form-control"
                   aria-label="IGV"
                   disabled
-                  value={precio}
+                  value={Precio}
                 />
               </div>
             </div>

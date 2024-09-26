@@ -1,20 +1,26 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { TableVentasRows } from "./TableVentasRows";
 import { formatearTotal } from "../../../helpers/formatearTotal";
 import { Spiner } from "../../../components/Spiner";
+import { useCarrito } from "../../../context/CarritoContext";
+import { useProductos } from "../../../context/ProductosContext";
+import { useClientes } from "../../../context/ClientesContext";
+import { useRegistraciones } from "../../../context/RegistracionesContext";
+import { helpHttp } from "../../../helpers/helpHttp";
+import { URL } from "../../../helpers/api";
+import Swal from "sweetalert2";
+import { descargarTiket } from "../../../helpers/DescargarTicket";
+import { useNavigate } from 'react-router-dom'
 
 export const TableVentas = ({
-  carrito,
   inputProductos,
-  handleInputProductos,
-  onConfirmarVenta,
   handleResetCarrito,
+  inputCantidadRef,
   inputCodeBarRef,
-  totalCarrito,
   btnConfirmarVenta,
   btnAnularVenta,
-  handleEliminarCarrito,
-  estadoVenta,
+  setInputProductos,
+  setInputDNI
 }) => {
   /*
     0- Sin nada
@@ -22,6 +28,81 @@ export const TableVentas = ({
     2- Venta completada
     3- Error
   */
+  const [estadoVenta, setEstadoVenta] = useState(0);
+
+  const { carrito, deleteProductoCarrito, sumarTotalCarrito, totalCarrito, resetCarrito } =
+    useCarrito();
+  const { busquedaProducto } = useProductos();
+  const { resetClientesEncontrado } = useClientes();
+  const { setRegistraciones, registraciones } =
+    useRegistraciones();
+  const { post } = helpHttp()
+
+  const navigate = useNavigate()
+
+  useEffect(() => {
+    sumarTotalCarrito(carrito);
+  }, [carrito, totalCarrito]);
+
+  const handleInputProductos = async (e) => {
+    let CodeBar = e.target.value;
+    setInputProductos(CodeBar);
+    if (CodeBar.trim() === "") {
+      setInputProductos("");
+    } else {
+      const producto = await busquedaProducto(CodeBar);
+      if (producto) {
+        inputCantidadRef.current.focus();
+      }
+    }
+  };
+
+  const onConfirmarVenta = () => {
+    if (carrito.length === 0) {
+      Swal.fire({
+        title: "El carrito esta vacio",
+        text: "El carrito tiene que contener productos",
+        icon: "warning",
+      });
+      return;
+    }
+    let options = {
+      body: carrito,
+      headers: { "Content-Type": "application/json" },
+    };
+    setEstadoVenta(1);
+    try {
+      post(`${URL}/registraciones`, options).then((res) => {
+        if (res.message === "Venta registrada") {
+          setRegistraciones([...registraciones, res]);
+          resetClientesEncontrado("");
+          setInputDNI("")
+          resetCarrito()
+          setEstadoVenta(2);
+          Swal.fire({
+            title: "Descargar Ticket?",
+            showDenyButton: true,
+            showCancelButton: true,
+            confirmButtonText: "Descargar",
+            denyButtonText: `Ver venta`,
+          }).then((result) => {
+            if (result.isConfirmed) {
+              descargarTiket(res.idRegistraciones, res.NFactura);
+              Swal.fire("Revise sus descargas!", "", "success");
+            } else if (result.isDenied) {
+              navigate(`/panel/informes/${res.idRegistraciones}`);
+            }
+          });
+        } else {
+          setError(res);
+          setEstadoVenta(3);
+        }
+        setEstadoVenta(0);
+      });
+    } catch (error) {
+      console.log(error);
+    }
+  };
 
   if (estadoVenta === 0) {
     false;
@@ -44,7 +125,7 @@ export const TableVentas = ({
 
       <div className="card-body">
         <div className="row mb-2">
-          <div className="col-sm-12">
+          <div className="col-sm-8">
             <input
               type="text"
               className="form-control form-control-sm"
@@ -55,6 +136,12 @@ export const TableVentas = ({
               ref={inputCodeBarRef}
               tabIndex={2}
             />
+          </div>
+          <div className="col-4">
+            <button className="btn btn-primary">
+              {" "}
+              <i className="fa-solid fa-magnifying-glass"></i> Buscar
+            </button>
           </div>
         </div>
         <div className="row">
@@ -76,7 +163,7 @@ export const TableVentas = ({
                     <TableVentasRows
                       key={index}
                       carrito={datos}
-                      handleEliminarCarrito={handleEliminarCarrito}
+                      handleEliminarCarrito={deleteProductoCarrito}
                     />
                   ))
                 ) : (
@@ -104,7 +191,7 @@ export const TableVentas = ({
             >
               <i
                 className="fa-solid fa-check"
-                hidden={estadoVenta === 1 && true}
+                // hidden={estadoVenta === 1 && true}
               ></i>{" "}
               {estadoVenta === 1 ? <Spiner /> : "Confirmar"}
             </button>

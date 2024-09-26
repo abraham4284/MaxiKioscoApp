@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import Swal from "sweetalert2";
 import swat from "sweetalert2";
+import { useClientes } from "../../../context/ClientesContext";
 
 const initialFrom = {
   idClientes: null,
@@ -12,13 +13,13 @@ const initialFrom = {
 };
 
 export const CardClientesComponents = ({
-  createData,
-  updateData,
   dataToEdit,
   setDataToEdit,
   handleInput,
 }) => {
   const [form, setForm] = useState(initialFrom);
+
+  const { createClientes, updateClientes } = useClientes();
 
   useEffect(() => {
     if (dataToEdit) {
@@ -46,9 +47,9 @@ export const CardClientesComponents = ({
       return;
     }
     if (form.idClientes === null) {
-      createData(form);
+      createClientes(form);
     } else {
-      updateData(form);
+      updateClientes(form);
     }
 
     handleReset();

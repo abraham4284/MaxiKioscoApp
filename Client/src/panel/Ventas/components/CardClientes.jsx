@@ -1,31 +1,29 @@
-import React from "react";
+import React, { useState } from "react";
+import { useClientes } from "../../../context/ClientesContext";
 
-export const CardClientes = ({
-  busquedarClienteDNI,
-  cliente,
-  setCliente,
-  inputDNI,
-  setInputDNI,
-}) => {
+export const CardClientes = ( { inputDNI, setInputDNI }) => {
+  const { clienteEncontrado, buscarClientesPorDNI } = useClientes();
+
   const handleChangeInput = (e) => {
     setInputDNI(e.target.value);
   };
 
-  const handleKeyDownInput = (e) => {
+  const handleKeyDownInput = async (e) => {
     if (e.key === "Enter") {
       const CUIT = e.target.value;
       setInputDNI(CUIT);
       if (CUIT.trim() === "") {
-        setCliente("");
+        setInputDNI("");
       } else {
-        const clienteNombre = busquedarClienteDNI(CUIT);
-        setCliente(clienteNombre);
+        await buscarClientesPorDNI(CUIT);
       }
     }
   };
 
-  
-
+  const clienteFinal =
+    clienteEncontrado === "Consumidor Final" || clienteEncontrado === ""
+      ? "Consumidor Final"
+      : `${clienteEncontrado.Apellido} ${clienteEncontrado.Nombre}`;
 
   return (
     <div className="card">
@@ -54,7 +52,7 @@ export const CardClientes = ({
           <div className="col-sm-6">
             <div className="form-group">
               <label form="nombre">Cliente</label>
-              <p className="mt-1"> {cliente} </p>
+              <p className="mt-1"> {clienteFinal} </p>
             </div>
           </div>
         </div>

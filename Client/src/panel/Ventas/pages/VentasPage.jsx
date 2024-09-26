@@ -1,39 +1,19 @@
 import React, { useEffect, useRef, useState } from "react";
-import Swal from "sweetalert2";
 import { CardClientes } from "../components/CardClientes";
-import { helpHttp } from "../../../helpers/helpHttp.js";
 import { TableVentas } from "../components/TableVentas";
 import { CardDetalles } from "../components/CardDetalles";
-import { useNavigate } from "react-router-dom";
-import { useAuth } from "../../../context/AuthContext.jsx";
-import { descargarTiket } from "../../../helpers/DescargarTicket.js";
+import { useClientes } from "../../../context/ClientesContext.jsx";
+import { useProductos } from "../../../context/ProductosContext.jsx";
+import { useRegistraciones } from "../../../context/RegistracionesContext.jsx";
 
 export const VentasPage = () => {
-  const [dbClientes, setDbClientes] = useState([]);
-  const [dbProductos, setDbProductos] = useState([]);
-  const [dbRegistraciones, setDbRegistraciones] = useState([]);
+  const { getClientes } = useClientes();
+  const { getProductos, productoEncontrado, resetProductoEncontrado } =
+    useProductos();
+  const { getRegistraciones } = useRegistraciones();
 
-  // Clientes
-  const [idClientes, setIdClientes] = useState(null);
-  const [inputDNI, setInputDNI] = useState("");
-  // End Clientes
-
-  // Productos
-  const [idProductos, setIdProductos] = useState([]);
-  const [CodeBar, setCodeBar] = useState([]);
-  const [producto, setProductos] = useState([]);
-  const [stock, setStock] = useState([]);
-  const [precio, setPrecio] = useState([]);
-  const [cantidad, setCantidad] = useState([]);
-  const [subTotal, setSubTotal] = useState([]);
   const [inputProductos, setInputProductos] = useState([]);
-  // const [idRegistraciones, setIdRegistraciones] = useState(null);
-  //  End Productos
-  const [carrito, setCarrito] = useState([]);
-
-  const [error, setError] = useState(null);
-  const [cliente, setCliente] = useState("");
-  const [estadoVenta, setEstadoVenta] = useState(0);
+  const [inputDNI, setInputDNI] = useState("");
 
   // Ref
   const btnAgregar = useRef(null);
@@ -43,43 +23,11 @@ export const VentasPage = () => {
   const inputCodeBarRef = useRef(null);
   const inputCantidadRef = useRef(null);
 
-  const navigate = useNavigate();
-  const { get, post } = helpHttp();
-  const { usuario } = useAuth();
-
-  const URL = import.meta.env.VITE_BACKEND_URL;
-
   useEffect(() => {
-    get(`${URL}/cliente`).then((res) => {
-      if (!res.error) {
-        setDbClientes(res);
-        setError(null);
-      } else {
-        setDbClientes(null);
-        setError(res);
-      }
-    });
-
-    get(`${URL}/productos`).then((res) => {
-      if (!res.error) {
-        setDbProductos(res);
-        setError(null);
-      } else {
-        setDbProductos(null);
-        setError(res);
-      }
-    });
-
-    get(`${URL}/registraciones`).then((res) => {
-      if (!res.error) {
-        setDbRegistraciones(res);
-        setError(null);
-      } else {
-        setDbRegistraciones(null);
-        setError(res);
-      }
-    });
-  }, [URL]);
+    getClientes();
+    getProductos();
+    getRegistraciones();
+  }, []);
 
   useEffect(() => {
     const handleBtnAgregar = (e) => {
@@ -123,229 +71,6 @@ export const VentasPage = () => {
     };
   }, []);
 
-  const busquedarClienteDNI = (CUIT) => {
-    let busqueda = dbClientes.find((el) => el.CUIT === CUIT);
-    let busquedaNoEncontrada = "Consumidor final";
-    if (busqueda) {
-      const { idClientes, Apellido, Nombre } = busqueda;
-      let resultado = `${Apellido} ${Nombre}`;
-      setIdClientes(idClientes);
-      return resultado;
-    } else {
-      console.log(busqueda, "En caso de que no");
-      return busquedaNoEncontrada;
-    }
-  };
-
-  const busquedaProducto = (CodeBar) => {
-    let busqueda = dbProductos.find((el) => el.CodeBar === CodeBar);
-    return busqueda;
-  };
-
-  const handleInputProductos = (e) => {
-    let CodeBar = e.target.value;
-    setInputProductos(CodeBar);
-    if (CodeBar.trim() === "") {
-      setProductos("");
-      setStock("");
-      setPrecio("");
-    } else {
-      const producto = busquedaProducto(CodeBar);
-      if (producto) {
-        const { idProductos, CodeBar, Descripcion, Precio, Stock } = producto;
-        console.log(idClientes,'Soy el idClientes en handleInputProductos')
-        console.log(producto, "producto encontrado");
-        setIdProductos(idProductos);
-        setCodeBar(CodeBar);
-        setProductos(Descripcion);
-        setStock(Stock);
-        setPrecio(Precio);
-        inputCantidadRef.current.focus();
-      } else {
-        setProductos("Producto no encontrado");
-        setStock("");
-        setPrecio("");
-      }
-    }
-  };
-
-  const handleInputCantidad = (e) => {
-    const cantidadInput = e.target.value;
-    setCantidad(cantidadInput);
-    let resultado = cantidadInput * precio;
-    setSubTotal(resultado);
-  };
-
-  const handlebtnAgregar = () => {
-    if (!producto || !precio || !cantidad || cantidad <= 0) {
-      Swal.fire({
-        title: "Por favor ingrese un producto válido",
-        text: "La cantidad tiene que ser mayor a 0",
-        icon: "warning",
-      });
-      return;
-    }
-
-    console.log(idClientes,'Soy el idClientes en  handleBtnAgregar')
-
-    const existingProductIndex = carrito.findIndex(
-      (item) => item.CodeBar === CodeBar
-    );
-
-    if (existingProductIndex !== -1) {
-      const updatedCarrito = [...carrito];
-      const existingProduct = updatedCarrito[existingProductIndex];
-      const newCantidad = existingProduct.cantidad + parseInt(cantidad);
-      const newSubTotal = existingProduct.precio * newCantidad;
-
-      if (stock < newCantidad) {
-        Swal.fire({
-          title: `Stock insuficiente`,
-          icon: "warning",
-        });
-        return;
-      }
-
-      updatedCarrito[existingProductIndex] = {
-        ...existingProduct,
-        cantidad: newCantidad,
-        subTotal: newSubTotal,
-      };
-
-      setCarrito(updatedCarrito);
-    } else {
-      if (stock <= 0) {
-        Swal.fire({
-          title: "No puedes agregar este producto porque su Stock es 0",
-          text: "Tenes que reponer este producto",
-          icon: "error",
-        });
-        return;
-      } else if (stock <= 10) {
-        Swal.fire({
-          title: `Alerta stock bajo ${stock}`,
-          text: "A partir de las 10 unidades se considera stock crítico",
-          icon: "warning",
-        });
-      }
-
-      if (parseInt(cantidad) > stock) {
-        Swal.fire({
-          title: "Estas intentando vender una cantidad mayor a tu stock",
-          text: `Solo quedan ${stock} unidades en stock`,
-          icon: "error",
-        });
-        return;
-      }
-
-      const data = {
-        idProductos,
-        CodeBar,
-        producto,
-        precio: parseFloat(precio),
-        cantidad: parseInt(cantidad),
-        subTotal: parseFloat(subTotal),
-      };
-      setCarrito([...carrito, data]);
-    }
-
-    inputCodeBarRef.current.focus();
-    handleResetDetalle();
-  };
-
-  const handleEliminarCarrito = (id) => {
-    let newData = carrito.filter((el) => el.idProductos !== id);
-    setCarrito(newData);
-  };
-
-  let totalCarrito = 0;
-  const sumarCarrito = (data = []) => {
-    if (!data) return;
-    for (let i = 0; i < data.length; i++) {
-      let { subTotal } = data[i];
-      totalCarrito += subTotal;
-    }
-    return totalCarrito;
-  };
-
-  const handleResetDetalle = () => {
-  
-    setProductos("");
-    setStock("");
-    setPrecio("");
-    setCantidad("");
-    setSubTotal("");
-    setInputProductos("");
-    inputCodeBarRef.current.focus();
-  };
-
-  const handleResetCarrito = () => {
-    setCarrito([]);
-    setIdClientes("")
-    setInputDNI("")
-    setCliente("")
-  };
-
-  const ventaData = carrito.map((item) => ({
-    Producto: item.producto,
-    PrecioU: item.precio,
-    Cantidad: item.cantidad,
-    idClientes: idClientes,
-    idProductos: item.idProductos,
-    idUsuarios: usuario.idUsuarios,
-  }));
-
-  const onConfirmarVenta = () => {
-    if (carrito.length === 0) {
-      Swal.fire({
-        title: "El carrito esta vacio",
-        text: "El carrito tiene que contener productos",
-        icon: "warning",
-      });
-      return;
-    }
-    let options = {
-      body: ventaData,
-      headers: { "Content-Type": "application/json" },
-    };
-    setEstadoVenta(1);
-    try {
-      post(`${URL}/registraciones`, options).then((res) => {
-        if (res.message === "Venta registrada") {
-          setDbRegistraciones([...dbRegistraciones, res]);
-          handleResetCarrito();
-          handleResetDetalle();
-          setIdClientes(null)
-          setInputDNI("")
-          setCliente("");
-          setEstadoVenta(2);
-          Swal.fire({
-            title: "Descargar Ticket?",
-            showDenyButton: true,
-            showCancelButton: true,
-            confirmButtonText: "Descargar",
-            denyButtonText: `Ver venta`,
-          }).then((result) => {
-            if (result.isConfirmed) {
-              descargarTiket(res.idRegistraciones, res.NFactura);
-              Swal.fire("Revise sus descargas!", "", "success");
-            } else if (result.isDenied) {
-              navigate(`/panel/informes/${res.idRegistraciones}`);
-            }
-          });
-        } else {
-          setError(res);
-          setEstadoVenta(3);
-        }
-        setEstadoVenta(0);
-      });
-    } catch (error) {
-      console.log(error);
-    }
-  };
-
-  sumarCarrito(carrito);
-
   return (
     <>
       <div className="container">
@@ -355,11 +80,8 @@ export const VentasPage = () => {
               <div className="col-sm-12">
                 {/* Clientes */}
                 <CardClientes
-                  busquedarClienteDNI={busquedarClienteDNI}
-                  cliente={cliente}
-                  setCliente={setCliente}
-                  inputDNI={inputDNI}
-                  setInputDNI={setInputDNI}
+                 inputDNI = {inputDNI}
+                 setInputDNI = {setInputDNI}
                 />
               </div>
             </div>
@@ -367,17 +89,13 @@ export const VentasPage = () => {
               <div className="col-sm-12">
                 {/* Tabla de ventas */}
                 <TableVentas
-                  carrito={carrito}
                   inputProductos={inputProductos}
+                  inputCantidadRef={inputCantidadRef}
                   inputCodeBarRef={inputCodeBarRef}
                   btnConfirmarVenta={btnConfirmarVenta}
                   btnAnularVenta={btnAnularVenta}
-                  totalCarrito={totalCarrito}
-                  handleInputProductos={handleInputProductos}
-                  onConfirmarVenta={onConfirmarVenta}
-                  handleResetCarrito={handleResetCarrito}
-                  handleEliminarCarrito={handleEliminarCarrito}
-                  estadoVenta={estadoVenta}
+                  setInputProductos={setInputProductos}
+                  setInputDNI = {setInputDNI}
                 />
                 {/* End Tabla de ventas */}
               </div>
@@ -388,17 +106,13 @@ export const VentasPage = () => {
             <div className="row mb-2">
               <div className="col-sm-12">
                 <CardDetalles
-                  producto={producto}
-                  stock={stock}
-                  precio={precio}
-                  cantidad={cantidad}
+                  productoEncontrado={productoEncontrado}
+                  inputCodeBarRef={inputCodeBarRef}
                   btnAnular={btnAnular}
-                  subTotal={subTotal}
                   btnAgregar={btnAgregar}
-                  handleInputCantidad={handleInputCantidad}
-                  handlebtnAgregar={handlebtnAgregar}
-                  handleResetDetalle={handleResetDetalle}
                   inputCantidadRef={inputCantidadRef}
+                  resetProductoEncontrado={resetProductoEncontrado}
+                  setInputProductos = {setInputProductos}
                 />
               </div>
             </div>

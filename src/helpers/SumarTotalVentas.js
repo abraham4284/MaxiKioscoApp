@@ -3,8 +3,8 @@ export const sumarTotales = (ventas = []) => {
     if (!ventas) return;
     let Total = 0;
     for (let i = 0; i < ventas.length; i++) {
-      let { Cantidad, PrecioU } = ventas[i];
-      let resultado = Cantidad * PrecioU;
+      let { cantidad, precio } = ventas[i];
+      let resultado = cantidad * precio;
       Total += resultado;
     }
 

@@ -74,12 +74,14 @@ export const getRegistracionesDetalles = async (req, res) => {
 export const crearRegistraciones = async (req, res) => {
   try {
     const ventas = req.body;
+    const { user } = req
+    console.log(ventas)
     if (!Array.isArray(ventas) || ventas.length === 0) {
       throw new Error("El cuerpo de la solicitud debe ser un array de ventas");
     }
 
     const numeroFactura = generarNumeroFactura();
-    const { idClientes, idProductos, idUsuarios } = ventas[0];
+    const { idClientes, idProductos } = ventas[0];
 
     const { Total } = sumarTotales(ventas);
     const Fecha = formatearFechas(new Date());
@@ -94,24 +96,24 @@ export const crearRegistraciones = async (req, res) => {
       Total,
       idClientes,
       idProductos,
-      idUsuarios,
+      user.idUsuarios,
     ];
 
     const [resultRegistraciones] = await pool.query(query, values);
     const idRegistraciones = resultRegistraciones.insertId;
 
     const queries = ventas.map(async (venta) => {
-      const { PrecioU, Cantidad, idProductos } = venta;
+      const { cantidad, precio, idProductos } = venta;
       console.log(venta, "Data venta map");
       const queryDetalleRegistraciones = `
         INSERT INTO detalle_registraciones (Fecha, PrecioUni, Cantidad, Total, idProductos, idRegistraciones, idClientes)
         VALUES (?, ?, ?, ?, ?, ?, ?)
       `;
-      const TotalDetalles = PrecioU * Cantidad;
+      const TotalDetalles = precio * cantidad;
       const values = [
         Fecha,
-        PrecioU,
-        Cantidad,
+        precio,
+        cantidad,
         TotalDetalles,
         idProductos,
         idRegistraciones,
@@ -119,7 +121,7 @@ export const crearRegistraciones = async (req, res) => {
       ];
       await Promise.all([
         await pool.query(queryDetalleRegistraciones, values),
-        modificarStockVenta(idProductos, Cantidad),
+        modificarStockVenta(idProductos, cantidad),
       ]);
     });
 
@@ -132,8 +134,11 @@ export const crearRegistraciones = async (req, res) => {
     });
   } catch (error) {
     res.status(500).json({ error: "Error en el servidor" });
-    console.log({ error: error.message, mesagge: "Soy el error" });
-    console.log("Error en crearRegistraciones");
+    console.log({
+      error: error.message,
+      errorCompleto : error,
+      message: "Error en crearRegistarciones Back"
+    })
   }
 };
 

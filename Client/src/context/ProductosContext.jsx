@@ -13,6 +13,7 @@ export const useProductos = () => {
 
 export const ProductosProvider = ({ children }) => {
   const [productos, setProductos] = useState([]);
+  const [productoEncontrado, setProductoEncontrado] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
@@ -41,6 +42,25 @@ export const ProductosProvider = ({ children }) => {
     }
   };
 
+  const busquedaProducto = async (CodeBar) => {
+    try {
+      let busqueda = productos.find((el) => el.CodeBar === CodeBar);
+      if (busqueda) {
+        setProductoEncontrado(busqueda);
+      }else{
+        console.log("No existe el producto")
+      }
+    } catch (error) {
+      console.log(error);
+      setLoading(false);
+      setError(error.message);
+    }
+  };
+
+  const resetProductoEncontrado = () =>{
+    setProductoEncontrado([]);
+  }
+
   const createProductos = (data) => {
     try {
       let options = {
@@ -55,7 +75,7 @@ export const ProductosProvider = ({ children }) => {
         } else {
           setError(res);
           setLoading(false);
-          setProductos(null)
+          setProductos(null);
         }
         setLoading(false);
       });
@@ -81,11 +101,11 @@ export const ProductosProvider = ({ children }) => {
           );
           setProductos(newData);
           setError(null);
-          getProductos()
+          getProductos();
         } else {
           setError(res);
           setLoading(false);
-          setProductos(null)
+          setProductos(null);
         }
         setLoading(false);
       });
@@ -117,9 +137,9 @@ export const ProductosProvider = ({ children }) => {
             } else {
               setError(res);
               setLoading(false);
-              setProductos(null)
+              setProductos(null);
             }
-            setLoading(false)
+            setLoading(false);
           });
           Swal.fire({
             title: "Deleted!",
@@ -135,18 +155,23 @@ export const ProductosProvider = ({ children }) => {
     }
   };
 
-  return <ProductosContext.Provider value={{
-    productos,
-    error,
-    loading,
-    getProductos,
-    createProductos,
-    updateProductos,
-    deleteProductos
-  }}
-  
-  >
-    { children }
+  return (
+    <ProductosContext.Provider
+      value={{
+        productos,
+        error,
+        loading,
+        getProductos,
+        createProductos,
+        updateProductos,
+        deleteProductos,
 
-  </ProductosContext.Provider>;
+        productoEncontrado,
+        busquedaProducto,
+        resetProductoEncontrado
+      }}
+    >
+      {children}
+    </ProductosContext.Provider>
+  );
 };
