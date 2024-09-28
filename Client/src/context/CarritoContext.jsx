@@ -27,10 +27,31 @@ export const CarritoProvider = ({ children }) => {
     }
   };
 
+  const updateCantidadProducto = (data) => {
+    if (!data || !data.idProductos) return;
+    const newCarrito = carrito.map((el) =>
+      el.idProductos === data.idProductos
+        ? {
+            ...el,
+            Cantidad: data.Cantidad,
+            SubTotal: data.Cantidad * data.Precio,
+          }
+        : el
+    );
+    setCarrito(newCarrito);
+  };
+
+  const chekingProductoCarrito = (idProductos) => {
+    return carrito.some((item) => item.idProductos === idProductos);
+  };
+
   const deleteProductoCarrito = (id) => {
     try {
       const deleteProducto = carrito.filter((el) => el.idProductos !== id);
       setCarrito(deleteProducto);
+      if (deleteProducto.length === 0) {
+        setTotalCarrito(0);
+      }
     } catch (error) {
       console.log({
         error: error.message,
@@ -45,8 +66,8 @@ export const CarritoProvider = ({ children }) => {
       if (!carrito) return;
       let resultado = 0;
       for (let i = 0; i < carrito.length; i++) {
-        let { subTotal } = carrito[i];
-        resultado += subTotal;
+        let { SubTotal } = carrito[i];
+        resultado += SubTotal;
         setTotalCarrito(resultado);
       }
     } catch (error) {
@@ -60,6 +81,7 @@ export const CarritoProvider = ({ children }) => {
 
   const resetCarrito = () => {
     setCarrito([]);
+    setTotalCarrito(0);
   };
 
   return (
@@ -72,6 +94,8 @@ export const CarritoProvider = ({ children }) => {
         sumarTotalCarrito,
         setCarrito,
         resetCarrito,
+        chekingProductoCarrito,
+        updateCantidadProducto,
       }}
     >
       {children}

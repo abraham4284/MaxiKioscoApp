@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { useCarrito } from "../../../context/CarritoContext";
 import Swal from "sweetalert2";
 import { useClientes } from "../../../context/ClientesContext";
+import { useProductos } from "../../../context/ProductosContext";
 
 export const CardDetalles = ({
   productoEncontrado,
@@ -9,12 +10,12 @@ export const CardDetalles = ({
   inputCodeBarRef,
   btnAgregar,
   btnAnular,
-  resetProductoEncontrado,
   setInputProductos
 }) => {
 
   const { idProductos,CodeBar, Descripcion = "", Stock = "", Precio = "" } = productoEncontrado || {};
-  const { carrito, agregarCarrito, setCarrito } = useCarrito();
+  const { carrito, agregarCarrito, setCarrito  } = useCarrito();
+  const { resetProductoEncontrado } = useProductos();
   const  {  clienteEncontrado  } = useClientes();
   const [cantidad, setCantidad] = useState([]);
   const [subTotal, setSubTotal] = useState([]);
@@ -31,7 +32,8 @@ export const CardDetalles = ({
     setCantidad("")
     setSubTotal("")
     setInputProductos("")
-    inputCodeBarRef.current.focus();
+
+    // inputCodeBarRef.current.focus();
   }
 
 
@@ -52,8 +54,8 @@ export const CardDetalles = ({
     if (existingProductIndex !== -1) {
       const updatedCarrito = [...carrito];
       const existingProduct = updatedCarrito[existingProductIndex];
-      const newCantidad = existingProduct.cantidad + parseInt(cantidad);
-      const newSubTotal = existingProduct.precio * newCantidad;
+      const newCantidad = existingProduct.Cantidad + parseInt(cantidad);
+      const newSubTotal = existingProduct.Precio * newCantidad;
 
       if (Stock < newCantidad) {
         Swal.fire({
@@ -65,8 +67,8 @@ export const CardDetalles = ({
 
       updatedCarrito[existingProductIndex] = {
         ...existingProduct,
-        cantidad: newCantidad,
-        subTotal: newSubTotal,
+        Cantidad: newCantidad,
+        SubTotal: newSubTotal,
       };
 
       setCarrito(updatedCarrito);
@@ -100,14 +102,16 @@ export const CardDetalles = ({
         idClientes: clienteEncontrado.idClientes,
         CodeBar,
         Descripcion,
-        precio: parseFloat(Precio),
-        cantidad: parseInt(cantidad),
-        subTotal: parseFloat(subTotal),
+        Stock,
+        Precio: parseFloat(Precio),
+        Cantidad: parseInt(cantidad),
+        SubTotal: parseFloat(subTotal),
       };
       agregarCarrito(data);
     }
 
-    inputCodeBarRef.current.focus();
+
+   
     handleResetDetalle();
   };
 

@@ -103,17 +103,17 @@ export const crearRegistraciones = async (req, res) => {
     const idRegistraciones = resultRegistraciones.insertId;
 
     const queries = ventas.map(async (venta) => {
-      const { cantidad, precio, idProductos } = venta;
+      const { Cantidad, Precio, idProductos } = venta;
       console.log(venta, "Data venta map");
       const queryDetalleRegistraciones = `
         INSERT INTO detalle_registraciones (Fecha, PrecioUni, Cantidad, Total, idProductos, idRegistraciones, idClientes)
         VALUES (?, ?, ?, ?, ?, ?, ?)
       `;
-      const TotalDetalles = precio * cantidad;
+      const TotalDetalles = Precio * Cantidad;
       const values = [
         Fecha,
-        precio,
-        cantidad,
+        Precio,
+        Cantidad,
         TotalDetalles,
         idProductos,
         idRegistraciones,
@@ -121,7 +121,7 @@ export const crearRegistraciones = async (req, res) => {
       ];
       await Promise.all([
         await pool.query(queryDetalleRegistraciones, values),
-        modificarStockVenta(idProductos, cantidad),
+        modificarStockVenta(idProductos, Cantidad),
       ]);
     });
 

@@ -13,7 +13,7 @@ export const useProductos = () => {
 
 export const ProductosProvider = ({ children }) => {
   const [productos, setProductos] = useState([]);
-  const [productoEncontrado, setProductoEncontrado] = useState([]);
+  const [productoEncontrado, setProductoEncontrado] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
@@ -48,7 +48,7 @@ export const ProductosProvider = ({ children }) => {
       if (busqueda) {
         setProductoEncontrado(busqueda);
       }else{
-        console.log("No existe el producto")
+        setProductoEncontrado(null);
       }
     } catch (error) {
       console.log(error);

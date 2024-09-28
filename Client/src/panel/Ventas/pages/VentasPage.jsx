@@ -5,23 +5,29 @@ import { CardDetalles } from "../components/CardDetalles";
 import { useClientes } from "../../../context/ClientesContext.jsx";
 import { useProductos } from "../../../context/ProductosContext.jsx";
 import { useRegistraciones } from "../../../context/RegistracionesContext.jsx";
+import { ModalCantidadProducto } from "../components/productos/ModalCantidadProducto.jsx";
+import { ModalSearchProductos } from "../components/productos/ModalSearchProductos.jsx";
 
 export const VentasPage = () => {
   const { getClientes } = useClientes();
-  const { getProductos, productoEncontrado, resetProductoEncontrado } =
+  const { getProductos, productoEncontrado } =
     useProductos();
   const { getRegistraciones } = useRegistraciones();
 
   const [inputProductos, setInputProductos] = useState([]);
   const [inputDNI, setInputDNI] = useState("");
+  const [dataToEdit, setDataToEdit] = useState(null);
 
   // Ref
   const btnAgregar = useRef(null);
   const btnAnular = useRef(null);
   const btnConfirmarVenta = useRef(null);
   const btnAnularVenta = useRef(null);
+  const btnBuscarProducto = useRef(null);
+
   const inputCodeBarRef = useRef(null);
   const inputCantidadRef = useRef(null);
+  const inputBuscarProducto = useRef(null);
 
   useEffect(() => {
     getClientes();
@@ -59,15 +65,24 @@ export const VentasPage = () => {
       }
     };
 
+    const handleBtnSearchProducto = (e) => {
+      if (e.key === "F7") {
+        e.preventDefault();
+        btnBuscarProducto.current.click();
+      }
+    };
+
     window.addEventListener("keydown", handleBtnAgregar);
     window.addEventListener("keydown", handleBtnAnular);
     window.addEventListener("keydown", handleBtnConfirmarVenta);
     window.addEventListener("keydown", handleBtnAnularVenta);
+    window.addEventListener("keydown", handleBtnSearchProducto);
     return () => {
       window.removeEventListener("keydown", handleBtnAgregar);
       window.removeEventListener("keydown", handleBtnAnular);
       window.removeEventListener("keydown", handleBtnConfirmarVenta);
       window.removeEventListener("keydown", handleBtnAnularVenta);
+      window.removeEventListener("keydown", handleBtnSearchProducto);
     };
   }, []);
 
@@ -79,10 +94,7 @@ export const VentasPage = () => {
             <div className="row mb-2">
               <div className="col-sm-12">
                 {/* Clientes */}
-                <CardClientes
-                 inputDNI = {inputDNI}
-                 setInputDNI = {setInputDNI}
-                />
+                <CardClientes inputDNI={inputDNI} setInputDNI={setInputDNI} />
               </div>
             </div>
             <div className="row">
@@ -94,8 +106,10 @@ export const VentasPage = () => {
                   inputCodeBarRef={inputCodeBarRef}
                   btnConfirmarVenta={btnConfirmarVenta}
                   btnAnularVenta={btnAnularVenta}
+                  btnBuscarProducto={btnBuscarProducto}
                   setInputProductos={setInputProductos}
-                  setInputDNI = {setInputDNI}
+                  setInputDNI={setInputDNI}
+                  setDataToEdit={setDataToEdit}
                 />
                 {/* End Tabla de ventas */}
               </div>
@@ -111,13 +125,14 @@ export const VentasPage = () => {
                   btnAnular={btnAnular}
                   btnAgregar={btnAgregar}
                   inputCantidadRef={inputCantidadRef}
-                  resetProductoEncontrado={resetProductoEncontrado}
-                  setInputProductos = {setInputProductos}
+                  setInputProductos={setInputProductos}
                 />
               </div>
             </div>
           </div>
         </div>
+        <ModalCantidadProducto dataToEdit={dataToEdit} />
+        <ModalSearchProductos inputBuscarProducto={inputBuscarProducto} />
       </div>
     </>
   );

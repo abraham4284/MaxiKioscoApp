@@ -10,17 +10,18 @@ import { helpHttp } from "../../../helpers/helpHttp";
 import { URL } from "../../../helpers/api";
 import Swal from "sweetalert2";
 import { descargarTiket } from "../../../helpers/DescargarTicket";
-import { useNavigate } from 'react-router-dom'
+import { useNavigate } from "react-router-dom";
 
 export const TableVentas = ({
   inputProductos,
-  handleResetCarrito,
   inputCantidadRef,
   inputCodeBarRef,
   btnConfirmarVenta,
   btnAnularVenta,
+  btnBuscarProducto,
   setInputProductos,
-  setInputDNI
+  setInputDNI,
+  setDataToEdit,
 }) => {
   /*
     0- Sin nada
@@ -30,19 +31,36 @@ export const TableVentas = ({
   */
   const [estadoVenta, setEstadoVenta] = useState(0);
 
-  const { carrito, deleteProductoCarrito, sumarTotalCarrito, totalCarrito, resetCarrito } =
-    useCarrito();
-  const { busquedaProducto } = useProductos();
+  const {
+    carrito,
+    deleteProductoCarrito,
+    sumarTotalCarrito,
+    totalCarrito,
+    resetCarrito,
+  } = useCarrito();
+  const { busquedaProducto, productoEncontrado } = useProductos();
   const { resetClientesEncontrado } = useClientes();
-  const { setRegistraciones, registraciones } =
-    useRegistraciones();
-  const { post } = helpHttp()
+  const { setRegistraciones, registraciones } = useRegistraciones();
+  const { post } = helpHttp();
 
-  const navigate = useNavigate()
+  const navigate = useNavigate();
 
   useEffect(() => {
     sumarTotalCarrito(carrito);
   }, [carrito, totalCarrito]);
+
+   useEffect(() => {
+    if (productoEncontrado) {
+      inputCantidadRef.current.focus();
+    }
+   
+  }, [productoEncontrado]);
+
+  useEffect(()=>{
+      if(carrito.length > 0 ){
+        inputCodeBarRef.current.focus();
+      }
+  },[carrito])
 
   const handleInputProductos = async (e) => {
     let CodeBar = e.target.value;
@@ -50,12 +68,11 @@ export const TableVentas = ({
     if (CodeBar.trim() === "") {
       setInputProductos("");
     } else {
-      const producto = await busquedaProducto(CodeBar);
-      if (producto) {
-        inputCantidadRef.current.focus();
-      }
+      await busquedaProducto(CodeBar);
     }
   };
+
+ 
 
   const onConfirmarVenta = () => {
     if (carrito.length === 0) {
@@ -76,8 +93,8 @@ export const TableVentas = ({
         if (res.message === "Venta registrada") {
           setRegistraciones([...registraciones, res]);
           resetClientesEncontrado("");
-          setInputDNI("")
-          resetCarrito()
+          setInputDNI("");
+          resetCarrito();
           setEstadoVenta(2);
           Swal.fire({
             title: "Descargar Ticket?",
@@ -94,7 +111,6 @@ export const TableVentas = ({
             }
           });
         } else {
-          setError(res);
           setEstadoVenta(3);
         }
         setEstadoVenta(0);
@@ -138,7 +154,13 @@ export const TableVentas = ({
             />
           </div>
           <div className="col-4">
-            <button className="btn btn-primary">
+            <button
+              type="button"
+              className="btn btn-primary"
+              data-bs-toggle="modal"
+              data-bs-target="#ModalSearchProductos"
+              ref={btnBuscarProducto}
+            >
               {" "}
               <i className="fa-solid fa-magnifying-glass"></i> Buscar
             </button>
@@ -164,6 +186,7 @@ export const TableVentas = ({
                       key={index}
                       carrito={datos}
                       handleEliminarCarrito={deleteProductoCarrito}
+                      setDataToEdit={setDataToEdit}
                     />
                   ))
                 ) : (
@@ -191,7 +214,7 @@ export const TableVentas = ({
             >
               <i
                 className="fa-solid fa-check"
-                // hidden={estadoVenta === 1 && true}
+                hidden={estadoVenta === 1 && true}
               ></i>{" "}
               {estadoVenta === 1 ? <Spiner /> : "Confirmar"}
             </button>
@@ -199,7 +222,7 @@ export const TableVentas = ({
               type="button"
               ref={btnAnularVenta}
               className="btn btn-danger btn-block ms-3"
-              onClick={handleResetCarrito}
+              onClick={resetCarrito}
               disabled={estadoVenta}
             >
               <i className="fa-solid fa-xmark"></i> Cancelar
