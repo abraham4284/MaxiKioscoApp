@@ -1,14 +1,26 @@
-import React from 'react'
-import { formatearTotal } from '../../../helpers/formatearTotal';
+import React from "react";
+import { formatearTotal } from "../../../helpers/formatearTotal";
+import { useRegistraciones } from "../../../context/RegistracionesContext";
 
 export const TableRegistracionesDetalles = ({ data }) => {
-    const { Descripcion, Cantidad, PrecioUni, Total  } = data;
+  const { loadingDetalles } = useRegistraciones();
+
   return (
-    <tr>
-        <td> { Descripcion } </td>
-        <td> { Cantidad } </td>
-        <td> { formatearTotal(PrecioUni) } </td>
-        <td> { formatearTotal(Total) } </td>
-    </tr>
-  )
-}
+    <>
+      {loadingDetalles ? (
+        <tr>
+          <td>Cargando...</td>
+        </tr>
+      ) : (
+        data.map((el) => (
+          <tr key={el.idDetalleRegistraciones}>
+            <td> {el.Descripcion} </td>
+            <td> {el.Cantidad} </td>
+            <td> {formatearTotal(el.PrecioUni)} </td>
+            <td> {formatearTotal(el.Total)} </td>
+          </tr>
+        ))
+      )}
+    </>
+  );
+};
