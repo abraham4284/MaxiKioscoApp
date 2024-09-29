@@ -25,12 +25,11 @@ export const ClientesProvider = ({ children }) => {
   const getClientes = async () => {
     try {
       get(URL).then((res) => {
-        if (!res) {
+        if(!res){
           setClientes(null);
           setLoading(false);
           setError(null);
         }
-
         setClientes(res);
         setLoading(false);
         setError(null);
@@ -44,16 +43,21 @@ export const ClientesProvider = ({ children }) => {
     }
   };
 
-  const buscarClientesPorDNI = async (CUIT)=>{
+ 
+
+  const buscarClientesPorDNI = async (CUIT) => {
     try {
       let busqueda = clientes.find((el) => el.CUIT === CUIT);
-      console.log(busqueda,'Soy la busquedael resultado')
+      console.log(busqueda, "Soy la busquedael resultado");
       if (busqueda) {
-         setClienteEncontrado(busqueda)
-         console.log(clienteEncontrado,'Soy el cliente encontrado')
+        setClienteEncontrado(busqueda);
+        console.log(clienteEncontrado, "Soy el cliente encontrado");
       } else {
-        setClienteEncontrado("Consumidor Final")
-        console.log(clienteEncontrado,'Soy el cliente encontrado por si no se encuentra')
+        setClienteEncontrado("Consumidor Final");
+        console.log(
+          clienteEncontrado,
+          "Soy el cliente encontrado por si no se encuentra"
+        );
       }
     } catch (error) {
       console.log({
@@ -62,12 +66,11 @@ export const ClientesProvider = ({ children }) => {
         message: "Error en getClientes ClientesContext.jsx",
       });
     }
-  }
+  };
 
-
-  const resetClientesEncontrado = () =>{
-    setClienteEncontrado("")
-  }
+  const resetClientesEncontrado = () => {
+    setClienteEncontrado("Consumidor Final");
+  };
 
   const createClientes = async (data) => {
     let options = {
@@ -77,7 +80,7 @@ export const ClientesProvider = ({ children }) => {
 
     try {
       post(URL, options).then((res) => {
-        console.log(res)
+        console.log(res);
         if (!res) {
           setClientes(null);
           setLoading(false);
@@ -169,12 +172,14 @@ export const ClientesProvider = ({ children }) => {
         loading,
         error,
         clienteEncontrado,
+
         getClientes,
         createClientes,
         updateClientes,
         deleteClientes,
         buscarClientesPorDNI,
-        resetClientesEncontrado
+        resetClientesEncontrado,
+        setLoading
       }}
     >
       {children}

@@ -40,7 +40,6 @@ export const RegisterPage = () => {
 
   return (
     <>
-      <NavbarSocial />
       <div className="wrapper fadeInDown">
         <div id="formContent">
           {/* Tabs Titles */}

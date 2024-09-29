@@ -1,14 +1,10 @@
 import React from "react";
 import { DescripcionSistema } from "./HomeDescription/DescripcionSistema";
-import { NavbarSocial } from "../components/NavbarSocial";
 import YoutubePlayer from "react-player/youtube";
-import maxiKioscoPng from '../../public/MaxiKiosco.png'
-import { Footer } from "../components/Footer";
 
 export const HomePage = () => {
   return (
     <>
-      <NavbarSocial />
       <div className="container">
         <DescripcionSistema />
         <div className="row ">
@@ -26,7 +22,6 @@ export const HomePage = () => {
             />
           </div>
         </div>
-        <Footer/>
       </div>
     </>
   );

@@ -14,8 +14,13 @@ export const useRegistraciones = () => {
 
 export const RegistracionesProvider = ({ children }) => {
   const [registraciones, setRegistraciones] = useState([]);
+  const [detalleRegistraciones, setDetalleRegistraciones] = useState([]);
+
+
   const [loading, setLoading] = useState(true);
+  const [loadingDetalles, setLoadingDetalles] = useState(true)
   const [error, setError] = useState(null);
+  const [errorDetalles ,setErrorDetalles] = useState(null)
 
   const URL_API = `${URL}/registraciones`;
 
@@ -67,13 +72,13 @@ export const RegistracionesProvider = ({ children }) => {
     try {
       get(`${URL}/registracionesDetalles/${id}`).then((res) => {
         if (!res) {
-          setRegistraciones(null);
-          setLoading(false);
-          setError(res);
+          setDetalleRegistraciones(null);
+          setLoadingDetalles(false);
+          setErrorDetalles(res);
         }
-        setRegistraciones(res);
-        setLoading(false);
-        setError(null);
+        setDetalleRegistraciones(res);
+        setLoadingDetalles(false);
+        setLoadingDetalles(null);
       });
     } catch (error) {
       console.log({
@@ -117,11 +122,17 @@ export const RegistracionesProvider = ({ children }) => {
         registraciones,
         loading,
         error,
+        
+        detalleRegistraciones,
+        loadingDetalles,
+        errorDetalles,
+
         getRegistraciones,
         getIdRegistraciones,
         getIdRegistracionesDetalles,
         createRegistraciones,
-        setRegistraciones
+        setRegistraciones,
+        setLoading
       }}
     >
       {children}

@@ -1,92 +1,43 @@
 import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
-import { helpHttp } from "../../../helpers/helpHttp";
-import { Navbar } from "../../../components/Navbar";
 import { TableRegistracionesDetalles } from "../components/TableRegistracionesDetalles";
 import { formatearTotal } from "../../../helpers/formatearTotal";
 import { Spiner } from "../../../components/Spiner";
+import { useRegistraciones } from "../../../context/RegistracionesContext";
+import { useClientes } from "../../../context/ClientesContext";
 
 export const InformeDetallePages = () => {
   const { id } = useParams();
-  const { get } = helpHttp();
 
-  const [detalles, setDetalles] = useState([]);
-  const [resgistraciones, setRegistraciones] = useState([]);
-  const [clientes, setClientes] = useState([]);
-  const [errorRegistraciones, setErrorRegistraciones] = useState(null);
-  const [error, setError] = useState(null);
-  const [errorClientes, setErrorClientes] = useState(null);
-  const [loading, setLoading] = useState(true);
+  const {
+    detalleRegistraciones,
+    getIdRegistracionesDetalles,
+    getIdRegistraciones,
+    registraciones,
+    loading: loadinRegistraciones,
+    setLoading: setLoadingRegistraciones,
+  } = useRegistraciones();
 
+  const { clientes, getClientes, loading, setLoading } = useClientes();
   const [mostrarParaImprimir, setMostrarParaImprimir] = useState(false);
 
-  const URL = import.meta.env.VITE_BACKEND_URL;
+  const getFetchRegistracionesClientes = async (id) => {
+    setLoadingRegistraciones(true);
+    setLoading(true);
+
+    await getIdRegistracionesDetalles(id);
+    await getIdRegistraciones(id);
+    await getClientes();
+
+    setLoadingRegistraciones(false);
+    setLoading(false);
+  };
 
   useEffect(() => {
-    const getDetallesRegistraciones = async (id) => {
-      try {
-        let endpoint = `${URL}/registracionesDetalles/${Number(id)}`;
-        get(endpoint).then((res) => {
-          if (res.error) {
-            setDetalles(null);
-            setError(res);
-            setLoading(false);
-          }
-          setDetalles(res);
-          setError(null);
-          setLoading(false);
-        });
-        setDetalles([]);
-      } catch (error) {
-        console.log(error.message);
-        setError(error.message);
-      }
-    };
-
-    const getRegistraciones = async (id) => {
-      try {
-        let enpoint = `${URL}/registraciones/${id}`;
-        get(enpoint).then((res) => {
-          if (res.error) {
-            setRegistraciones(null);
-            setErrorRegistraciones(res);
-            setLoading(false);
-          }
-          setRegistraciones(res);
-          setErrorRegistraciones(null);
-          setLoading(false);
-        });
-        setRegistraciones([]);
-      } catch (error) {
-        console.log(error.message);
-        setErrorRegistraciones(error.message);
-      }
-    };
-    const getClientes = async () => {
-      try {
-        get(`${URL}/cliente`).then((res) => {
-          if (res.error) {
-            setClientes(null);
-            setErrorClientes(res);
-            setLoading(false);
-          }
-          setClientes(res);
-          setErrorClientes(null);
-          setLoading(false);
-        });
-        setClientes([]);
-      } catch (error) {
-        console.log(error);
-        setErrorClientes(error.message);
-      }
-    };
-
-    getRegistraciones(id);
-    getDetallesRegistraciones(id);
-    getClientes();
+     getFetchRegistracionesClientes(id)
   }, [id]);
 
-  const { NFactura, Fecha, Total, idClientes } = resgistraciones;
+  const { NFactura, Fecha, Total, idClientes } = registraciones;
 
   let clienteEncontrado = "";
 
@@ -120,9 +71,12 @@ export const InformeDetallePages = () => {
     };
   }, []);
 
+  console.log(loadinRegistraciones, "LoadingRegistraciones");
+  console.log(loading, "Loading Clientes");
+
   return (
     <>
-      {loading ? (
+      {loading && loadinRegistraciones ? (
         <div className="container">
           <div className="row">
             <div className="col d-flex justify-content-center">
@@ -155,7 +109,7 @@ export const InformeDetallePages = () => {
                           </tr>
                         </thead>
                         <tbody className="table-group-divider">
-                          {detalles.map((datos) => (
+                          {detalleRegistraciones.map((datos) => (
                             <TableRegistracionesDetalles
                               key={datos.idDetalleRegistraciones}
                               data={datos}

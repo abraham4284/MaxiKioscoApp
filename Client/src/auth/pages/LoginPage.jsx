@@ -49,7 +49,6 @@ export const LoginPage = () => {
 
   return (
     <>
-      <NavbarSocial />
       <div className="wrapper fadeInDown">
         <div id="formContent">
           {/* Tabs Titles */}

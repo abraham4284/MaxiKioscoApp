@@ -29,7 +29,6 @@ export const ModalProductos = ({
     get(`${URL}/proveedores`).then((res) => {
       if (!res.error) {
         setDbProveedores(res);
-        console.log(res);
         setError(null);
       } else {
         setDbProveedores(null);

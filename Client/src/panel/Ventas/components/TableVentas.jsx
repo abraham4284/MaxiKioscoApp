@@ -40,10 +40,17 @@ export const TableVentas = ({
   } = useCarrito();
   const { busquedaProducto, productoEncontrado } = useProductos();
   const { resetClientesEncontrado } = useClientes();
-  const { setRegistraciones, registraciones } = useRegistraciones();
+  const { setRegistraciones, registraciones, setLoading } = useRegistraciones();
   const { post } = helpHttp();
 
   const navigate = useNavigate();
+
+
+ const resetCarritoClientes = ()=>{
+   resetCarrito()
+   resetClientesEncontrado()
+   setInputDNI("")
+ }
 
   useEffect(() => {
     sumarTotalCarrito(carrito);
@@ -92,7 +99,8 @@ export const TableVentas = ({
       post(`${URL}/registraciones`, options).then((res) => {
         if (res.message === "Venta registrada") {
           setRegistraciones([...registraciones, res]);
-          resetClientesEncontrado("");
+          setLoading(false)
+          resetClientesEncontrado();
           setInputDNI("");
           resetCarrito();
           setEstadoVenta(2);
@@ -222,7 +230,7 @@ export const TableVentas = ({
               type="button"
               ref={btnAnularVenta}
               className="btn btn-danger btn-block ms-3"
-              onClick={resetCarrito}
+              onClick={resetCarritoClientes}
               disabled={estadoVenta}
             >
               <i className="fa-solid fa-xmark"></i> Cancelar

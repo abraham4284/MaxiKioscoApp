@@ -91,16 +91,13 @@ export const login = async (req, res) => {
 
     // Creamos nuevamente el token de acceso
     const token = createAccesToken(data);
-    console.log(token, "token de login");
     // Creamos el logeo
     await pool.query("INSERT INTO login (idUsuarios,Token) VALUES (?,?)", [
       rows[0].idUsuarios,
       token,
     ]);
 
-    // Liberamos la conexion
-    //pool.releaseConnection(conection);
-    // Guardamos la cookies para el navegador
+   
     res.cookie("token", token, {
       httpOnly: true,
       secure: true,
@@ -108,7 +105,7 @@ export const login = async (req, res) => {
       maxAge: 1000 * 60 * 60,
     });
     res.status(201).json(data);
-    //Creamos la conexion
+   
   } catch (error) {
     res
       .status(500)

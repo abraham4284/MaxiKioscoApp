@@ -125,3 +125,29 @@
     break-inside: avoid;
   }
 }
+
+
+/* Style boton Novedades */
+
+@keyframes pulsate {
+  0%{
+    box-shadow: 0 0 0 0 rgba(0, 252, 168, 0.7);
+  }
+  100%{
+    box-shadow: 0 0 15px 10px rgba(0, 252, 168, 0);
+  }
+}
+
+.novedades{
+  /* border: 1px solid #00fca8; */
+  padding: 8px 16px;
+  border-radius: 5px;
+  animation: pulsate 1s infinite ease-in-out;
+  transition: 0.2s ease;
+  background-color: transparent;
+}
+
+.novedades:hover{
+  background-color: #00fca8;
+  color: white;
+}

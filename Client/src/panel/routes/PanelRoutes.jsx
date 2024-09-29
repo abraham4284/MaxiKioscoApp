@@ -1,17 +1,17 @@
 import React from "react";
-import { Navbar } from "../components/Navbar.jsx";
+import { Navbar } from "../../components/Navbar.jsx";
 import { Route, Routes } from "react-router-dom";
-import { RutasProtegidas } from "../components/RutasProtegidas.jsx";
-import { FormNegocios } from "../components/FormNegocios.jsx";
-import { VentasPage } from "./Ventas/pages/VentasPage.jsx";
-import { ListarInformesPages } from "./Informes/pages/ListarInformesPages.jsx";
-import { InformeDetallePages } from "./Informes/pages/InformeDetallePages.jsx";
-import { ListarProductosPage } from "./Stock/index.js";
-import { ListarClientesPage } from "./Clientes/pages/ListarClientesPage.jsx";
-import { ListarProveedoresPage } from "./Proveedores/pages/ListarProveedoresPage.jsx";
-import { MiNegocioPage } from "./MiNegocio/pages/MiNegocioPage.jsx";
-import { MiConfiguracion } from "./Usuarios/pages/MiConfiguracion.jsx";
-import { Footer } from "../components/Footer.jsx";
+
+import { FormNegocios } from "../../components/FormNegocios.jsx";
+import { VentasPage } from "../Ventas/pages/VentasPage.jsx";
+import { ListarInformesPages } from "../Informes/pages/ListarInformesPages.jsx";
+import { InformeDetallePages } from "../Informes/pages/InformeDetallePages.jsx";
+import { ListarProductosPage } from "../Stock/pages/ListarProductosPage.jsx";
+import { ListarClientesPage } from "../Clientes/pages/ListarClientesPage.jsx";
+import { ListarProveedoresPage } from "../Proveedores/pages/ListarProveedoresPage.jsx";
+import { MiNegocioPage } from "../MiNegocio/pages/MiNegocioPage.jsx";
+import { MiConfiguracion } from "../Usuarios/pages/MiConfiguracion.jsx";
+import { Footer } from "../../components/Footer.jsx";
 
 export const PanelRoutes = () => {
   return (

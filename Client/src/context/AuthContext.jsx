@@ -61,7 +61,6 @@ export const AuthProvider = ({ children }) => {
         headers: { "Content-Type": "application/json" },
       };
       post(`${URL}/login`, options).then((res) => {
-        console.log(res);
         if (res.error) {
           setUsuario(null);
           setIsAutenticated(false);
