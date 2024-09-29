@@ -72,6 +72,10 @@ export const ClientesProvider = ({ children }) => {
     setClienteEncontrado("Consumidor Final");
   };
 
+  const resetClientes = () =>{
+    setClientes([]);
+  }
+
   const createClientes = async (data) => {
     let options = {
       body: data,
@@ -179,7 +183,8 @@ export const ClientesProvider = ({ children }) => {
         deleteClientes,
         buscarClientesPorDNI,
         resetClientesEncontrado,
-        setLoading
+        setLoading,
+        resetClientes
       }}
     >
       {children}

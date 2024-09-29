@@ -88,6 +88,14 @@ export const RegistracionesProvider = ({ children }) => {
     }
   };
 
+  const resetRegistraciones = () =>{
+    setRegistraciones([])
+  }
+
+  const resetDetalleRegistraciones = () =>{
+    setDetalleRegistraciones([])
+  }
+
   const createRegistraciones = async (data) => {
     let options = {
       body: data,
@@ -133,6 +141,8 @@ export const RegistracionesProvider = ({ children }) => {
         setRegistraciones,
         setLoading,
         setLoadingDetalles,
+        resetRegistraciones,
+        resetDetalleRegistraciones
       }}
     >
       {children}

@@ -12,3 +12,9 @@
     min-width: 800px; /* Ajusta el ancho mínimo según tus necesidades */
   }
 
+
+  .cont{
+   display: grid;
+   place-items: center;
+   margin: auto ;
+  }
