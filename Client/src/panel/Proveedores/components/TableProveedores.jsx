@@ -1,8 +1,13 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { TableProveedoresRows } from "./TableProveedoresRows";
 import { Spiner } from "../../../components/Spiner";
+import { useProveedores } from "../../../context/ProveedoresContext";
 
-export const TableProveedores = ({ data, setDataToEdit, deleteData, loading }) => {
+export const TableProveedores = ({ data, setDataToEdit }) => {
+  const { deleteProveedores, loading, getProveedores } = useProveedores();
+  useEffect(()=>{
+    getProveedores()
+  },[])
   return (
     <div className="row">
       <div className="col-sm-12">
@@ -31,7 +36,7 @@ export const TableProveedores = ({ data, setDataToEdit, deleteData, loading }) =
                           key={datos.idProveedores}
                           data={datos}
                           setDataToEdit={setDataToEdit}
-                          deleteData={deleteData}
+                          deleteData={deleteProveedores}
                         />
                       ))
 

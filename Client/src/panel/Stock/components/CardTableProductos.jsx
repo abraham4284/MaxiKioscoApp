@@ -1,13 +1,14 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { TableProductosRows } from "./TableProductosRows";
 import { Spiner } from "../../../components/Spiner";
+import { useProductos } from "../../../context/ProductosContext";
 
 export const CardTableProductos = ({
   data,
-  setDataToEdit,
-  deleteData,
-  loading,
+  setDataToEdit
 }) => {
+   const { deleteProductos, loading } = useProductos();
+
   return (
     <table className="table">
       <thead>
@@ -27,20 +28,14 @@ export const CardTableProductos = ({
               <Spiner />{" "}
             </td>
           </tr>
-        ) : data.length > 0 ? (
-          data.map((datos) => (
-            <TableProductosRows
-              key={datos.idProductos}
-              data={datos}
-              setDataToEdit={setDataToEdit}
-              deleteData={deleteData}
-            />
-          ))
-        ) : (
-          <tr>
-            <td colSpan="3">No hay datos</td>
-          </tr>
-        )}
+        ): (
+          <TableProductosRows
+           data={data}
+           setDataToEdit={setDataToEdit}
+           deleteData={deleteProductos}
+          />
+        ) 
+      }
       </tbody>
     </table>
   );

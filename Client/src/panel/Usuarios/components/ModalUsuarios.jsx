@@ -28,7 +28,8 @@ export const ModalUsuarios = ({ dataToEdit }) => {
 
   const handleSubmit = (e)=>{
      e.preventDefault();
-     updateUsuarios(form)
+    //  console.log(form)
+     updateUsuarios(dataToEdit.idUsuarios, form);
   }
 
   return (

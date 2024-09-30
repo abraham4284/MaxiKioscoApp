@@ -1,5 +1,7 @@
 import React, { useEffect, useState } from "react";
-import { helpHttp } from "../../../helpers/helpHttp";
+import { useProveedores } from "../../../context/ProveedoresContext";
+import { useProductos } from "../../../context/ProductosContext";
+import Swal from "sweetalert2";
 
 const initialForm = {
   idProductos: null,
@@ -14,27 +16,16 @@ const initialForm = {
 
 export const ModalProductos = ({
   dataToEdit,
-  createData,
-  updateData,
   setDataToEdit,
 }) => {
   const [form, setForm] = useState(initialForm);
-  const [dbProveedores, setDbProveedores] = useState([]);
-  const [error, setError] = useState(null);
-  let { get } = helpHttp();
 
-  const URL = import.meta.env.VITE_BACKEND_URL
+
+  const { getProveedores, proveedores } = useProveedores();
+  const { createProductos , updateProductos } = useProductos();
 
   useEffect(() => {
-    get(`${URL}/proveedores`).then((res) => {
-      if (!res.error) {
-        setDbProveedores(res);
-        setError(null);
-      } else {
-        setDbProveedores(null);
-        setError(res);
-      }
-    });
+    getProveedores();
   }, []);
 
 
@@ -100,11 +91,12 @@ export const ModalProductos = ({
       return;
     }
     if (form.idProductos === null) {
-      createData(form);
+      createProductos(form);
+      console.log(form)
       setForm(initialForm)
     } else {
       form.Motivo = dataToEdit ? form.Motivo : null;
-      updateData(form);
+      updateProductos(dataToEdit.idProductos, form);
       
     }
   };
@@ -262,7 +254,7 @@ export const ModalProductos = ({
                   onChange={handleSelectedIdProveedores}
                 >
                   <option value="">Seleccione un proveedor</option>
-                  {dbProveedores.map((pro, index) => (
+                  {proveedores.map((pro, index) => (
                     <option key={index} value={pro.idProveedores}>
                       {pro.Nombre}
                     </option>

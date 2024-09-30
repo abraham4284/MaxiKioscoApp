@@ -1,5 +1,11 @@
 import { createContext, useContext, useState } from "react";
-import { helpHttp } from "../helpers/helpHttp";
+import {
+  getClientesRequest,
+  createClientesRequest,
+  updateClientesRequest,
+  deleteClientesRequest,
+} from "../api/clientes/clientes.api.js";
+
 import Swal from "sweetalert2";
 
 const ClientesContext = createContext();
@@ -18,22 +24,20 @@ export const ClientesProvider = ({ children }) => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
-  const URL = `${import.meta.env.VITE_BACKEND_URL}/cliente`;
-
-  const { get, post, put, deleted } = helpHttp();
+ 
 
   const getClientes = async () => {
     try {
-      get(URL).then((res) => {
-        if(!res){
-          setClientes(null);
-          setLoading(false);
-          setError(null);
-        }
-        setClientes(res);
+      const { data } = await getClientesRequest();
+      if (!data) {
+        setClientes(null);
         setLoading(false);
         setError(null);
-      });
+      } else {
+        setClientes(data);
+        setLoading(false);
+        setError(null);
+      }
     } catch (error) {
       console.log({
         error: error.message,
@@ -42,8 +46,6 @@ export const ClientesProvider = ({ children }) => {
       });
     }
   };
-
- 
 
   const buscarClientesPorDNI = async (CUIT) => {
     try {
@@ -72,29 +74,21 @@ export const ClientesProvider = ({ children }) => {
     setClienteEncontrado("Consumidor Final");
   };
 
-  const resetClientes = () =>{
+  const resetClientes = () => {
     setClientes([]);
-  }
+  };
 
   const createClientes = async (data) => {
-    let options = {
-      body: data,
-      headers: { "Content-Type": "application/json" },
-    };
-
     try {
-      post(URL, options).then((res) => {
-        console.log(res);
-        if (!res) {
-          setClientes(null);
-          setLoading(false);
-          setError(null);
-        }
-
-        setClientes([...clientes, res]);
+      const { data: dataClientes } = await createClientesRequest(data);
+      if (!dataClientes) {
+        setClientes(null);
         setLoading(false);
         setError(null);
-      });
+      }
+      setClientes([...clientes, dataClientes]);
+      setLoading(false);
+      setError(null);
     } catch (error) {
       console.log({
         error: error.message,
@@ -104,26 +98,19 @@ export const ClientesProvider = ({ children }) => {
     }
   };
 
-  const updateClientes = async (data) => {
-    let endpoind = `${URL}/${data.idClientes}`;
-    let options = {
-      body: data,
-      headers: { "Content-Type": "application/json" },
-    };
+  const updateClientes = async (id, data) => {
     try {
-      put(endpoind, options).then((res) => {
-        if (!res) {
-          setClientes(null);
-          setLoading(false);
-          setError(null);
-        }
-        let newData = clientes.map((el) =>
-          el.idClientes === data.idClientes ? data : el
-        );
-        setClientes(newData);
+      const { data: dataClientes } = await updateClientesRequest(id, data);
+      if (!dataClientes) {
+        setClientes(null);
         setLoading(false);
         setError(null);
-      });
+      }
+
+      let newData = clientes.map((el) => (el.idClientes === id ? data : el));
+      setClientes(newData);
+      setLoading(false);
+      setError(null);
     } catch (error) {
       console.log({
         error: error.message,
@@ -134,8 +121,6 @@ export const ClientesProvider = ({ children }) => {
   };
 
   const deleteClientes = async (id) => {
-    let endpoind = `${URL}/${id}`;
-
     try {
       Swal.fire({
         title: "Estas seguro?",
@@ -145,19 +130,19 @@ export const ClientesProvider = ({ children }) => {
         confirmButtonColor: "#3085d6",
         cancelButtonColor: "#d33",
         confirmButtonText: "Si",
-      }).then((result) => {
+      }).then(async (result) => {
         if (result.isConfirmed) {
-          deleted(endpoind).then((res) => {
-            if (!res) {
-              setClientes(null);
-              setLoading(false);
-              setError(null);
-            }
-            let newData = clientes.filter((el) => el.idClientes !== id);
-            setClientes(newData);
+          const { data } = await deleteClientesRequest(id);
+          if (!data) {
+            setClientes(null);
             setLoading(false);
             setError(null);
-          });
+          }
+
+          let newData = clientes.filter((el) => el.idClientes !== id);
+          setClientes(newData);
+          setLoading(false);
+          setError(null);
         }
       });
     } catch (error) {
@@ -184,7 +169,7 @@ export const ClientesProvider = ({ children }) => {
         buscarClientesPorDNI,
         resetClientesEncontrado,
         setLoading,
-        resetClientes
+        resetClientes,
       }}
     >
       {children}

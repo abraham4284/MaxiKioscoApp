@@ -49,7 +49,7 @@ export const CardClientesComponents = ({
     if (form.idClientes === null) {
       createClientes(form);
     } else {
-      updateClientes(form);
+      updateClientes(dataToEdit.idClientes, form);
     }
 
     handleReset();

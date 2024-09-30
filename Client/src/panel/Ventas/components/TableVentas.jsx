@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import Swal from "sweetalert2";
 import { TableVentasRows } from "./TableVentasRows";
 import { formatearTotal } from "../../../helpers/formatearTotal";
 import { Spiner } from "../../../components/Spiner";
@@ -6,11 +7,9 @@ import { useCarrito } from "../../../context/CarritoContext";
 import { useProductos } from "../../../context/ProductosContext";
 import { useClientes } from "../../../context/ClientesContext";
 import { useRegistraciones } from "../../../context/RegistracionesContext";
-import { helpHttp } from "../../../helpers/helpHttp";
-import { URL } from "../../../helpers/api";
-import Swal from "sweetalert2";
 import { descargarTiket } from "../../../helpers/DescargarTicket";
 import { useNavigate } from "react-router-dom";
+import { createRegistracionesRequest } from "../../../api/registraciones/registraciones.api";
 
 export const TableVentas = ({
   inputProductos,
@@ -41,33 +40,30 @@ export const TableVentas = ({
   const { busquedaProducto, productoEncontrado } = useProductos();
   const { resetClientesEncontrado } = useClientes();
   const { setRegistraciones, registraciones, setLoading } = useRegistraciones();
-  const { post } = helpHttp();
 
   const navigate = useNavigate();
 
-
- const resetCarritoClientes = ()=>{
-   resetCarrito()
-   resetClientesEncontrado()
-   setInputDNI("")
- }
+  const resetCarritoClientes = () => {
+    resetCarrito();
+    resetClientesEncontrado();
+    setInputDNI("");
+  };
 
   useEffect(() => {
     sumarTotalCarrito(carrito);
   }, [carrito, totalCarrito]);
 
-   useEffect(() => {
+  useEffect(() => {
     if (productoEncontrado) {
       inputCantidadRef.current.focus();
     }
-   
   }, [productoEncontrado]);
 
-  useEffect(()=>{
-      if(carrito.length > 0 ){
-        inputCodeBarRef.current.focus();
-      }
-  },[carrito])
+  useEffect(() => {
+    if (carrito.length > 0) {
+      inputCodeBarRef.current.focus();
+    }
+  }, [carrito]);
 
   const handleInputProductos = async (e) => {
     let CodeBar = e.target.value;
@@ -79,9 +75,7 @@ export const TableVentas = ({
     }
   };
 
- 
-
-  const onConfirmarVenta = () => {
+  const onConfirmarVenta = async () => {
     if (carrito.length === 0) {
       Swal.fire({
         title: "El carrito esta vacio",
@@ -90,39 +84,35 @@ export const TableVentas = ({
       });
       return;
     }
-    let options = {
-      body: carrito,
-      headers: { "Content-Type": "application/json" },
-    };
     setEstadoVenta(1);
     try {
-      post(`${URL}/registraciones`, options).then((res) => {
-        if (res.message === "Venta registrada") {
-          setRegistraciones([...registraciones, res]);
-          setLoading(false)
-          resetClientesEncontrado();
-          setInputDNI("");
-          resetCarrito();
-          setEstadoVenta(2);
-          Swal.fire({
-            title: "Descargar Ticket?",
-            showDenyButton: true,
-            showCancelButton: true,
-            confirmButtonText: "Descargar",
-            denyButtonText: `Ver venta`,
-          }).then((result) => {
-            if (result.isConfirmed) {
-              descargarTiket(res.idRegistraciones, res.NFactura);
-              Swal.fire("Revise sus descargas!", "", "success");
-            } else if (result.isDenied) {
-              navigate(`/panel/informes/${res.idRegistraciones}`);
-            }
-          });
-        } else {
-          setEstadoVenta(3);
-        }
-        setEstadoVenta(0);
-      });
+      const { data } = await createRegistracionesRequest(carrito);
+      if (data.message === "Venta registrada") {
+        setRegistraciones([...registraciones, data]);
+        setLoading(false);
+        resetClientesEncontrado();
+        setInputDNI("");
+        resetCarrito();
+        setEstadoVenta(2);
+        Swal.fire({
+          title: "Descargar Ticket?",
+          showDenyButton: true,
+          showCancelButton: true,
+          confirmButtonText: "Descargar",
+          denyButtonText: `Ver venta`,
+        }).then((result) => {
+          if (result.isConfirmed) {
+            descargarTiket(data.idRegistraciones, data.NFactura);
+            Swal.fire("Revise sus descargas!", "", "success");
+          } else if (result.isDenied) {
+            navigate(`/panel/informes/${data.idRegistraciones}`);
+          }
+        });
+      } else {
+        setEstadoVenta(3);
+      }
+
+      setEstadoVenta(0);
     } catch (error) {
       console.log(error);
     }

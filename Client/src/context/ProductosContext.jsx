@@ -1,5 +1,12 @@
 import { createContext, useContext, useState } from "react";
-import { helpHttp } from "../helpers/helpHttp";
+
+import {
+  getProductosRequest,
+  createProductosRequest,
+  updateProductosRequest,
+  deleteProductosRequest,
+} from "../api/productos/productos.api.js";
+import Swal from "sweetalert2";
 
 const ProductosContext = createContext();
 
@@ -17,24 +24,19 @@ export const ProductosProvider = ({ children }) => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
-  const { get, post, put, deleted } = helpHttp();
 
-  const URL = import.meta.env.VITE_BACKEND_URL;
-
-  const getProductos = () => {
+  const getProductos = async () => {
     try {
-      setLoading(true);
-      get(`${URL}/productos`).then((res) => {
-        if (!res.error) {
-          setProductos(res);
-          setError(null);
-        } else {
-          setProductos(null);
-          setError(res);
-          setLoading(false);
-        }
+      const { data } = await getProductosRequest();
+      if (!data) {
+        setProductos(null);
         setLoading(false);
-      });
+        setError(data);
+      }
+
+      setProductos(data);
+      setLoading(false);
+      setError(null);
     } catch (error) {
       console.log(error);
       setLoading(false);
@@ -47,7 +49,7 @@ export const ProductosProvider = ({ children }) => {
       let busqueda = productos.find((el) => el.CodeBar === CodeBar);
       if (busqueda) {
         setProductoEncontrado(busqueda);
-      }else{
+      } else {
         setProductoEncontrado(null);
       }
     } catch (error) {
@@ -57,28 +59,22 @@ export const ProductosProvider = ({ children }) => {
     }
   };
 
-  const resetProductoEncontrado = () =>{
+  const resetProductoEncontrado = () => {
     setProductoEncontrado([]);
-  }
+  };
 
-  const createProductos = (data) => {
+  const createProductos = async (data) => {
     try {
-      let options = {
-        body: data,
-        headers: { "Content-Type": "application/json" },
-      };
-      setLoading(true);
-      post(`${URL}/productos`, options).then((res) => {
-        if (!res.error) {
-          setProductos([...db, res]);
-          setError(null);
-        } else {
-          setError(res);
-          setLoading(false);
-          setProductos(null);
-        }
+      const { data: dataProductos } = await createProductosRequest(data);
+      if (!dataProductos) {
+        setProductos(null);
         setLoading(false);
-      });
+        setError(dataProductos);
+      }
+
+      setProductos([...productos, dataProductos]);
+      setLoading(false);
+      setError(null);
     } catch (error) {
       console.log(error);
       setLoading(false);
@@ -86,29 +82,21 @@ export const ProductosProvider = ({ children }) => {
     }
   };
 
-  const updateProductos = (data) => {
+  const updateProductos = async (id,data) => {
     try {
-      let endpoint = `${URL}/productos/${data.idProductos}`;
-      let options = {
-        body: data,
-        headers: { "Content-Type": "application/json" },
-      };
-      setLoading(true);
-      put(endpoint, options).then((res) => {
-        if (!res.error) {
-          let newData = productos.map((el) =>
-            el.idProductos === data.idProductos ? data : el
-          );
-          setProductos(newData);
-          setError(null);
-          getProductos();
-        } else {
-          setError(res);
-          setLoading(false);
-          setProductos(null);
-        }
+      const { data: dataProductos } = await updateProductosRequest(id,data);
+      if (!dataProductos) {
+        setProductos(null);
         setLoading(false);
-      });
+        setError(dataProductos);
+      }
+
+      let newData = productos.map((el) =>
+        el.idProductos === id ? data : el
+      );
+      setProductos(newData);
+      setLoading(false);
+      setError(null);
     } catch (error) {
       console.log(error);
       setError(error.message);
@@ -126,21 +114,19 @@ export const ProductosProvider = ({ children }) => {
         confirmButtonColor: "#3085d6",
         cancelButtonColor: "#d33",
         confirmButtonText: "Si!",
-      }).then((result) => {
+      }).then(async (result) => {
         if (result.isConfirmed) {
-          let endpoint = `${URL}/productos/${id}`;
-          setLoading(true);
-          deleted(endpoint).then((res) => {
-            if (!res.error) {
-              let newData = db.filter((el) => el.idProductos !== id);
-              setProductos(newData);
-            } else {
-              setError(res);
-              setLoading(false);
-              setProductos(null);
-            }
+          const { data } = await deleteProductosRequest(id);
+          if (!data) {
+            setProductos(null);
             setLoading(false);
-          });
+            setError(data);
+          }
+          let newData = productos.filter((el) => el.idProductos !== id);
+          setProductos(newData);
+          setLoading(false);
+          setError(null);
+
           Swal.fire({
             title: "Deleted!",
             text: "Your file has been deleted.",
@@ -168,7 +154,7 @@ export const ProductosProvider = ({ children }) => {
 
         productoEncontrado,
         busquedaProducto,
-        resetProductoEncontrado
+        resetProductoEncontrado,
       }}
     >
       {children}

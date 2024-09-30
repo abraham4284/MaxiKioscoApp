@@ -1,5 +1,10 @@
-import { createContext, useContext, useEffect, useState } from "react";
-import { helpHttp } from "../helpers/helpHttp";
+import { createContext, useContext, useState } from "react";
+
+import {
+  getNegociosRequest,
+  createNegociosRequest,
+  updateNegociosRequest,
+} from "../api/negocios/negocios.api.js";
 
 const negociosContext = createContext();
 
@@ -16,71 +21,59 @@ export const NegociosProvider = ({ children }) => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
-  const { get, post, put } = helpHttp();
-  let url = "http://localhost:3000/api/negocios";
-  const URL = import.meta.env.VITE_BACKEND_URL
 
-  const getNegocios = () => {
-    setLoading(true);
+  const getNegocios = async () => {
     try {
-      get(`${URL}/negocios`).then((res) => {
-        if (res.error) {
-          setError(res);
-          setNegocios([]);
-        } else {
-          setNegocios(res);
-          setError(null);
-        }
+      const { data } = await getNegociosRequest();
+      if (!data) {
+        setNegocios([]);
         setLoading(false);
-      });
+        setError(data);
+      }
+      setNegocios(data);
+      setLoading(false);
+      setError(null);
     } catch (error) {
       setError(error);
       setLoading(false);
     }
   };
 
-  // useEffect(() => {
-  //   getNegocios();
-  // }, []);
-
-  const createNegocio = (data) => {
-    let options = {
-      body: data,
-      headers: { "Content-Type": "application/json" },
-    };
-    setLoading(true);
-    post(`${URL}/negocios`, options).then((res) => {
-      if (res.error) {
-        setError(res);
-      } else {
-        setNegocios([...negocios, res]);
-        setError(null);
+  const createNegocio = async (data) => {
+    try {
+      const { data: dataNegocio } = await createNegociosRequest(data);
+      if (!dataNegocio) {
+        setNegocios([]);
+        setLoading(false);
+        setError(dataNegocio);
       }
+      setNegocios([...negocios, dataNegocio]);
       setLoading(false);
-    });
+      setError(null);
+    } catch (error) {
+      console.log({
+        error: error.message,
+        errorCompleto: error,
+        message: "Errore en CreateNegocio ",
+      });
+    }
   };
 
-  const updateNegocios = (data) => {
+  const updateNegocios = async (id,data) => {
     try {
-      let endpoint = `${URL}/negocios/${data.idNegocios}`;
-      let options = {
-        body: data,
-        headers: { "Content-Type": "application/json" },
-      };
-
-      setLoading(true);
-      put(endpoint, options).then((res) => {
-        if (!res.error) {
-          let newData = negocios.map((el) =>
-            el.idNegocios === data.idNegocios ? data : el
-          );
-          setNegocios(newData);
-          setError(null);
-        } else {
-          setError(res);
-        }
+      const { data: dataNegocio } = await updateNegociosRequest(id,data);
+      if (!dataNegocio) {
+        setNegocios([]);
         setLoading(false);
-      });
+        setError(dataNegocio);
+      }
+
+      let newData = negocios.map((el) =>
+        el.idNegocios === id ? data : el
+      );
+      setNegocios(newData);
+      setLoading(false);
+      setError(null);
     } catch (error) {
       console.log(error);
       setLoading(false);
@@ -89,7 +82,14 @@ export const NegociosProvider = ({ children }) => {
 
   return (
     <negociosContext.Provider
-      value={{ negocios, error, loading, createNegocio, updateNegocios, getNegocios }}
+      value={{
+        negocios,
+        error,
+        loading,
+        createNegocio,
+        updateNegocios,
+        getNegocios,
+      }}
     >
       {children}
     </negociosContext.Provider>

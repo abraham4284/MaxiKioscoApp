@@ -22,14 +22,14 @@ export const TableProductosVentas = ({ data }) => {
       SubTotal: parseFloat(Precio),
     };
 
-    if (Stock <= 0) {
+    if (parseInt(Stock) <= 0) {
       Swal.fire({
         title: "No puedes agregar este producto porque su Stock es 0",
         text: "Tenes que reponer este producto",
         icon: "error",
       });
       return;
-    } else if (Stock <= 10) {
+    } else if (parseInt(Stock) <= 10) {
       Swal.fire({
         title: `Alerta stock bajo ${Stock}`,
         text: "A partir de las 10 unidades se considera stock crítico",

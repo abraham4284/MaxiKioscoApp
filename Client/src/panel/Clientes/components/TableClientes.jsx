@@ -28,19 +28,12 @@ export const TableClientes = ({ data, setDataToEdit }) => {
                       <Spiner />
                     </td>
                   </tr>
-                ) : data ? (
-                  data.map((datos) => (
-                    <TableClientesRows
-                      key={datos.idClientes}
-                      data={datos}
-                      setDataToEdit={setDataToEdit}
-                      deleteData={deleteClientes}
-                    />
-                  ))
                 ) : (
-                  <tr>
-                    <td colSpan="3"> No hay datos </td>
-                  </tr>
+                  <TableClientesRows
+                    data={data}
+                    deleteData={deleteClientes}
+                    setDataToEdit={setDataToEdit}
+                  />
                 )}
               </tbody>
             </table>

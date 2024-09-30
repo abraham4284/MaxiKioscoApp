@@ -154,6 +154,7 @@ export const getUsernameUsuarios = async (req, res) => {
 export const updateUsuarios = async (req, res) => {
   try {
     const { Username, Password, img } = req.body;
+    console.log(req.body)
     const updateHashedPassword = await bycrypt.hash(Password, 10); 
     const { id } = req.params;
 

@@ -1,31 +1,29 @@
-import { helpHttp } from "./helpHttp";
+import { descargarTicketRequest } from "../api/comprobantes/ticket.api";
 
-const URL = import.meta.env.VITE_BACKEND_URL;
-const { get } = helpHttp();
+export const descargarTiket = async (idRegistraciones, NFactura) => {
+  try {
+    const { data } = await descargarTicketRequest(idRegistraciones);
+    if (!data) {
+      console.log(data);
+    } else {
+      const blob = new Blob([data], { type: "application/pdf" });
+      const url = window.URL.createObjectURL(blob);
 
-export const descargarTiket = (idRegistraciones, NFactura) => {
-    get(`${URL}/ticket/${idRegistraciones}`, { responseType: 'blob' })
-      .then((res) => {
-        if (res.error) {
-          console.log(res.error);
-        } else {
-          // Crear una URL para el blob
-          const blob = new Blob([res], { type: "application/pdf" });
-          const url = window.URL.createObjectURL(blob);
-  
-          // Crear un enlace para descargar el archivo
-          const link = document.createElement("a");
-          link.href = url;
-          link.setAttribute("download", `${NFactura}.pdf`); // Nombre del archivo
-          document.body.appendChild(link);
-  
-          // Hacer clic en el enlace para descargar el archivo
-          link.click();
-  
-          // Limpiar el URL del objeto y el enlace
-          link.remove();
-          window.URL.revokeObjectURL(url);
-        }
-      })
-      .catch((err) => console.log(err));
-  };
+      const link = document.createElement("a");
+      link.href = url;
+      link.setAttribute("download", `${NFactura}.pdf`);
+      document.body.appendChild(link);
+
+      link.click();
+
+      link.remove();
+      window.URL.revokeObjectURL(url);
+    }
+  } catch (error) {
+    console.log({
+      error: error.message,
+      errorCompleto: error,
+      message: "Error en descargarTiket",
+    });
+  }
+};

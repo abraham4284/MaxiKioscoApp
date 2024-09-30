@@ -2,8 +2,6 @@ import React, { useEffect, useState } from "react";
 import { ModalProductos } from "./ModalProductos";
 
 export const CardProductos = ({
-  createData,
-  updateData,
   dataToEdit,
   setDataToEdit,
   handleInput,
@@ -58,8 +56,6 @@ export const CardProductos = ({
       <ModalProductos
         dataToEdit={dataToEdit}
         setDataToEdit={setDataToEdit}
-        createData={createData}
-        updateData={updateData}
       />
     </div>
   );

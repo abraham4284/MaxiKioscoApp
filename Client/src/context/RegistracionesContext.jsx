@@ -1,6 +1,10 @@
 import { useContext, createContext, useState } from "react";
-import { URL } from "../helpers/api.js";
-import { helpHttp } from "../helpers/helpHttp";
+import {
+  getRegistracionesRequest,
+  getIdRegistracionesRequest,
+  getIdRegistracionesDetallesRequest,
+} from "../api/registraciones/registraciones.api.js";
+
 
 const RegistracionesContext = createContext();
 
@@ -16,27 +20,26 @@ export const RegistracionesProvider = ({ children }) => {
   const [registraciones, setRegistraciones] = useState([]);
   const [detalleRegistraciones, setDetalleRegistraciones] = useState([]);
 
+
   const [loading, setLoading] = useState(true);
   const [loadingDetalles, setLoadingDetalles] = useState(true);
   const [error, setError] = useState(null);
   const [errorDetalles, setErrorDetalles] = useState(null);
 
-  const URL_API = `${URL}/registraciones`;
-
-  const { get, post } = helpHttp();
+  
 
   const getRegistraciones = async () => {
     try {
-      get(URL_API).then((res) => {
-        if (!res) {
-          setRegistraciones(null);
-          setLoading(false);
-          setError(res);
-        }
-        setRegistraciones(res);
+      const { data } = await getRegistracionesRequest();
+      if (!data) {
+        setRegistraciones(null);
         setLoading(false);
-        setError(null);
-      });
+        setError(data);
+      }
+
+      setRegistraciones(data);
+      setLoading(false);
+      setError(null);
     } catch (error) {
       console.log({
         error: error.message,
@@ -48,16 +51,16 @@ export const RegistracionesProvider = ({ children }) => {
 
   const getIdRegistraciones = async (id) => {
     try {
-      get(`${URL_API}/${id}`).then((res) => {
-        if (!res) {
-          setRegistraciones(null);
-          setLoading(false);
-          setError(res);
-        }
-        setRegistraciones(res);
+      const { data } = await getIdRegistracionesRequest(id);
+      if (!data) {
+        setRegistraciones(null);
         setLoading(false);
-        setError(null);
-      });
+        setError(data);
+      }
+
+      setRegistraciones(data);
+      setLoading(false);
+      setError(null);
     } catch (error) {
       console.log({
         error: error.message,
@@ -69,16 +72,16 @@ export const RegistracionesProvider = ({ children }) => {
 
   const getIdRegistracionesDetalles = async (id) => {
     try {
-      get(`${URL}/registracionesDetalles/${id}`).then((res) => {
-        if (!res) {
-          setDetalleRegistraciones(null);
-          setLoadingDetalles(false);
-          setErrorDetalles(res);
-        }
-        setDetalleRegistraciones(res);
+      const { data } = await getIdRegistracionesDetallesRequest(id);
+      if (!data) {
+        setDetalleRegistraciones(null);
         setLoadingDetalles(false);
-        setErrorDetalles(null);
-      });
+        setErrorDetalles(data);
+      }
+
+      setDetalleRegistraciones(data);
+      setLoadingDetalles(false);
+      setErrorDetalles(null);
     } catch (error) {
       console.log({
         error: error.message,
@@ -88,40 +91,15 @@ export const RegistracionesProvider = ({ children }) => {
     }
   };
 
-  const resetRegistraciones = () =>{
-    setRegistraciones([])
-  }
-
-  const resetDetalleRegistraciones = () =>{
-    setDetalleRegistraciones([])
-  }
-
-  const createRegistraciones = async (data) => {
-    let options = {
-      body: data,
-      headers: { "Content-Type": "application/json" },
-    };
-    try {
-      post(URL_API, options).then((res) => {
-        if (!res) {
-          setRegistraciones(null);
-          setLoading(false);
-          setError(res);
-        }
-        if (res.message === "Venta registrada") {
-          setRegistraciones([...registraciones, res]);
-          setLoading(false);
-          setError(null);
-        }
-      });
-    } catch (error) {
-      console.log({
-        error: error.message,
-        errorCompleto: error,
-        message: "Error en createRegistraciones ClientesContext.jsx",
-      });
-    }
+  const resetRegistraciones = () => {
+    setRegistraciones([]);
   };
+
+  const resetDetalleRegistraciones = () => {
+    setDetalleRegistraciones([]);
+  };
+
+ 
 
   return (
     <RegistracionesContext.Provider
@@ -137,12 +115,11 @@ export const RegistracionesProvider = ({ children }) => {
         getRegistraciones,
         getIdRegistraciones,
         getIdRegistracionesDetalles,
-        createRegistraciones,
         setRegistraciones,
         setLoading,
         setLoadingDetalles,
         resetRegistraciones,
-        resetDetalleRegistraciones
+        resetDetalleRegistraciones,
       }}
     >
       {children}

@@ -46,6 +46,8 @@ export const LoginPage = () => {
     2- Venta completada
     3- Error
   */
+ 
+  
 
   return (
     <>
@@ -55,9 +57,7 @@ export const LoginPage = () => {
           <h2 className="active">Login</h2>
           {error && error.length > 0 && (
             <div className="alert alert-danger mt-3">
-              {error.map((err, index) => (
-                <p key={index}>{err}</p>
-              ))}
+                {error }
             </div>
           )}
 

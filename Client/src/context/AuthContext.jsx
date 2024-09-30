@@ -1,5 +1,12 @@
 import { createContext, useState, useContext, useEffect } from "react";
-import { helpHttp } from "../helpers/helpHttp";
+import {
+  getUsuariosByNameRequest,
+  verifyRequest,
+  registroRequest,
+  loginRequest,
+  updateUsuariosRequest,
+  logoutRequest,
+} from "../api/auth/auth.api.js";
 
 const authContext = createContext();
 
@@ -20,117 +27,87 @@ export const AuthProvider = ({ children }) => {
   const [loadingUserIndividual, setLoadingUserIndividual] = useState(true);
   const [stateSession, setStateSession] = useState(0);
 
-
-  const URL = import.meta.env.VITE_BACKEND_URL;
-
-
-  const { get, post, put } = helpHttp();
-
-  const register = (data) => {
+  const register = async (data) => {
     setStateSession(1);
     try {
-      let options = {
-        body: data,
-        headers: { "Content-Type": "application/json" },
-      };
-      post(`${URL}/registro`, options).then((res) => {
-        console.log(res, "Soy la respuesta");
-        if (res.error) {
-          setUsuario(null);
-          setIsAutenticated(false);
-          setErrors(["El usuario ya existe"]);
-          return;
-        }
-        setUsuario(res);
+      const { data: dataUser } = await registroRequest(data);
+      if (!dataUser) {
+        setUsuario(null);
+        setIsAutenticated(false);
+        setErrors(dataUser);
+        return;
+      } else {
+        setUsuario(dataUser);
         setIsAutenticated(true);
         setErrors(null);
         setStateSession(2);
-      });
+      }
     } catch (error) {
       console.log(error);
+      setErrors(error.response.data.message);
       console.log("Error en al funcion register context");
       setStateSession(3);
     }
   };
 
-  const login = (data) => {
-    setStateSession(1)
+  const login = async (data) => {
+    setStateSession(1);
     try {
-      let options = {
-        body: data,
-        headers: { "Content-Type": "application/json" },
-      };
-      post(`${URL}/login`, options).then((res) => {
-        if (res.error) {
-          setUsuario(null);
-          setIsAutenticated(false);
-          setErrors(["Usuario o contraseña incorrecta"]);
-          return;
-        }
-        setUsuario(res);
+      const { data: dataUser } = await loginRequest(data);
+      if (!dataUser) {
+        setUsuario(null);
+        setIsAutenticated(false);
+        setErrors(dataUser);
+      } else {
+        setUsuario(dataUser);
         setIsAutenticated(true);
         setErrors(null);
-        setStateSession(2)
-      });
+        setStateSession(2);
+      }
     } catch (error) {
-      console.log(error);
-      console.log("Error en al funcion login context");
-      setStateSession(3)
+      setErrors(error.response.data.message);
+      setStateSession(3);
     }
   };
 
-  const getUsuariosByUsername = (data) => {
+  const getUsuariosByUsername = async (data) => {
     try {
-      let endpoint = `${URL}/usuarios/${data}`;
-      setLoadingUserIndividual(true);
-      get(endpoint).then((res) => {
-        if (res.error) {
-          setLoadingUserIndividual(false);
-          setUsuarioIndividual(false);
-        }
-        setUsuarioIndividual(res);
+      const { data: dataUser } = await getUsuariosByNameRequest(data);
+      if (!dataUser) {
         setLoadingUserIndividual(false);
-      });
+        setUsuarioIndividual(false);
+      }
+
+      setUsuarioIndividual(dataUser);
+      setLoadingUserIndividual(false);
     } catch (error) {
       console.log(error);
       console.log("Error en al funcion getIdUsuarios Context");
     }
   };
 
-  const updateUsuarios = (data) => {
+  const updateUsuarios = async (id, data) => {
     try {
-      let endpoint = `${URL}/usuarios/${data.idUsuarios}`;
-      let options = {
-        body: data,
-        headers: { "Content-Type": "application/json" },
-      };
-      setLoadingUserIndividual(true);
-      put(endpoint, options).then((res) => {
-        if (res.error) {
-          setUsuarioIndividual(null);
-          setLoadingUserIndividual(false);
-          setIsAutenticated(false);
-        }
-        setUsuarioIndividual(data);
+      const { data: dataUser } = await updateUsuariosRequest(id, data);
+      if (!dataUser) {
+        setUsuarioIndividual(null);
         setLoadingUserIndividual(false);
-        setIsAutenticated(true);
-      });
+        setIsAutenticated(false);
+      }
+      setUsuarioIndividual(dataUser);
+      setLoadingUserIndividual(false);
+      setIsAutenticated(true);
     } catch (error) {
       console.log(error);
       console.log("Error en al funcion updateUsuarios Context");
     }
   };
 
-  const logout = () => {
+  const logout = async () => {
     try {
-      let endpoint = `${URL}/logout`;
-      post(endpoint).then((res) => {
-        if(res){
-          setIsAutenticated(false)
-          setLoading(false)
-          setUsuario(null)
-        }
-      });
+      await logoutRequest();
+      setIsAutenticated(false);
+      setUsuario(null);
     } catch (error) {
       console.log(error);
       setIsAutenticated(false);
@@ -140,22 +117,28 @@ export const AuthProvider = ({ children }) => {
   };
 
   useEffect(() => {
+    if (error && error.length > 0) {
+      const timer = setTimeout(() => {
+        setErrors([]);
+      }, 5000);
+
+      return () => clearTimeout(timer);
+    }
+  }, [error]);
+
+  useEffect(() => {
     const checkLogin = async () => {
       try {
-        setLoading(true);
-        let endpoint = `${URL}/verify`;
-        get(endpoint).then((res) => {
-           
-          if (res.error) {
-            setIsAutenticated(false);
-            setLoading(false);
-            setUsuario(null);
-          } else {
-            setUsuario(res);
-            setIsAutenticated(true);
-            setLoading(false);
-          }
-        });
+        const { data } = await verifyRequest();
+        if (!data) {
+          setIsAutenticated(false);
+          setLoading(false);
+          setUsuario(null);
+        } else {
+          setUsuario(data);
+          setIsAutenticated(true);
+          setLoading(false);
+        }
       } catch (error) {
         setIsAutenticated(false);
         setLoading(false);

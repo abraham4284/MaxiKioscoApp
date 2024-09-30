@@ -7,22 +7,25 @@ import { ProductosProvider } from "./context/ProductosContext";
 import { ClientesProvider } from "./context/ClientesContext";
 import { RegistracionesProvider } from "./context/RegistracionesContext";
 import { CarritoProvider } from "./context/CarritoContext";
+import { ProveedoresProvider } from "./context/ProveedoresContext";
 
 export const MaxiKioscoApp = () => {
   return (
     <AuthProvider>
       <CarritoProvider>
-        <RegistracionesProvider>
-          <ClientesProvider>
-            <ProductosProvider>
-              <NegociosProvider>
-                <BrowserRouter>
-                  <AppRouter />
-                </BrowserRouter>
-              </NegociosProvider>
-            </ProductosProvider>
-          </ClientesProvider>
-        </RegistracionesProvider>
+        <ProveedoresProvider>
+          <RegistracionesProvider>
+            <ClientesProvider>
+              <ProductosProvider>
+                <NegociosProvider>
+                  <BrowserRouter>
+                    <AppRouter />
+                  </BrowserRouter>
+                </NegociosProvider>
+              </ProductosProvider>
+            </ClientesProvider>
+          </RegistracionesProvider>
+        </ProveedoresProvider>
       </CarritoProvider>
     </AuthProvider>
   );

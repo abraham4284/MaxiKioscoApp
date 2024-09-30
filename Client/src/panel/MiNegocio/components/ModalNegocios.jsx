@@ -42,7 +42,7 @@ export const ModalNegocios = ({ dataToEdit }) => {
 
  const handleSubmit = (e)=>{
      e.preventDefault();
-     updateNegocios(form)
+     updateNegocios(dataToEdit.idNegocios, form)
  }
 
 

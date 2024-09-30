@@ -1,64 +1,62 @@
-import React, { useEffect, useState } from 'react'
-import Swal from 'sweetalert2';
+import React, { useEffect, useState } from "react";
+import Swal from "sweetalert2";
+import { useProveedores } from "../../../context/ProveedoresContext";
 
 const initialForm = {
   idProveedores: null,
   CUIT: "",
   Nombre: "",
   Correo: "",
-  Domicilio: ""
-}
+  Domicilio: "",
+};
 
-
-
-
-
-export const CardProveedores = ({ createData, updateData, dataToEdit, setDataToEdit,handleInputBusquedaProveedores }) => {
-
-
+export const CardProveedores = ({
+  dataToEdit,
+  setDataToEdit,
+  handleInputBusquedaProveedores,
+}) => {
   const [form, setForm] = useState(initialForm);
 
+  const { createProveedores, updateProveedores} = useProveedores();
 
   useEffect(() => {
     if (dataToEdit) {
-      setForm(dataToEdit)
+      setForm(dataToEdit);
     } else {
-      setForm(initialForm)
+      setForm(initialForm);
     }
-  }, [dataToEdit])
+  }, [dataToEdit]);
 
   const handleChange = (e) => {
     setForm({
       ...form,
-      [e.target.name]: e.target.value
-    })
-  }
+      [e.target.name]: e.target.value,
+    });
+  };
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    if(!form.CUIT || !form.Nombre || !form.Correo || !form.Domicilio ){
+    if (!form.CUIT || !form.Nombre || !form.Correo || !form.Domicilio) {
       Swal.fire({
-        title:"Los campos no se pueden enviar vacios",
-        text:"Todos los campos son obligatorios",
-        icon:"warning"
-      })
+        title: "Los campos no se pueden enviar vacios",
+        text: "Todos los campos son obligatorios",
+        icon: "warning",
+      });
       return;
     }
     if (form.idProveedores === null) {
-      createData(form)
+      createProveedores(form);
     } else {
-      updateData(form)
+      updateProveedores(form);
     }
 
     handleReset();
-  }
+  };
 
   const handleReset = (e) => {
     setForm(initialForm);
-    setDataToEdit(null)
-  }
-
-
+    setDataToEdit(null);
+  };
 
   return (
     <div className="row mt-5">
@@ -66,7 +64,10 @@ export const CardProveedores = ({ createData, updateData, dataToEdit, setDataToE
         <div className="row">
           <div className="col-sm-12">
             <div className="card">
-              <div className="card-header" style={{ backgroundColor: "#4e73df", color: "white" }}>
+              <div
+                className="card-header"
+                style={{ backgroundColor: "#4e73df", color: "white" }}
+              >
                 Proveedores
               </div>
               <div className="card-body">
@@ -77,7 +78,7 @@ export const CardProveedores = ({ createData, updateData, dataToEdit, setDataToE
                       <input
                         type="text"
                         className="form-control form-control-xl"
-                        placeholder='Ingrese nombre de un Proveedor'
+                        placeholder="Ingrese nombre de un Proveedor"
                         onChange={handleInputBusquedaProveedores}
                       />
                     </div>
@@ -91,67 +92,88 @@ export const CardProveedores = ({ createData, updateData, dataToEdit, setDataToE
                         data-bs-target="#exampleModalProveedores"
                         onClick={handleReset}
                       >
-                        <i className='fas-solid fa fa-plus '></i> Agregar
+                        <i className="fas-solid fa fa-plus "></i> Agregar
                       </button>
                     </div>
                   </div>
                 </div>
               </div>
-
             </div>
           </div>
         </div>
-
       </div>
-
 
       {/* Modal */}
 
-      <div className="modal fade" id="exampleModalProveedores" tabIndex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+      <div
+        className="modal fade"
+        id="exampleModalProveedores"
+        tabIndex="-1"
+        aria-labelledby="exampleModalLabel"
+        aria-hidden="true"
+      >
         <div className="modal-dialog">
           <div className="modal-content">
-            <div className="modal-header" style={{ backgroundColor: "#4e73df", color: "white" }}>
-              <h1 className="modal-title fs-5" id="exampleModalLabel">{dataToEdit ? "Editar Proveedor" : "Alta Proveedor"}</h1>
-              <button type="button" className="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            <div
+              className="modal-header"
+              style={{ backgroundColor: "#4e73df", color: "white" }}
+            >
+              <h1 className="modal-title fs-5" id="exampleModalLabel">
+                {dataToEdit ? "Editar Proveedor" : "Alta Proveedor"}
+              </h1>
+              <button
+                type="button"
+                className="btn-close"
+                data-bs-dismiss="modal"
+                aria-label="Close"
+              ></button>
             </div>
             <div className="modal-body">
               <form onSubmit={handleSubmit}>
                 <div className="mb-3">
-                  <label form="exampleInputEmail1" className="form-label">CUIT</label>
+                  <label form="exampleInputEmail1" className="form-label">
+                    CUIT
+                  </label>
                   <input
                     type="number"
                     className="form-control"
-                    name='CUIT'
+                    name="CUIT"
                     onChange={handleChange}
                     value={form.CUIT}
                   />
                 </div>
                 <div className="mb-3">
-                  <label form="exampleInputPassword1" className="form-label">Nombre</label>
+                  <label form="exampleInputPassword1" className="form-label">
+                    Nombre
+                  </label>
                   <input
                     type="text"
                     className="form-control"
-                    name='Nombre'
+                    name="Nombre"
                     onChange={handleChange}
                     value={form.Nombre}
                   />
                 </div>
                 <div className="mb-3">
-                  <label form="exampleInputPassword1" className="form-label">Correo</label>
+                  <label form="exampleInputPassword1" className="form-label">
+                    Correo
+                  </label>
                   <input
                     type="email"
                     className="form-control"
-                    name='Correo'
+                    name="Correo"
                     onChange={handleChange}
                     value={form.Correo}
                   />
                 </div>
                 <div className="mb-3">
-                  <label form="exampleInputPassword1" className="form-label">Domicilio</label>
+                  <label form="exampleInputPassword1" className="form-label">
+                    Domicilio
+                  </label>
                   <input
                     type="text"
                     className="form-control"
-                    name='Domicilio'
+                    name="Domicilio"
                     onChange={handleChange}
                     value={form.Domicilio}
                   />
@@ -159,16 +181,32 @@ export const CardProveedores = ({ createData, updateData, dataToEdit, setDataToE
                 <div className="modal-footer">
                   <button
                     type="submit"
-                    className={dataToEdit ? "btn btn-warning" : "btn btn-success"}
+                    className={
+                      dataToEdit ? "btn btn-warning" : "btn btn-success"
+                    }
                     data-bs-dismiss="modal"
                   >
-                    {
-                      dataToEdit
-                        ? <span> <i className="fa-regular fa-pen-to-square"></i> Confirmar</span>
-                        : <span> <i className="fa-solid fa-plus"></i> Crear</span>
-                    }
+                    {dataToEdit ? (
+                      <span>
+                        {" "}
+                        <i className="fa-regular fa-pen-to-square"></i>{" "}
+                        Confirmar
+                      </span>
+                    ) : (
+                      <span>
+                        {" "}
+                        <i className="fa-solid fa-plus"></i> Crear
+                      </span>
+                    )}
                   </button>
-                  <button type="reset" className="btn btn-danger" onClick={handleReset}> <i className="fa-solid fa-xmark"></i> Cancelar</button>
+                  <button
+                    type="reset"
+                    className="btn btn-danger"
+                    onClick={handleReset}
+                  >
+                    {" "}
+                    <i className="fa-solid fa-xmark"></i> Cancelar
+                  </button>
                 </div>
               </form>
             </div>
@@ -176,5 +214,5 @@ export const CardProveedores = ({ createData, updateData, dataToEdit, setDataToE
         </div>
       </div>
     </div>
-  )
-}
+  );
+};

@@ -16,7 +16,7 @@ export const ModalCantidadProducto = ({ dataToEdit }) => {
   const handleSubmit = (e) => {
     e.preventDefault();
     const updateProducto = { ...dataToEdit, Cantidad: cantidad };
-    if (dataToEdit.Stock < cantidad) {
+    if (parseInt(dataToEdit.Stock) < parseInt(cantidad)) {
       Swal.fire({
         title: `Stock insuficiente`,
         icon: "warning",

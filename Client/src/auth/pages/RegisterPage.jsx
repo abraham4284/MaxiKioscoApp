@@ -46,9 +46,7 @@ export const RegisterPage = () => {
           <h2 className="active">Registro</h2>
           {error && error.length > 0 && (
             <div className="alert alert-danger ">
-              {error.map((err, index) => (
-                <p key={index}>{err}</p>
-              ))}
+               {error}
             </div>
           )}
 
