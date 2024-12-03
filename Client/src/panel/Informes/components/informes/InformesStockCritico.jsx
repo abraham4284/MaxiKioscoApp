@@ -5,7 +5,9 @@ import { useProductos } from "../../../../context/ProductosContext";
 
 export const InformesStockCritico = ({ setDataToEdit }) => {
   const [stockCri, setStockCri] = useState("10");
+  const [filterStockCriticoData ,setFilterStockCriticoData] = useState([]);
   const { productos, getProductos } = useProductos();
+
   
 
   useEffect(()=>{
@@ -53,6 +55,7 @@ export const InformesStockCritico = ({ setDataToEdit }) => {
                       <th>Precio</th>
                       <th>Stock</th>
                       <th>Familia</th>
+                      <th>Tipo</th>
                       <th>Acciones</th>
                     </tr>
                   </thead>
@@ -67,13 +70,13 @@ export const InformesStockCritico = ({ setDataToEdit }) => {
                           />
                         ))
                       ) : (
-                        <tr>
-                          <td colSpan="3">No hay stock critico</td>
+                        <tr className="text-start">
+                          <td colSpan="">No hay stock critico</td>
                         </tr>
                       )
                     ) : (
-                      <tr>
-                        <td colSpan="3">Ingrese un valor</td>
+                      <tr className="text-start">
+                        <td colSpan="">Ingrese un valor</td>
                       </tr>
                     )}
                   </tbody>

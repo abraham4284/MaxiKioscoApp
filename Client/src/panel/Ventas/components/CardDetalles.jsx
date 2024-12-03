@@ -10,13 +10,20 @@ export const CardDetalles = ({
   inputCodeBarRef,
   btnAgregar,
   btnAnular,
-  setInputProductos
+  setInputProductos,
 }) => {
-
-  const { idProductos,CodeBar, Descripcion = "", Stock = "", Precio = "" } = productoEncontrado || {};
-  const { carrito, agregarCarrito, setCarrito  } = useCarrito();
+  const {
+    idProductos,
+    CodeBar,
+    Descripcion = "",
+    Stock = "",
+    Precio = "",
+    precioCosto = "",
+    tipoProducto = "",
+  } = productoEncontrado || {};
+  const { carrito, agregarCarrito, setCarrito } = useCarrito();
   const { resetProductoEncontrado } = useProductos();
-  const  {  clienteEncontrado  } = useClientes();
+  const { clienteEncontrado } = useClientes();
   const [cantidad, setCantidad] = useState([]);
   const [subTotal, setSubTotal] = useState([]);
 
@@ -27,15 +34,14 @@ export const CardDetalles = ({
     setSubTotal(resultado);
   };
 
-  const handleResetDetalle = () =>{
+  const handleResetDetalle = () => {
     resetProductoEncontrado();
-    setCantidad("")
-    setSubTotal("")
-    setInputProductos("")
+    setCantidad("");
+    setSubTotal("");
+    setInputProductos("");
 
     // inputCodeBarRef.current.focus();
-  }
-
+  };
 
   const handlebtnAgregar = () => {
     if (!Descripcion || !Precio || !cantidad || cantidad <= 0) {
@@ -67,7 +73,7 @@ export const CardDetalles = ({
 
       updatedCarrito[existingProductIndex] = {
         ...existingProduct,
-        Cantidad: newCantidad,
+        Cantidad: parseFloat(newCantidad),
         SubTotal: newSubTotal,
       };
 
@@ -80,12 +86,22 @@ export const CardDetalles = ({
           icon: "error",
         });
         return;
-      } else if (Stock <= 10) {
-        Swal.fire({
-          title: `Alerta stock bajo ${Stock}`,
-          text: "A partir de las 10 unidades se considera stock crítico",
-          icon: "warning",
-        });
+      } else if (tipoProducto === "Unidad") {
+        if (Stock <= 10) {
+          Swal.fire({
+            title: `Alerta stock bajo ${Stock}`,
+            text: "A partir de las 10 unidades se considera stock crítico",
+            icon: "warning",
+          });
+        }
+      } else if (tipoProducto === "KG") {
+        if (Stock <= 2) {
+          Swal.fire({
+            title: `Alerta stock bajo ${Stock}`,
+            text: "A partir de las 2 KG se considera stock crítico",
+            icon: "warning",
+          });
+        }
       }
 
       if (parseInt(cantidad) > Stock) {
@@ -103,21 +119,18 @@ export const CardDetalles = ({
         CodeBar,
         Descripcion,
         Stock,
+        precioCosto: parseFloat(precioCosto),
         Precio: parseFloat(Precio),
-        Cantidad: parseInt(cantidad),
+        Cantidad: parseFloat(cantidad),
         SubTotal: parseFloat(subTotal),
       };
       agregarCarrito(data);
     }
 
-
-   
     handleResetDetalle();
   };
 
-
   // console.log(carrito,'Soy el carrito CardDetalles')
-
 
   return (
     <>

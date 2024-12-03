@@ -1,6 +1,6 @@
 import React from "react";
-import { formatearTotal } from "../../../helpers/formatearTotal";
-import { useRegistraciones } from "../../../context/RegistracionesContext";
+import { formatearTotal } from "../../../../helpers/formatearTotal";
+import { useRegistraciones } from "../../../../context/RegistracionesContext";
 
 export const TableRegistracionesDetalles = ({ data }) => {
   const { loadingDetalles } = useRegistraciones();

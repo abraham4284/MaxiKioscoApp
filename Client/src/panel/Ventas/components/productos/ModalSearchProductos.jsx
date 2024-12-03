@@ -84,6 +84,7 @@ export const ModalSearchProductos = ({ inputBuscarProducto }) => {
                 <thead>
                   <tr>
                     <th>CodeBar</th>
+                    <th>Img</th>
                     <th>Nombre</th>
                     <th>Precio</th>
                     <th>Stock</th>

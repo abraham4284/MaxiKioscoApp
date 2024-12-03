@@ -53,7 +53,6 @@ export const InformeMovimientoStock = () => {
                       <th>Descripcion</th>
                       <th>Motivo</th>
                       <th>Cantidad</th>
-                      <th>idProductos</th>
                     </tr>
                   </thead>
                   <tbody className="table-group-divider">
@@ -73,7 +72,7 @@ export const InformeMovimientoStock = () => {
                       ))
                     ) : (
                       <tr>
-                        <td colSpan="3"> No hay datos</td>
+                        <td className="text-start"> No hay movimientos</td>
                       </tr>
                     )}
                   </tbody>

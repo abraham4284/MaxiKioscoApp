@@ -1,7 +1,7 @@
 import React from "react";
 
 export const TableProductosRegistros = ({ data, setDataToEdit }) => {
-  const { CodeBar, Descripcion, Familia, Precio, Stock, idProveedores } = data;
+  const { CodeBar, Descripcion, Familia, Precio, Stock, tipoProducto } = data;
   return (
     <tr>
       <td>{CodeBar}</td>
@@ -9,6 +9,7 @@ export const TableProductosRegistros = ({ data, setDataToEdit }) => {
       <td> {Precio} </td>
       <td>{Stock}</td>
       <td>{Familia}</td>
+      <td>{tipoProducto}</td>
       <td>
         <button
           className="btn btn-warning"

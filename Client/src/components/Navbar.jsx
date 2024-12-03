@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useState } from "react";
+import React from "react";
 import { Link, useLocation } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 import { useNegocios } from "../context/NegociosContext";
@@ -42,6 +42,16 @@ export const Navbar = () => {
                 to={"/panel/ventas"}
               >
                 Ventas
+              </Link>
+            </li>
+            <li className="nav-item">
+              <Link
+                className={`nav-link ${
+                  location.pathname === "/panel/dashboard" ? "active" : ""
+                }`}
+                to={"/panel/dashboard"}
+              >
+                Dashboard
               </Link>
             </li>
             <li className="nav-item">

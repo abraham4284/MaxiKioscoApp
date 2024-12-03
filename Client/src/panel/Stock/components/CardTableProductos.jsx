@@ -14,10 +14,13 @@ export const CardTableProductos = ({
       <thead>
         <tr>
           <th>CodeBar</th>
+          <th>img</th>
           <th>Descripcion</th>
+          <th>precio-Costo</th>
           <th>Precio</th>
           <th>Stock</th>
           <th>Familia</th>
+          <th>Tipo</th>
           <th>Acciones</th>
         </tr>
       </thead>

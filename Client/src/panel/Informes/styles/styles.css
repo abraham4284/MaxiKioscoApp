@@ -4,6 +4,7 @@
     overflow-y: auto;
     max-height: 400px; /* Ajusta la altura máxima según tus necesidades */
     width: 100%;
+    text-align: center;
   }
   
   /* Opcional: estilos adicionales para mejorar la apariencia */

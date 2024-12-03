@@ -118,6 +118,8 @@ export const TableVentas = ({
     }
   };
 
+  console.log(carrito)
+
   if (estadoVenta === 0) {
     false;
   } else if (estadoVenta === 1) {
@@ -216,6 +218,7 @@ export const TableVentas = ({
               ></i>{" "}
               {estadoVenta === 1 ? <Spiner /> : "Confirmar"}
             </button>
+
             <button
               type="button"
               ref={btnAnularVenta}

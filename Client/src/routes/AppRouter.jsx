@@ -8,7 +8,7 @@ export const AppRouter = () => {
   return (
     <Routes>
       <Route path="/*" element={<RoutasPublicas />} />
-      
+
       <Route element={<RutasProtegidas />}>
         <Route path="/panel/*" element={<PanelRoutes />} />
       </Route>

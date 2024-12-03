@@ -34,30 +34,46 @@ export const getIdProductos = async (req, res) => {
 
 export const createProductos = async (req, res) => {
   try {
-    const { CodeBar, Descripcion, Precio, Stock, Familia, idProveedores } =
-      req.body;
-    const { user } = req;
-    // const idUsuarios = await busquedaIdUser(user.Username);
-    const query =
-      "INSERT INTO productos (CodeBar, Descripcion, Precio, Stock, Familia, idProveedores,idUsuarios) VALUES (?,?,?,?,?,?,?)";
-    const values = [
+    const {
       CodeBar,
+      img,
       Descripcion,
+      precioCosto,
       Precio,
       Stock,
       Familia,
       idProveedores,
+      tipoProducto
+    } = req.body;
+    
+    const { user } = req;
+
+    const query =
+      "INSERT INTO productos (CodeBar, img, Descripcion, precioCosto, Precio, Stock, Familia, idProveedores, tipoProducto ,idUsuarios) VALUES (?,?,?,?,?,?,?,?,?,?)";
+    const values = [
+      CodeBar,
+      img,
+      Descripcion,
+      precioCosto,
+      Precio,
+      Stock,
+      Familia,
+      idProveedores,
+      tipoProducto,
       user.idUsuarios,
     ];
     const [result] = await pool.query(query, values);
     const producto = {
       idProductos: result.insertId,
       CodeBar,
+      img,
       Descripcion,
+      precioCosto,
       Precio,
       Stock,
       Familia,
       idProveedores,
+      tipoProducto,
       idUsuarios: user.idUsuarios,
     };
     res.status(201).json(producto);
@@ -73,26 +89,36 @@ export const updateProductos = async (req, res) => {
     const { user } = req;
     const {
       CodeBar,
+      img,
       Descripcion,
+      precioCosto,
       Precio,
       Stock,
       Familia,
       idProveedores,
+      tipoProducto,
       Motivo,
     } = req.body;
+
+    console.log(req.body,"Lo que viene del body")
     const Fecha = formatearFechas(new Date());
     console.log(Motivo, "Soy el motivo");
     const query = `
-        UPDATE productos SET CodeBar = ?, Descripcion = ?, Precio = ?, Stock = ?, Familia = ?, idProveedores = ?
-        WHERE idProductos = ?
+       UPDATE productos SET CodeBar = ?, img = ?, Descripcion = ?,
+       precioCosto = ?, Precio = ?, Stock = ?, Familia = ?,
+        idProveedores = ?, tipoProducto = ?  WHERE idProductos = ?
+
         `;
     const values = [
       CodeBar,
+      img,
       Descripcion,
+      precioCosto,
       Precio,
       Stock,
       Familia,
       idProveedores,
+      tipoProducto,
       id,
     ];
     const [rows] = await pool.query(query, values);

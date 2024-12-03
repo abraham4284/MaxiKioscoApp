@@ -3,6 +3,7 @@ import { formatearTotal } from "../../../../helpers/formatearTotal";
 import { Spiner } from "../../../../components/Spiner";
 import { TableRegistraciones } from "../TableRegistraciones";
 import { useRegistraciones } from "../../../../context/RegistracionesContext";
+import { CardDashboardGeneral } from "../../../Dashboard/components/CardDashboardGeneral";
 
 export const InformesVentasDiarias = () => {
   const [fecha, setFecha] = useState("");
@@ -10,78 +11,50 @@ export const InformesVentasDiarias = () => {
   const [filterVentas, setFilterVentas] = useState([]);
   const [inputFactura, setInputFactura] = useState("");
 
-  const { registraciones, getRegistraciones, loading } = useRegistraciones();
+  const {
+    registraciones,
+    getRegistraciones,
+    loading,
+    sumarTotalesGenerales,
+    sumarTotalesHoy,
+    sumarTotalesPorFecha,
+    handleResetTotales,
+    handleResetFilterVentas,
+    sumarTotalesPorRangoFechas,
+
+    totalesGenerales,
+    totalVentasHoyData,
+    totalPorFecha,
+    totalFechasPorRango,
+    filtroVentasPorRango,
+  } = useRegistraciones();
 
   useEffect(() => {
     getRegistraciones();
   }, []);
 
-  let ventasTotales = 0;
-  const sumarVentasTotales = (data = []) => {
-    if (!data) return;
-    for (let i = 0; i < data.length; i++) {
-      let { Total } = data[i];
-      ventasTotales += Number(Total);
+  useEffect(() => {
+    if (registraciones.length > 0) {
+      sumarTotalesGenerales(registraciones);
+      sumarTotalesHoy(registraciones);
+      handleResetFilterVentas(registraciones);
     }
-    return ventasTotales;
-  };
+  }, [registraciones]);
 
-  //Filtrar ventas por Fecha
-
-  let ventasTotalesPorDia = 0;
-  const sumarVentasPorDia = (data = [], fecha) => {
-    for (let i = 0; i < data.length; i++) {
-      const { Fecha, Total } = data[i];
-      if (Fecha === fecha) {
-        ventasTotalesPorDia += Number(Total);
-      }
+  useEffect(() => {
+    if (registraciones.length > 0 && fecha) {
+      sumarTotalesPorFecha(registraciones, fecha);
     }
-    return ventasTotalesPorDia;
-  };
-
-  const filtrarFechasPorRango = (data = [], fechaInicio, fechaFin) => {
-    if (!fechaInicio || !fechaFin) {
-      return data;
+    if (registraciones.length > 0 && fecha && fechaFin) {
+      sumarTotalesPorRangoFechas(registraciones, fecha, fechaFin);
     }
-
-    let ventaFiltrada = data.filter((ventas) => {
-      const fechaVenta = ventas.Fecha;
-      return fechaVenta >= fechaInicio && fechaVenta <= fechaFin;
-    });
-    return ventaFiltrada;
-  };
-
-  let sumarVentasTotalesPorRango = 0;
-  const sumarVentasTotalesPorRangoFechas = (
-    data = [],
-    fechaInicio,
-    fechaFin
-  ) => {
-    if (!fechaInicio || !fechaFin) {
-      return;
-    }
-    const filtrarVentasPorRangoFechas = data.filter((ventas) => {
-      const fechaVenta = ventas.Fecha;
-      return fechaVenta >= fechaInicio && fechaVenta <= fechaFin;
-    });
-
-    filtrarVentasPorRangoFechas.forEach((ventas) => {
-      sumarVentasTotalesPorRango += Number(ventas.Total);
-    });
-
-    return sumarVentasTotalesPorRango;
-  };
+  }, [fecha, fechaFin]);
 
   const onClickResetFechas = () => {
     setFecha("");
     setFechaFin("");
+    handleResetTotales();
   };
-
-  const mostrarRegistroFiltradoPorRango = filtrarFechasPorRango(
-    registraciones,
-    fecha,
-    fechaFin
-  );
 
   const handleFilterVentasByFactura = (e) => {
     e.preventDefault();
@@ -100,9 +73,10 @@ export const InformesVentasDiarias = () => {
     setFilterVentas(filterFacturaVentas);
   };
 
-  sumarVentasTotales(registraciones);
-  sumarVentasPorDia(registraciones, fecha);
-  sumarVentasTotalesPorRangoFechas(registraciones, fecha, fechaFin);
+  const { totalVentaGeneral, totalGanaciaGeneral } = totalesGenerales;
+  const { totalVentasHoy, totalGanaciaHoy } = totalVentasHoyData;
+  const { totalVentaPorDia, totalGanaciasPorDia } = totalPorFecha;
+  const { totalVentaPorRango, totalGanaciasPorRango } = totalFechasPorRango;
 
   return (
     <div className="col-sm-12 mt-3">
@@ -114,14 +88,12 @@ export const InformesVentasDiarias = () => {
           Informe de ventas diarias
         </div>
 
-        <div className="card-header">
-          <p className="mt-2">
-            Total de ventas :{" "}
-            <span className="bg-success bg-gradient text-white border border-3 border-success">
-              {formatearTotal(ventasTotales)}
-            </span>
-          </p>
-        </div>
+        <CardDashboardGeneral
+          totalVentasHoy={totalVentasHoy}
+          totalGanaciaHoy={totalGanaciaHoy}
+          totalVentaGeneral={totalVentaGeneral}
+          totalGanaciaGeneral={totalGanaciaGeneral}
+        />
         <div
           className="card-header "
           style={{ backgroundColor: "#4e73df", color: "white" }}
@@ -150,13 +122,19 @@ export const InformesVentasDiarias = () => {
         <div className="d-flex justify-content-center gap-3 mt-3">
           <div className="alert alert-primary" role="alert">
             Ventas por dia:{" "}
-            {formatearTotal(ventasTotalesPorDia ? ventasTotalesPorDia : 0)}
+            {formatearTotal(totalVentaPorDia ? totalVentaPorDia : 0)}
+          </div>
+          <div className="alert alert-primary" role="alert">
+            Ganancia por dia:{" "}
+            {formatearTotal(totalGanaciasPorDia ? totalGanaciasPorDia : 0)}
           </div>
           <div className="alert alert-info" role="alert">
             Ventas por rango:{" "}
-            {formatearTotal(
-              sumarVentasTotalesPorRango ? sumarVentasTotalesPorRango : 0
-            )}
+            {formatearTotal(totalVentaPorRango ? totalVentaPorRango : 0)}
+          </div>
+          <div className="alert alert-success" role="alert">
+            Ganancia por rango:{" "}
+            {formatearTotal(totalGanaciasPorRango ? totalGanaciasPorRango : 0)}
           </div>
         </div>
 
@@ -194,9 +172,9 @@ export const InformesVentasDiarias = () => {
                         </td>
                       </tr>
                     ) : inputFactura === "" ? (
-                      mostrarRegistroFiltradoPorRango &&
-                      mostrarRegistroFiltradoPorRango.length > 0 &&
-                      mostrarRegistroFiltradoPorRango.map((datos) => (
+                      filtroVentasPorRango &&
+                      filtroVentasPorRango.length > 0 &&
+                      filtroVentasPorRango.map((datos) => (
                         <TableRegistraciones
                           key={datos.idRegistraciones}
                           data={datos}

@@ -2,7 +2,7 @@ import React from "react";
 import { Link } from "react-router-dom";
 // import "./styles.css";
 import { instagram, github, linkedin, portafolio } from "../helpers/social";
-import CV from "../../public/AbrahamApasFullStackDeveloper.pdf";
+import CV from "../../public/Apas-Abraham-CV.pdf";
 import { useAuth } from "../context/AuthContext";
 
 export const NavbarSocial = () => {
@@ -63,7 +63,7 @@ export const NavbarSocial = () => {
               <a
                 className="nav-link btn btn-cv"
                 href={CV}
-                download="AbrahamApasFullStackDeveloper"
+                download="Apas-Abraham-CV"
               >
                 Descargar CV
               </a>

@@ -12,6 +12,10 @@ import { ListarProveedoresPage } from "../Proveedores/pages/ListarProveedoresPag
 import { MiNegocioPage } from "../MiNegocio/pages/MiNegocioPage.jsx";
 import { MiConfiguracion } from "../Usuarios/pages/MiConfiguracion.jsx";
 import { Footer } from "../../components/Footer.jsx";
+import { ProtectedRoutesNegocios } from "../components/RutasProtegidas/ProtectedRoutesNegocios.jsx";
+import { DashboardPage } from "../Dashboard/pages/DashboardPage.jsx";
+import { TableDetalleRegistracionesCompleto } from "../Dashboard/components/tables/TableDetalleRegistracionesCompleto.jsx";
+import { InformeDetalleVentasCompleto } from "../Dashboard/components/InformeDetalleVentasCompleto.jsx";
 
 export const PanelRoutes = () => {
   return (
@@ -19,32 +23,25 @@ export const PanelRoutes = () => {
       <div className="">
         <Navbar />
         <Routes>
-          {/* Rutas privadas */}
-         
           <Route path="/crearNegocio" element={<FormNegocios />} />
-          {/* Panel de ventas */}
           <Route path="/ventas" element={<VentasPage />} />
+          <Route path="/dashboard" element={<DashboardPage />} />
+          <Route
+            path="/dashboard/ventas/detalle/:id"
+            element={<InformeDetalleVentasCompleto />}
+          />
           <Route path="/informes" element={<ListarInformesPages />} />
           <Route path="/informes/:id" element={<InformeDetallePages />} />
-          {/*Panel de pruductos */}
           <Route path="/productos/listar" element={<ListarProductosPage />} />
-          {/* Panel de Clientes */}
           <Route path="/clientes/listar" element={<ListarClientesPage />} />
           <Route
             path="/proveedores/listar"
             element={<ListarProveedoresPage />}
           />
-          {/* end Rutas privadas */}
-
-          {/* Mi negocio */}
           <Route path="/negocio" element={<MiNegocioPage />} />
-          {/* End Mi negocio */}
-
-          {/* Mi Configuracion */}
           <Route path="/configuracion" element={<MiConfiguracion />} />
-          {/* End Mi Configuracion */}
         </Routes>
-        <Footer/>
+        <Footer />
       </div>
     </>
   );

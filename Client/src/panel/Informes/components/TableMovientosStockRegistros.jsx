@@ -1,7 +1,7 @@
 import React from "react";
 
 export const TableMovientosStockRegistros = ({ data }) => {
-    const { Fecha, CodeBar, Descripcion, Motivo, Cantidad, idProductos} = data;
+    const { Fecha, CodeBar, Descripcion, Motivo, Cantidad} = data;
   return (
     <tr>
       <td> {Fecha} </td>
@@ -9,7 +9,6 @@ export const TableMovientosStockRegistros = ({ data }) => {
       <td> {Descripcion}</td>
       <td>{Motivo}</td>
       <td>{Cantidad}</td>
-      <td>{idProductos}</td>
     </tr>
   );
 };

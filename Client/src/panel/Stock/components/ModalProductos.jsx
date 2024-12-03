@@ -6,28 +6,26 @@ import Swal from "sweetalert2";
 const initialForm = {
   idProductos: null,
   CodeBar: "",
+  img: "",
   Descripcion: "",
+  precioCosto: "",
   Precio: "",
   Stock: "",
   Familia: "",
   idProveedores: "",
+  tipoProducto: "",
   Motivo: "",
 };
 
-export const ModalProductos = ({
-  dataToEdit,
-  setDataToEdit,
-}) => {
+export const ModalProductos = ({ dataToEdit, setDataToEdit }) => {
   const [form, setForm] = useState(initialForm);
 
-
   const { getProveedores, proveedores } = useProveedores();
-  const { createProductos , updateProductos } = useProductos();
+  const { createProductos, updateProductos } = useProductos();
 
   useEffect(() => {
     getProveedores();
   }, []);
-
 
   useEffect(() => {
     if (dataToEdit) {
@@ -36,9 +34,6 @@ export const ModalProductos = ({
       setForm(initialForm);
     }
   }, [dataToEdit]);
-
-
-
 
   const handleChange = (e) => {
     setForm({
@@ -67,6 +62,12 @@ export const ModalProductos = ({
       Motivo: e.target.value,
     });
   };
+  const handleSelectedTipoProducto = (e) => {
+    setForm({
+      ...form,
+      tipoProducto: e.target.value,
+    });
+  };
 
   const handleReset = () => {
     setForm(initialForm);
@@ -91,13 +92,13 @@ export const ModalProductos = ({
       return;
     }
     if (form.idProductos === null) {
+      form.Stock = parseFloat(form.Stock)
       createProductos(form);
-      console.log(form)
-      setForm(initialForm)
+      console.log(form);
+      setForm(initialForm);
     } else {
       form.Motivo = dataToEdit ? form.Motivo : null;
       updateProductos(dataToEdit.idProductos, form);
-      
     }
   };
   return (
@@ -105,7 +106,7 @@ export const ModalProductos = ({
       className="modal fade"
       id="exampleModalProductos"
       data-bs-backdrop="static"
-        data-bs-keyboard="false"
+      data-bs-keyboard="false"
       tabIndex="-1"
       aria-labelledby="exampleModalLabel"
       aria-hidden="true"
@@ -141,6 +142,19 @@ export const ModalProductos = ({
                   onChange={handleChange}
                 />
               </div>
+              <div className="form-outline mb-4">
+                <label className="form-label" htmlFor="form3Example3cg">
+                  URL IMG <i className="fa-solid fa-barcode"></i>{" "}
+                </label>
+                <input
+                  type="text"
+                  className="form-control"
+                  placeholder="Ingrese la url de la imagen"
+                  name="img"
+                  value={form.img}
+                  onChange={handleChange}
+                />
+              </div>
 
               <div className="form-outline mb-4">
                 <label className="form-label" htmlFor="form3Example3cg">
@@ -157,6 +171,20 @@ export const ModalProductos = ({
                 />
               </div>
 
+              <div className="form-outline mb-4">
+                <label className="form-label" htmlFor="form3Example3cg">
+                  Precio Costo{" "}
+                  <i className="fa-solid fa-hand-holding-dollar"></i>
+                </label>
+                <input
+                  type="number"
+                  className="form-control "
+                  placeholder="Ingrese precio"
+                  name="precioCosto"
+                  value={form.precioCosto}
+                  onChange={handleChange}
+                />
+              </div>
               <div className="form-outline mb-4">
                 <label className="form-label" htmlFor="form3Example3cg">
                   Precio <i className="fa-solid fa-hand-holding-dollar"></i>
@@ -200,6 +228,9 @@ export const ModalProductos = ({
                   >
                     <option value="">
                       Seleccione una opcion de modificacion
+                    </option>
+                    <option value="+/-Cambio de precio">
+                      +/-Cambio de precio
                     </option>
                     <option value="+Compra de Mercaderia">
                       +Compra de Mercaderia
@@ -262,6 +293,24 @@ export const ModalProductos = ({
                 </select>
               </div>
 
+              {/* Tipo de producto */}
+              <div className="form-outline mb-4">
+                <label className="form-label" htmlFor="form3Example4cg">
+                  Tipo de producto <i className="fa-solid fa-user-tie"></i>
+                </label>
+                <select
+                  className="form-select"
+                  aria-label="Default select example"
+                  name="tipoProducto"
+                  value={form.tipoProducto}
+                  onChange={handleSelectedTipoProducto}
+                >
+                  <option value="">Seleccione un tipo de producto</option>
+                  <option value="Unidad">Unidad</option>
+                  <option value="KG">KG</option>
+                </select>
+              </div>
+
               <div className="modal-footer">
                 <button
                   type="submit"
@@ -283,7 +332,7 @@ export const ModalProductos = ({
                 <button
                   type="reset"
                   className="btn btn-danger"
-                  onClick={()=> handleReset()}
+                  onClick={() => handleReset()}
                 >
                   {" "}
                   <i className="fa-solid fa-xmark"></i> Cancelar

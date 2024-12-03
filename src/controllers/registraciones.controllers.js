@@ -48,14 +48,12 @@ export const getRegistracionesDetalles = async (req, res) => {
     }
 
     const query = `
-    SELECT  productos.Descripcion, registraciones.Fecha, registraciones.Total,
-    detalle_registraciones.PrecioUni, detalle_registraciones.Cantidad,detalle_registraciones.Total, detalle_registraciones.idRegistraciones,
-    detalle_registraciones.idDetalleRegistraciones
-    FROM registraciones
-    JOIN detalle_registraciones ON detalle_registraciones.idRegistraciones = registraciones.idRegistraciones
-    JOIN productos ON detalle_registraciones.idProductos = productos.idProductos
-    WHERE detalle_registraciones.idRegistraciones = ?;
-
+    SELECT p.Descripcion, r.Fecha, r.Total,
+	    dr.precioUniCosto, dr.PrecioUni, dr.Cantidad, dr.totalCosto, dr.Total, dr.idRegistraciones, dr.idDetalleRegistraciones
+      FROM registraciones r
+      JOIN detalle_registraciones dr ON dr.idRegistraciones = r.idRegistraciones
+      JOIN productos p ON dr.idProductos = p.idProductos
+      WHERE dr.idRegistraciones = ?;
     `;
 
     const [rows] = await pool.query(query, [id]);
@@ -83,16 +81,17 @@ export const crearRegistraciones = async (req, res) => {
     const numeroFactura = generarNumeroFactura();
     const { idClientes, idProductos } = ventas[0];
 
-    const { Total } = sumarTotales(ventas);
+    const { Total, TotalCosto } = sumarTotales(ventas);
     const Fecha = formatearFechas(new Date());
-
+    
     const query = `
-    INSERT INTO registraciones (NFactura, Fecha, Total, idClientes, idProductos, idUsuarios) 
-    VALUES (?, ?, ?, ?, ?, ?)
+    INSERT INTO registraciones (NFactura, Fecha, totalCosto, Total, idClientes, idProductos, idUsuarios) 
+    VALUES (?, ?, ?, ?, ?, ?, ?)
     `;
     const values = [
       numeroFactura,
       Fecha,
+      TotalCosto,
       Total,
       idClientes,
       idProductos,
@@ -103,17 +102,20 @@ export const crearRegistraciones = async (req, res) => {
     const idRegistraciones = resultRegistraciones.insertId;
 
     const queries = ventas.map(async (venta) => {
-      const { Cantidad, Precio, idProductos } = venta;
+      const { Cantidad, precioCosto, Precio, idProductos } = venta;
       console.log(venta, "Data venta map");
       const queryDetalleRegistraciones = `
-        INSERT INTO detalle_registraciones (Fecha, PrecioUni, Cantidad, Total, idProductos, idRegistraciones, idClientes)
-        VALUES (?, ?, ?, ?, ?, ?, ?)
+        INSERT INTO detalle_registraciones (Fecha, precioUniCosto, PrecioUni, Cantidad,totalCosto, Total, idProductos, idRegistraciones, idClientes)
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
       `;
+      const totalCostoDetalles = precioCosto * Cantidad;
       const TotalDetalles = Precio * Cantidad;
       const values = [
         Fecha,
+        precioCosto,
         Precio,
         Cantidad,
+        totalCostoDetalles,
         TotalDetalles,
         idProductos,
         idRegistraciones,

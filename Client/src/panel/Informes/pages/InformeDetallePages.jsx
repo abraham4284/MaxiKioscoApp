@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
-import { TableRegistracionesDetalles } from "../components/TableRegistracionesDetalles";
+import { TableRegistracionesDetalles } from "../../Dashboard/components/tables/TableRegistracionesDetalles";
 import { formatearTotal } from "../../../helpers/formatearTotal";
 import { Spiner } from "../../../components/Spiner";
 import { useRegistraciones } from "../../../context/RegistracionesContext";
