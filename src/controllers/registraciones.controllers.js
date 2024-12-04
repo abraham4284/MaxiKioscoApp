@@ -4,6 +4,7 @@ import { formatearFechas } from "../libs/formatearFechas.js";
 import { busquedaIdUser } from "../libs/BusquedaIdUser.js";
 import { sumarTotales } from "../helpers/SumarTotalVentas.js";
 import { generarNumeroFactura } from "../helpers/GenerarNumeroFactura.js";
+import { fechaLocal } from "../helpers/fechaLocal.js";
 
 export const getRegistraciones = async (req, res) => {
   try {
@@ -82,7 +83,7 @@ export const crearRegistraciones = async (req, res) => {
     const { idClientes, idProductos } = ventas[0];
 
     const { Total, TotalCosto } = sumarTotales(ventas);
-    const Fecha = formatearFechas(new Date());
+    const { HoyfechaLocal: Fecha } = fechaLocal();
     
     const query = `
     INSERT INTO registraciones (NFactura, Fecha, totalCosto, Total, idClientes, idProductos, idUsuarios) 
