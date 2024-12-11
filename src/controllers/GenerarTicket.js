@@ -58,7 +58,7 @@ export const generadorTicket = async (req, res) => {
       return {
         Descripcion: el.descripcion,
         PrecioUni: el.PrecioUni,
-        Cantidad: parseInt(el.Cantidad),
+        Cantidad: parseFloat(el.Cantidad),
         SubTotal: parseFloat(el.Cantidad * el.PrecioUni),
       };
     });
