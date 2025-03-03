@@ -12,8 +12,6 @@ export const register = async (req, res) => {
   const conection = await pool.getConnection();
 
   try {
-    // if(Username.length < 4 || Password.length < 4) return res.status(404).json({message:'No se puede ingresar menos de 4 caracteres'});
-    //Chqueamos si el usuario existe
     const [rows] = await pool.query(
       "SELECT * FROM usuarios WHERE Username = ?",
       [Username]
@@ -47,7 +45,6 @@ export const register = async (req, res) => {
       sameSite: "None",
       maxAge: 1000 * 60 * 60,
     });
-    console.log(token, "Token registro");
     res.status(201).json(data);
   } catch (error) {
     res.status(500).json({ error: "error en el servidor" });
