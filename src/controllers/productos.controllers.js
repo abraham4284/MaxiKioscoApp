@@ -43,9 +43,23 @@ export const createProductos = async (req, res) => {
       Stock,
       Familia,
       idProveedores,
-      tipoProducto
+      tipoProducto,
     } = req.body;
-    
+
+    if (
+      Descripcion === "" ||
+      precioCosto === "" ||
+      Precio === "" ||
+      Stock === "" ||
+      idProveedores === "" ||
+      tipoProducto === ""
+    ) {
+      return res.status(422).json({
+        status: "ERROR",
+        message: "Los datos son obligatorios",
+      });
+    }
+
     const { user } = req;
 
     const query =
@@ -63,6 +77,12 @@ export const createProductos = async (req, res) => {
       user.idUsuarios,
     ];
     const [result] = await pool.query(query, values);
+    if (result.affectedRows === 0) {
+      return res.status(500).json({
+        status: "ERROR",
+        message: "Error al crear el producto",
+      });
+    }
     const producto = {
       idProductos: result.insertId,
       CodeBar,
@@ -76,7 +96,11 @@ export const createProductos = async (req, res) => {
       tipoProducto,
       idUsuarios: user.idUsuarios,
     };
-    res.status(201).json(producto);
+    return res.status(200).json({
+      status: "OK",
+      message: "Producto creado correctamente",
+      data: producto,
+    });
   } catch (error) {
     res.status(500).json({ error: "Error en el servidor" });
     console.log({ error: error.message });
@@ -100,14 +124,25 @@ export const updateProductos = async (req, res) => {
       Motivo,
     } = req.body;
 
-    console.log(req.body,"Lo que viene del body")
-    const Fecha = formatearFechas(new Date());
-    console.log(Motivo, "Soy el motivo");
-    const query = `
-       UPDATE productos SET CodeBar = ?, img = ?, Descripcion = ?,
-       precioCosto = ?, Precio = ?, Stock = ?, Familia = ?,
-        idProveedores = ?, tipoProducto = ?  WHERE idProductos = ?
+    if (
+      Descripcion === "" ||
+      precioCosto === "" ||
+      Precio === "" ||
+      Stock === "" ||
+      idProveedores === "" ||
+      tipoProducto === ""
+    ) {
+      return res.status(422).json({
+        status: "ERROR",
+        message: "Los datos son obligatorios",
+      });
+    }
 
+    const Fecha = formatearFechas(new Date());
+    const query = `
+        UPDATE productos SET CodeBar = ?, img = ?, Descripcion = ?,
+        precioCosto = ?, Precio = ?, Stock = ?, Familia = ?,
+        idProveedores = ?, tipoProducto = ?  WHERE idProductos = ?
         `;
     const values = [
       CodeBar,
@@ -124,9 +159,10 @@ export const updateProductos = async (req, res) => {
     const [rows] = await pool.query(query, values);
 
     if (rows.affectedRows === 0) {
-      res
-        .status(404)
-        .json({ message: "No se encontro el producto a actualizar" });
+      res.status(404).json({
+        status: "ERROR",
+        message: "No se encontro el producto a actualizar",
+      });
     }
 
     const [rowsSelect] = await pool.query(
@@ -143,8 +179,12 @@ export const updateProductos = async (req, res) => {
       id,
       user.idUsuarios
     );
-    console.log("Movimiento Creado");
-    res.json(rowsSelect[0]);
+
+    return res.status(200).json({
+      status: "OK",
+      message: "Producto actualizado correctamente",
+      data: rowsSelect[0],
+    });
   } catch (error) {
     res.status(500).json({ error: "Error en el servidor" });
     console.log({ error: error.message });

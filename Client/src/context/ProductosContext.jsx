@@ -24,7 +24,6 @@ export const ProductosProvider = ({ children }) => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
-
   const getProductos = async () => {
     try {
       const { data } = await getProductosRequest();
@@ -63,18 +62,20 @@ export const ProductosProvider = ({ children }) => {
     setProductoEncontrado([]);
   };
 
-  const createProductos = async (data) => {
+  const createProductos = async (dataProductos) => {
     try {
-      const { data: dataProductos } = await createProductosRequest(data);
-      if (!dataProductos) {
+      const { data } = await createProductosRequest(dataProductos);
+      if (data.status === "OK") {
+        setProductos([...productos, data.data]);
+        setLoading(false);
+        setError(null);
+        return { success: true, message: data.message };
+      } else {
         setProductos(null);
         setLoading(false);
-        setError(dataProductos);
+        setError(data.message);
+        return { success: false, message: data.message };
       }
-
-      setProductos([...productos, dataProductos]);
-      setLoading(false);
-      setError(null);
     } catch (error) {
       console.log(error);
       setLoading(false);
@@ -82,21 +83,22 @@ export const ProductosProvider = ({ children }) => {
     }
   };
 
-  const updateProductos = async (id,data) => {
+  const updateProductos = async (id, dataProductos) => {
     try {
-      const { data: dataProductos } = await updateProductosRequest(id,data);
-      if (!dataProductos) {
-        setProductos(null);
+      const { data } = await updateProductosRequest(id, dataProductos);
+      if (data.status === "OK") {
+        let newData = productos.map((el) =>
+          el.idProductos === id ? dataProductos : el
+        );
+        setProductos(newData);
         setLoading(false);
-        setError(dataProductos);
+        setError(null);
+        return { success: true, message: data.message };
+      } else {
+        setLoading(false);
+        setError(data.message);
+        return { success: false, message: data.message };
       }
-
-      let newData = productos.map((el) =>
-        el.idProductos === id ? data : el
-      );
-      setProductos(newData);
-      setLoading(false);
-      setError(null);
     } catch (error) {
       console.log(error);
       setError(error.message);

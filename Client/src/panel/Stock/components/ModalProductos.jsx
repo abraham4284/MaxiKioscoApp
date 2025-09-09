@@ -74,7 +74,7 @@ export const ModalProductos = ({ dataToEdit, setDataToEdit }) => {
     setDataToEdit(null);
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     if (
       !form.CodeBar ||
@@ -92,13 +92,23 @@ export const ModalProductos = ({ dataToEdit, setDataToEdit }) => {
       return;
     }
     if (form.idProductos === null) {
-      form.Stock = parseFloat(form.Stock)
-      createProductos(form);
-      console.log(form);
+      form.Stock = parseFloat(form.Stock);
+      const { success, message } = await createProductos(form);
       setForm(initialForm);
+      Swal.fire({
+        title: message,
+        icon: success ? "success" : "error",
+      });
     } else {
       form.Motivo = dataToEdit ? form.Motivo : null;
-      updateProductos(dataToEdit.idProductos, form);
+      const { success, message } = await updateProductos(
+        dataToEdit.idProductos,
+        form
+      );
+      Swal.fire({
+        title: message,
+        icon: success ? "success" : "error",
+      });
     }
   };
   return (

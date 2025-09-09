@@ -1,0 +1,1 @@
+export { validateOnlyLetters } from "./validateOnlyLetters";

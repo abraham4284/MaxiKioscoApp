@@ -19,13 +19,38 @@ export const getClientes = async (req, res) => {
 export const createClientes = async (req, res) => {
   try {
     const { CUIT, Nombre, Apellido, Correo, Domicilio } = req.body;
+    if (Nombre === "" || Apellido === "") {
+      return res.status(422).json({
+        status: "ERROR",
+        message: "El nombre y el apellido no pueden venir vacios",
+      });
+    }
     const { user } = req;
     const query =
       "INSERT INTO clientes (CUIT, Nombre, Apellido, Correo, Domicilio, idUsuarios) VALUES (?,?,?,?,?,?)";
     const values = [CUIT, Nombre, Apellido, Correo, Domicilio, user.idUsuarios];
-    await pool.query(query, values);
+    const [result] = await pool.query(query, values);
+    if (result.affectedRows === 0) {
+      return res.status(500).json({
+        status: "ERROR",
+        message: "Error al crear el cliente",
+      });
+    }
 
-    res.status(201).json({ message: "Cliente creado correctamente" });
+    const newCliente = {
+      idClientes: result.insertId,
+      CUIT,
+      Nombre,
+      Apellido,
+      Correo,
+      Domicilio,
+    };
+
+    res.status(201).json({
+      status: "OK",
+      message: "Cliente creado correctamente",
+      data: newCliente,
+    });
   } catch (error) {
     res.status(500).json({ error: "Error en el servidor" });
     console.log({ error: error.message });
@@ -69,13 +94,22 @@ export const updateCliente = async (req, res) => {
   try {
     const { id } = req.params;
     const { CUIT, Nombre, Apellido, Correo, Domicilio } = req.body;
+    if (Nombre === "" || Apellido === "") {
+      return res.status(422).json({
+        status: "ERROR",
+        message: "El nombre y el apellido no pueden venir vacios",
+      });
+    }
     const query =
       "UPDATE clientes SET CUIT = ?, Nombre = ?, Apellido = ?, Correo = ?, Domicilio = ? WHERE idClientes = ?";
     const values = [CUIT, Nombre, Apellido, Correo, Domicilio, id];
     const [rows] = await pool.query(query, values);
 
     if (rows.affectedRows === 0) {
-      res.status(404).json({ error: "No se contro el cliente a actualizar" });
+      res.status(500).json({
+        status: "ERROR",
+        message: "No se contro el cliente a actualizar",
+      });
     }
 
     // Haremos un select para que nos devuelta el cliente actualizado
@@ -83,8 +117,19 @@ export const updateCliente = async (req, res) => {
       "SELECT * FROM clientes WHERE idClientes = ?",
       [id]
     );
-    console.log(rowsSelect[0]);
-    res.json(rowsSelect[0]);
+
+    if (rowsSelect[0].length === 0) {
+      res.status(500).json({
+        status: "ERROR",
+        message: "No se contro el cliente",
+      });
+    }
+
+    return res.status(200).json({
+      status: "OK",
+      message: "Cliente actualizado correctamente",
+      data: rowsSelect[0],
+    });
   } catch (error) {
     res.status(500).json({ error: "Error en el servidor" });
     console.log({ error: error.message });
