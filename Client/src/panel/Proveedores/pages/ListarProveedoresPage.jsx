@@ -13,6 +13,7 @@ export const ListarProveedoresPage = () => {
     getProveedores();
   }, []);
 
+  
   const handleInputBusquedaProveedores = (e) => {
     e.preventDefault();
     const searchInput = e.target.value.toLocaleLowerCase();
