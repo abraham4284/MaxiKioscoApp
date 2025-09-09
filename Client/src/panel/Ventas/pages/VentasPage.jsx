@@ -7,9 +7,10 @@ import { useProductos } from "../../../context/ProductosContext.jsx";
 import { useRegistraciones } from "../../../context/RegistracionesContext.jsx";
 import { ModalCantidadProducto } from "../components/productos/ModalCantidadProducto.jsx";
 import { ModalSearchProductos } from "../components/productos/ModalSearchProductos.jsx";
+import { ModalTableClientes } from "../components/productos/ModalTableClientes.jsx";
 
 export const VentasPage = () => {
-  const { getClientes } = useClientes();
+  const { getClientes, clientes,loading } = useClientes();
   const { getProductos, productoEncontrado } =
     useProductos();
   const { getRegistraciones } = useRegistraciones();
@@ -17,6 +18,7 @@ export const VentasPage = () => {
   const [inputProductos, setInputProductos] = useState([]);
   const [inputDNI, setInputDNI] = useState("");
   const [dataToEdit, setDataToEdit] = useState(null);
+  const [dataAll, setDataAll ] = useState(null);
 
   // Ref
   const btnAgregar = useRef(null);
@@ -86,6 +88,11 @@ export const VentasPage = () => {
     };
   }, []);
 
+  const addData = (data)=>{
+    setDataAll(data);
+  }
+
+
   return (
     <>
       <div className="container">
@@ -94,7 +101,7 @@ export const VentasPage = () => {
             <div className="row mb-2">
               <div className="col-sm-12">
                 {/* Clientes */}
-                <CardClientes inputDNI={inputDNI} setInputDNI={setInputDNI} />
+                <CardClientes dataAll={dataAll} />
               </div>
             </div>
             <div className="row">
@@ -110,6 +117,7 @@ export const VentasPage = () => {
                   setInputProductos={setInputProductos}
                   setInputDNI={setInputDNI}
                   setDataToEdit={setDataToEdit}
+                  dataAll = {dataAll}
                 />
                 {/* End Tabla de ventas */}
               </div>
@@ -133,6 +141,12 @@ export const VentasPage = () => {
         </div>
         <ModalCantidadProducto dataToEdit={dataToEdit} />
         <ModalSearchProductos inputBuscarProducto={inputBuscarProducto} />
+        <ModalTableClientes
+          loading={loading}
+          data={clientes}
+          addData={addData}
+          dataAll = {dataAll}
+        />
       </div>
     </>
   );

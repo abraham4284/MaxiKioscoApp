@@ -54,21 +54,16 @@ export const InformeDetallePages = () => {
     };
   }, [id]);
 
-  const { NFactura, Fecha, Total, idClientes } = registraciones;
+  const { NFactura, Fecha, Total, Nombre,Apellido } = registraciones;
 
   let clienteEncontrado = "";
 
-  if (idClientes === null) {
-    clienteEncontrado = "CONSUMIDOR FINAL";
-  } else {
-    const data = clientes.filter((el) => el.idClientes === idClientes);
-    if (data.length > 0) {
-      const { Apellido, Nombre } = data[0];
-      clienteEncontrado = `${Apellido} ${Nombre}`;
-    } else {
-      clienteEncontrado = "CONSUMIDOR FINAL ";
-    }
+  if(Nombre === null || Apellido === null){
+    clienteEncontrado = "CONSUMIDOR FINAL"
+  }else{
+    clienteEncontrado = `${Nombre} ${Apellido}`
   }
+
 
   useEffect(() => {
     const handleBeforePrint = () => {

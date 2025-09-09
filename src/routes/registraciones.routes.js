@@ -13,8 +13,8 @@ import { authRequired } from '../middlewares/ValidarToken.js'
 const router = Router();
 
 router.get('/registraciones',authRequired, getRegistraciones);
-router.get('/registraciones/:id', getIdRegistraciones);
-router.get('/registracionesDetalles/:id', getRegistracionesDetalles);
+router.get('/registraciones/:id',authRequired, getIdRegistraciones);
+router.get('/registracionesDetalles/:id',authRequired, getRegistracionesDetalles);
 
 router.post('/registraciones', authRequired, crearRegistraciones);
 router.put('/registraciones/:id', updateRegistraciones);

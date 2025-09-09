@@ -48,16 +48,10 @@ export const ClientesProvider = ({ children }) => {
   const buscarClientesPorDNI = async (CUIT) => {
     try {
       let busqueda = clientes.find((el) => el.CUIT === CUIT);
-      console.log(busqueda, "Soy la busquedael resultado");
       if (busqueda) {
         setClienteEncontrado(busqueda);
-        console.log(clienteEncontrado, "Soy el cliente encontrado");
       } else {
         setClienteEncontrado("Consumidor Final");
-        console.log(
-          clienteEncontrado,
-          "Soy el cliente encontrado por si no se encuentra"
-        );
       }
     } catch (error) {
       console.log({

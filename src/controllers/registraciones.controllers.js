@@ -1,10 +1,11 @@
 import { pool } from "../db.js";
-import { modificarStockVenta } from "../libs/modificarStock.js";
+import { modificarStockVentaTransaction } from "../libs/modificarStock.js";
 import { formatearFechas } from "../libs/formatearFechas.js";
 import { busquedaIdUser } from "../libs/BusquedaIdUser.js";
 import { sumarTotales } from "../helpers/SumarTotalVentas.js";
 import { generarNumeroFactura } from "../helpers/GenerarNumeroFactura.js";
 import { fechaLocal } from "../helpers/fechaLocal.js";
+import Big from "big.js";
 
 export const getRegistraciones = async (req, res) => {
   try {
@@ -26,7 +27,14 @@ export const getIdRegistraciones = async (req, res) => {
   try {
     const { id } = req.params;
     const query = `
-    SELECT * FROM registraciones WHERE idRegistraciones = ?
+    SELECT 
+    r.*, 
+    c.CUIT, 
+    c.Nombre, 
+    c.Apellido
+    FROM registraciones r
+    LEFT JOIN clientes c ON r.idClientes = c.idClientes
+    WHERE r.idRegistraciones = ?
     `;
     const [rows] = await pool.query(query, [id]);
     if (rows.length <= 0) {
@@ -72,19 +80,22 @@ export const getRegistracionesDetalles = async (req, res) => {
 
 export const crearRegistraciones = async (req, res) => {
   try {
-    const ventas = req.body;
-    const { user } = req
-    console.log(ventas)
+    const { ventas, idClientes } = req.body;
+
+    const { user } = req;
+
     if (!Array.isArray(ventas) || ventas.length === 0) {
       throw new Error("El cuerpo de la solicitud debe ser un array de ventas");
     }
 
+    const conn = await pool.getConnection();
+    await conn.beginTransaction();
     const numeroFactura = generarNumeroFactura();
-    const { idClientes, idProductos } = ventas[0];
+    const { idProductos } = ventas[0];
 
     const { Total, TotalCosto } = sumarTotales(ventas);
     const { HoyfechaLocal: Fecha } = fechaLocal();
-    
+
     const query = `
     INSERT INTO registraciones (NFactura, Fecha, totalCosto, Total, idClientes, idProductos, idUsuarios) 
     VALUES (?, ?, ?, ?, ?, ?, ?)
@@ -99,36 +110,44 @@ export const crearRegistraciones = async (req, res) => {
       user.idUsuarios,
     ];
 
-    const [resultRegistraciones] = await pool.query(query, values);
+    const [resultRegistraciones] = await conn.query(query, values);
     const idRegistraciones = resultRegistraciones.insertId;
 
     const queries = ventas.map(async (venta) => {
       const { Cantidad, precioCosto, Precio, idProductos } = venta;
-      console.log(venta, "Data venta map");
       const queryDetalleRegistraciones = `
         INSERT INTO detalle_registraciones (Fecha, precioUniCosto, PrecioUni, Cantidad,totalCosto, Total, idProductos, idRegistraciones, idClientes)
         VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
       `;
-      const totalCostoDetalles = precioCosto * Cantidad;
-      const TotalDetalles = Precio * Cantidad;
+      const precioCostoBig = new Big(precioCosto);
+      const precioBig = new Big(Precio);
+      const cantidadBig = new Big(Cantidad);
+      const totalCostoDetalles = precioCostoBig.times(cantidadBig);
+      const TotalDetalles = precioBig.times(cantidadBig);
       const values = [
         Fecha,
-        precioCosto,
-        Precio,
-        Cantidad,
-        totalCostoDetalles,
-        TotalDetalles,
+        precioCosto.toString(),
+        Precio.toString(),
+        cantidadBig.toString(),
+        totalCostoDetalles.toString(),
+        TotalDetalles.toString(),
         idProductos,
         idRegistraciones,
         idClientes,
       ];
       await Promise.all([
-        await pool.query(queryDetalleRegistraciones, values),
-        modificarStockVenta(idProductos, Cantidad),
+        await conn.query(queryDetalleRegistraciones, values),
+        modificarStockVentaTransaction(
+          idProductos,
+          cantidadBig.toString(),
+          conn
+        ),
       ]);
     });
 
     await Promise.all(queries);
+    await conn.commit();
+    conn.release();
 
     res.json({
       message: "Venta registrada",
@@ -139,9 +158,9 @@ export const crearRegistraciones = async (req, res) => {
     res.status(500).json({ error: "Error en el servidor" });
     console.log({
       error: error.message,
-      errorCompleto : error,
-      message: "Error en crearRegistarciones Back"
-    })
+      errorCompleto: error,
+      message: "Error en crearRegistarciones Back",
+    });
   }
 };
 
