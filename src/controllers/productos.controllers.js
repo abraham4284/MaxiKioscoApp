@@ -123,7 +123,6 @@ export const updateProductos = async (req, res) => {
       tipoProducto,
       Motivo,
     } = req.body;
-
     if (
       Descripcion === "" ||
       precioCosto === "" ||
@@ -183,6 +182,58 @@ export const updateProductos = async (req, res) => {
     return res.status(200).json({
       status: "OK",
       message: "Producto actualizado correctamente",
+      data: rowsSelect[0],
+    });
+  } catch (error) {
+    res.status(500).json({ error: "Error en el servidor" });
+    console.log({ error: error.message });
+  }
+};
+
+export const updateStockProductos = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { user } = req;
+    const { Stock, Motivo,CodeBar,Descripcion } = req.body;
+    if (Stock === "" || Motivo === "") {
+      return res.status(422).json({
+        status: "ERROR",
+        message: "Los datos son obligatorios",
+      });
+    }
+
+    const Fecha = formatearFechas(new Date());
+    const query = `
+        UPDATE productos SET Stock = ? WHERE idProductos = ?
+        `;
+    const values = [Stock, id];
+    const [rows] = await pool.query(query, values);
+
+    if (rows.affectedRows === 0) {
+      res.status(404).json({
+        status: "ERROR",
+        message: "No se encontro el producto a actualizar",
+      });
+    }
+
+    const [rowsSelect] = await pool.query(
+      "SELECT * FROM productos WHERE idProductos = ?",
+      [id]
+    );
+    // Creamos el movimiento Stock
+    await createMovimientosStock(
+      Fecha,
+      CodeBar,
+      Descripcion,
+      Motivo,
+      Stock,
+      id,
+      user.idUsuarios
+    );
+
+    return res.status(200).json({
+      status: "OK",
+      message: "Stock Actualizado correctamente",
       data: rowsSelect[0],
     });
   } catch (error) {

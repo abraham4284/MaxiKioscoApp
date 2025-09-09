@@ -14,7 +14,7 @@ export const TableProductosRegistros = ({ data, setDataToEdit }) => {
         <button
           className="btn btn-warning"
           data-bs-toggle="modal"
-          data-bs-target="#exampleModalProductos"
+          data-bs-target="#modalModificarCantidadProducto"
           onClick={()=> setDataToEdit(data)}
         >
           Editar

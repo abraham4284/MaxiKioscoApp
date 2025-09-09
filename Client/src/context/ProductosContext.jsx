@@ -4,6 +4,7 @@ import {
   getProductosRequest,
   createProductosRequest,
   updateProductosRequest,
+  updateStockProductosRequest,
   deleteProductosRequest,
 } from "../api/productos/productos.api.js";
 import Swal from "sweetalert2";
@@ -106,6 +107,29 @@ export const ProductosProvider = ({ children }) => {
     }
   };
 
+  const updateStockProductos = async (id, dataProductos) => {
+    try {
+      const { data } = await updateStockProductosRequest(id, dataProductos);
+      if (data.status === "OK") {
+        let newData = productos.map((el) =>
+          el.idProductos === id ? dataProductos : el
+        );
+        setProductos(newData);
+        setLoading(false);
+        setError(null);
+        return { success: true, message: data.message };
+      } else {
+        setLoading(false);
+        setError(data.message);
+        return { success: false, message: data.message };
+      }
+    } catch (error) {
+      console.log(error);
+      setError(error.message);
+      setLoading(false);
+    }
+  };
+
   const deleteProductos = (id) => {
     try {
       Swal.fire({
@@ -152,6 +176,7 @@ export const ProductosProvider = ({ children }) => {
         getProductos,
         createProductos,
         updateProductos,
+        updateStockProductos,
         deleteProductos,
 
         productoEncontrado,

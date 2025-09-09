@@ -4,22 +4,28 @@ import { ModalProductos } from "../../Stock/components/ModalProductos";
 import { useProductos } from "../../../context/ProductosContext";
 import { InformesStockCritico } from "../components/informes/InformesStockCritico";
 import { InformeMovimientoStock } from "../components/informes/InformeMovimientoStock";
-
+import { useUtilsState } from "../../../hooks";
+import { ModalReposicionStock } from "../components";
 
 export const ListarInformesPages = () => {
-  const [dataToEdit, setDataToEdit] = useState(null);
-  const { updateProductos } = useProductos();
+  const { dataEdit, addDataEdit } = useUtilsState();
+  const { updateStockProductos } = useProductos();
 
   return (
     <>
       <section className="container-fluid">
         <div className="container">
           <div className="row mt-5">
-            <InformesStockCritico setDataToEdit={setDataToEdit} />
+            <InformesStockCritico setDataToEdit={addDataEdit} />
             <InformeMovimientoStock />
           </div>
         </div>
-        <ModalProductos dataToEdit={dataToEdit} updateData={updateProductos} />
+        {/* <ModalProductos dataToEdit={dataEdit} updateData={updateProductos} /> */}
+        <ModalReposicionStock
+          dataToEdit={dataEdit}
+          setDataToEdit={addDataEdit}
+          updateStockProductos={updateStockProductos}
+        />
       </section>
     </>
   );

@@ -1,9 +1,9 @@
 import React, { useEffect, useState } from "react";
 import { formatearTotal } from "../../../../helpers/formatearTotal";
 import { Spiner } from "../../../../components/Spiner";
-import { TableRegistraciones } from "../TableRegistraciones";
+import { TableRegistraciones } from "../../../Dashboard/components/tables/TableRegistraciones";
 import { useRegistraciones } from "../../../../context/RegistracionesContext";
-import { CardDashboardGeneral } from "../../../Dashboard/components/CardDashboardGeneral";
+import { CardDashboardGeneral } from "../../../Dashboard/components/cards/CardDashboardGeneral";
 
 export const InformesVentasDiarias = () => {
   const [fecha, setFecha] = useState("");

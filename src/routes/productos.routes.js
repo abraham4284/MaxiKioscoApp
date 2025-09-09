@@ -5,7 +5,8 @@ import {
     createProductos,
     updateProductos,
     deleteProductos,
-    GetjoinProductosProveedores
+    GetjoinProductosProveedores,
+    updateStockProductos
 
 } from '../controllers/productos.controllers.js';
 import { authRequired } from '../middlewares/ValidarToken.js'
@@ -19,6 +20,7 @@ router.get('/prueba',authRequired, GetjoinProductosProveedores);
 
 router.post('/productos', authRequired, createProductos)
 router.put('/productos/:id',authRequired, updateProductos)
+router.put('/productosStock/:id',authRequired, updateStockProductos)
 
 router.delete('/productos/:id',authRequired, deleteProductos)
 
