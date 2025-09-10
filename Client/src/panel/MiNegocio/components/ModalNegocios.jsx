@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useNegocios } from "../../../context/NegociosContext";
-
+import Swal from "sweetalert2";
 
 const initialForm = {
   Nombre: "",
@@ -13,8 +13,6 @@ export const ModalNegocios = ({ dataToEdit }) => {
   const [form, setForm] = useState(initialForm);
 
   const { updateNegocios } = useNegocios();
-
-
 
   const handleChange = (e) => {
     setForm({
@@ -30,22 +28,38 @@ export const ModalNegocios = ({ dataToEdit }) => {
     });
   };
 
-
-  useEffect(()=>{
-    if(dataToEdit){
-        setForm(dataToEdit)
+  useEffect(() => {
+    if (dataToEdit) {
+      setForm(dataToEdit);
     }
-  },[dataToEdit])
+  }, [dataToEdit]);
 
-
-
-
- const handleSubmit = (e)=>{
-     e.preventDefault();
-     updateNegocios(dataToEdit.idNegocios, form)
- }
-
-
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    if (!form.Nombre || !form.Rubro || !form.Descripcion || !form.img) {
+      Swal.fire({
+        title: "Los campos no pueden ir vacios",
+        text: "todos los campos son obligatorios",
+        icon: "warning",
+      });
+      return;
+    }
+    const { success, message } = await updateNegocios(
+      dataToEdit.idNegocios,
+      form
+    );
+    if (success) {
+      Swal.fire({
+        title: message,
+        icon: "success",
+      });
+    } else {
+      Swal.fire({
+        title: message,
+        icon: "error",
+      });
+    }
+  };
 
   return (
     <div
