@@ -20,6 +20,7 @@ export const TableVentasRows = ({
         <button
           className="btn btn-outline-danger"
           onClick={() => handleEliminarCarrito(idProductos)}
+          disabled={estadoVenta}
          
         >
           <i className="fa-solid fa-trash"></i>
@@ -28,6 +29,7 @@ export const TableVentasRows = ({
           className="btn btn-outline-primary"
           data-bs-toggle="modal"
           data-bs-target="#ModalCantidad"
+          disabled={estadoVenta}
           onClick={() => setDataToEdit(carrito)}
          
         >

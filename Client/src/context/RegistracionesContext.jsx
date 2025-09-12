@@ -3,6 +3,7 @@ import {
   getRegistracionesRequest,
   getIdRegistracionesRequest,
   getIdRegistracionesDetallesRequest,
+  createRegistracionesRequest,
 } from "../api/registraciones/registraciones.api.js";
 import { fechaLocal } from "../helpers/fechaLocal.js";
 
@@ -209,9 +210,40 @@ export const RegistracionesProvider = ({ children }) => {
     }
   };
 
-  const handleResetFilterVentas = (data)=>{
+  const createRegistraciones = async (dataReg) => {
+    try {
+      const { data } = await createRegistracionesRequest(dataReg);
+      console.log(data, "data context");
+      console.log(data.idRegistraciones, "data idRegistraciones");
+      console.log(data.idRegistraciones, "data context");
+      console.log(data.NFactura, "data NFactura");
+      if (data.status === "OK") {
+        setRegistraciones([...registraciones, data.data]);
+        setLoading(false);
+        setError(null);
+        return {
+          success: true,
+          message: data.message,
+          idRegistraciones: data.idRegistraciones,
+          NFactura: data.NFactura,
+        };
+      } else {
+        setLoading(false);
+        setError(null);
+        return { success: false, message: data.message };
+      }
+    } catch (error) {
+      console.log({
+        error: error.message,
+        errorCompleto: error,
+        message: "Error en createRegistraciones Registraciones.jsx",
+      });
+    }
+  };
+
+  const handleResetFilterVentas = (data) => {
     setFiltroVentasPorRango(data);
-  }
+  };
   const handleResetTotales = () => {
     setTotalFechasPorRango("");
     setTotalPorFecha("");
@@ -245,6 +277,7 @@ export const RegistracionesProvider = ({ children }) => {
         getRegistraciones,
         getIdRegistraciones,
         getIdRegistracionesDetalles,
+        createRegistraciones,
         setRegistraciones,
         setLoading,
         setLoadingDetalles,
@@ -257,7 +290,7 @@ export const RegistracionesProvider = ({ children }) => {
         handleResetTotales,
         sumarTotalesPorRangoFechas,
         handleResetFilterVentas,
-        setFiltroVentasPorRango
+        setFiltroVentasPorRango,
       }}
     >
       {children}

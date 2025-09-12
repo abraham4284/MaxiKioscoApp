@@ -3,13 +3,8 @@ import Swal from "sweetalert2";
 import { TableVentasRows } from "./TableVentasRows";
 import { formatearTotal } from "../../../helpers/formatearTotal";
 import { Spiner } from "../../../components/Spiner";
-import { useCarrito } from "../../../context/CarritoContext";
-import { useProductos } from "../../../context/ProductosContext";
-import { useClientes } from "../../../context/ClientesContext";
-import { useRegistraciones } from "../../../context/RegistracionesContext";
-import { descargarTiket } from "../../../helpers/DescargarTicket";
 import { useNavigate } from "react-router-dom";
-import { createRegistracionesRequest } from "../../../api/registraciones/registraciones.api";
+
 
 export const TableVentas = ({
   inputProductos,
@@ -22,6 +17,16 @@ export const TableVentas = ({
   setInputDNI,
   setDataToEdit,
   dataAll,
+  carrito,
+  deleteProductoCarrito,
+  sumarTotalCarrito,
+  totalCarrito,
+  resetCarrito,
+  busquedaProducto,
+  productoEncontrado,
+  setLoading,
+  createRegistraciones,
+  resetClientesEncontrado
 }) => {
   /*
     0- Sin nada
@@ -31,16 +36,6 @@ export const TableVentas = ({
   */
   const [estadoVenta, setEstadoVenta] = useState(0);
 
-  const {
-    carrito,
-    deleteProductoCarrito,
-    sumarTotalCarrito,
-    totalCarrito,
-    resetCarrito,
-  } = useCarrito();
-  const { busquedaProducto, productoEncontrado } = useProductos();
-  const { resetClientesEncontrado } = useClientes();
-  const { setRegistraciones, registraciones, setLoading } = useRegistraciones();
 
   const navigate = useNavigate();
 
@@ -87,34 +82,29 @@ export const TableVentas = ({
     }
     setEstadoVenta(1);
     try {
-      const { data } = await createRegistracionesRequest({
+      const { idRegistraciones, NFactura } = await createRegistraciones({
         ventas: carrito,
         idClientes: dataAll?.idClientes || null,
       });
-      if (data.message === "Venta registrada") {
-        setRegistraciones([...registraciones, data]);
-        setLoading(false);
-        resetClientesEncontrado();
-        setInputDNI("");
-        resetCarrito();
-        setEstadoVenta(2);
-        Swal.fire({
-          title: "Descargar Ticket?",
-          showDenyButton: true,
-          showCancelButton: true,
-          confirmButtonText: "Descargar",
-          denyButtonText: `Ver venta`,
-        }).then((result) => {
-          if (result.isConfirmed) {
-            descargarTiket(data.idRegistraciones, data.NFactura);
-            Swal.fire("Revise sus descargas!", "", "success");
-          } else if (result.isDenied) {
-            navigate(`/panel/informes/${data.idRegistraciones}`);
-          }
-        });
-      } else {
-        setEstadoVenta(3);
-      }
+      setLoading(false);
+      resetClientesEncontrado();
+      setInputDNI("");
+      resetCarrito();
+      setEstadoVenta(2);
+      Swal.fire({
+        title: "Descargar Ticket?",
+        showDenyButton: true,
+        showCancelButton: true,
+        confirmButtonText: "Descargar",
+        denyButtonText: `Ver venta`,
+      }).then(async (result) => {
+        if (result.isConfirmed) {
+          await descargarTiket(idRegistraciones, NFactura);
+          Swal.fire("Revise sus descargas!", "", "success");
+        } else if (result.isDenied) {
+          navigate(`/panel/informes/${idRegistraciones}`);
+        }
+      });
 
       setEstadoVenta(0);
     } catch (error) {
@@ -189,6 +179,7 @@ export const TableVentas = ({
                       carrito={datos}
                       handleEliminarCarrito={deleteProductoCarrito}
                       setDataToEdit={setDataToEdit}
+                      estadoVenta = {estadoVenta}
                     />
                   ))
                 ) : (

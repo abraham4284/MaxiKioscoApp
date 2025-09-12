@@ -145,14 +145,27 @@ export const crearRegistraciones = async (req, res) => {
       ]);
     });
 
+    const newRegistracion = {
+      idRegistraciones,
+      numeroFactura,
+      Fecha,
+      TotalCosto,
+      Total,
+      idClientes,
+      idProductos,
+      idUsuarios: user.idUsuarios,
+    };
+
     await Promise.all(queries);
     await conn.commit();
     conn.release();
 
-    res.json({
+    return res.status(200).json({
+      status: "OK",
       message: "Venta registrada",
       idRegistraciones: resultRegistraciones.insertId,
       NFactura: numeroFactura,
+      data: newRegistracion,
     });
   } catch (error) {
     res.status(500).json({ error: "Error en el servidor" });

@@ -43,6 +43,7 @@ export const InformesStockCritico = ({ setDataToEdit,productos }) => {
                 <table className="table ">
                   <thead>
                     <tr>
+                      <th>Img</th>
                       <th>CodeBar</th>
                       <th>Descripcion</th>
                       <th>Precio</th>

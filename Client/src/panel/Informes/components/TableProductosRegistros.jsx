@@ -1,9 +1,22 @@
 import React from "react";
 
 export const TableProductosRegistros = ({ data, setDataToEdit }) => {
-  const { CodeBar, Descripcion, Familia, Precio, Stock, tipoProducto } = data;
+  const { img, CodeBar, Descripcion, Familia, Precio, Stock, tipoProducto } =
+    data;
   return (
     <tr>
+      <td>
+        <img
+          src={img}
+          alt=""
+          style={{
+            width: "50px",
+            height: "50px",
+            objectFit: "cover",
+            borderRadius: "1.5rem",
+          }}
+        />
+      </td>
       <td>{CodeBar}</td>
       <td> {Descripcion}</td>
       <td> {Precio} </td>

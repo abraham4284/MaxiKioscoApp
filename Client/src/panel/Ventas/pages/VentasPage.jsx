@@ -8,17 +8,30 @@ import { useRegistraciones } from "../../../context/RegistracionesContext.jsx";
 import { ModalCantidadProducto } from "../components/productos/ModalCantidadProducto.jsx";
 import { ModalSearchProductos } from "../components/productos/ModalSearchProductos.jsx";
 import { ModalTableClientes } from "../components/productos/ModalTableClientes.jsx";
+import { useCarrito } from "../../../context/CarritoContext.jsx";
 
 export const VentasPage = () => {
-  const { getClientes, clientes,loading } = useClientes();
-  const { getProductos, productoEncontrado } =
-    useProductos();
+  const { getClientes, clientes, loading } = useClientes();
+  const { getProductos, productoEncontrado, busquedaProducto } = useProductos();
   const { getRegistraciones } = useRegistraciones();
+
+  const [estadoVenta, setEstadoVenta] = useState(0);
+
+  const {
+    carrito,
+    deleteProductoCarrito,
+    sumarTotalCarrito,
+    totalCarrito,
+    resetCarrito,
+  } = useCarrito();
+
+  const { resetClientesEncontrado } = useClientes();
+  const { setLoading, createRegistraciones } = useRegistraciones();
 
   const [inputProductos, setInputProductos] = useState([]);
   const [inputDNI, setInputDNI] = useState("");
   const [dataToEdit, setDataToEdit] = useState(null);
-  const [dataAll, setDataAll ] = useState(null);
+  const [dataAll, setDataAll] = useState(null);
 
   // Ref
   const btnAgregar = useRef(null);
@@ -88,10 +101,9 @@ export const VentasPage = () => {
     };
   }, []);
 
-  const addData = (data)=>{
+  const addData = (data) => {
     setDataAll(data);
-  }
-
+  };
 
   return (
     <>
@@ -117,7 +129,17 @@ export const VentasPage = () => {
                   setInputProductos={setInputProductos}
                   setInputDNI={setInputDNI}
                   setDataToEdit={setDataToEdit}
-                  dataAll = {dataAll}
+                  dataAll={dataAll}
+                  busquedaProducto={busquedaProducto}
+                  carrito={carrito}
+                  createRegistraciones={createRegistraciones}
+                  deleteProductoCarrito={deleteProductoCarrito}
+                  productoEncontrado={productoEncontrado}
+                  resetCarrito={resetCarrito}
+                  setLoading={setLoading}
+                  sumarTotalCarrito={sumarTotalCarrito}
+                  totalCarrito={totalCarrito}
+                  resetClientesEncontrado = {resetClientesEncontrado}
                 />
                 {/* End Tabla de ventas */}
               </div>
@@ -145,7 +167,7 @@ export const VentasPage = () => {
           loading={loading}
           data={clientes}
           addData={addData}
-          dataAll = {dataAll}
+          dataAll={dataAll}
         />
       </div>
     </>
