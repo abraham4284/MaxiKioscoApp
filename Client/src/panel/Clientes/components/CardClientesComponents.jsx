@@ -36,37 +36,20 @@ export const CardClientesComponents = ({
     });
   };
 
-  const handleSubmit = async (e) => {
+  const handleSubmit = (e) => {
     e.preventDefault();
-    if (
-      !form.CUIT ||
-      !form.Nombre ||
-      !form.Apellido ||
-      !form.Correo ||
-      !form.Domicilio
-    ) {
+    if(!form.CUIT || !form.Nombre || !form.Apellido || !form.Correo || !form.Domicilio){
       Swal.fire({
-        title: "Los campos no se pueden enviar vacios",
-        text: "Todos los campos son obligatorios",
-        icon: "warning",
-      });
+        title:"Los campos no se pueden enviar vacios",
+        text:"Todos los campos son obligatorios",
+        icon:"warning"
+      })
       return;
     }
     if (form.idClientes === null) {
-      const { success, message } = await createClientes(form);
-      Swal.fire({
-        title: message,
-        icon: success ? "success" : "error",
-      });
+      createClientes(form);
     } else {
-      const { success, message } = await updateClientes(
-        dataToEdit.idClientes,
-        form
-      );
-      Swal.fire({
-        title: message,
-        icon: success ? "success" : "error",
-      });
+      updateClientes(dataToEdit.idClientes, form);
     }
 
     handleReset();

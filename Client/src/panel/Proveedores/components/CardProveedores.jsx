@@ -17,7 +17,7 @@ export const CardProveedores = ({
 }) => {
   const [form, setForm] = useState(initialForm);
 
-  const { createProveedores, updateProveedores } = useProveedores();
+  const { createProveedores, updateProveedores} = useProveedores();
 
   useEffect(() => {
     if (dataToEdit) {
@@ -34,7 +34,7 @@ export const CardProveedores = ({
     });
   };
 
-  const handleSubmit = async (e) => {
+  const handleSubmit = (e) => {
     e.preventDefault();
     if (!form.CUIT || !form.Nombre || !form.Correo || !form.Domicilio) {
       Swal.fire({
@@ -45,20 +45,9 @@ export const CardProveedores = ({
       return;
     }
     if (form.idProveedores === null) {
-      const { success, message } = await createProveedores(form);
-      Swal.fire({
-        title: message,
-        icon: success ? "success" : "error",
-      });
+      createProveedores(form);
     } else {
-      const { success, message } = await updateProveedores(
-        dataToEdit.idProveedores,
-        form
-      );
-      Swal.fire({
-        title: message,
-        icon: success ? "success" : "error",
-      });
+      updateProveedores(form);
     }
 
     handleReset();

@@ -3,9 +3,16 @@ import { TableProductosRegistros } from "../TableProductosRegistros";
 import { useProductos } from "../../../../context/ProductosContext";
 
 
-export const InformesStockCritico = ({ setDataToEdit,productos }) => {
+export const InformesStockCritico = ({ setDataToEdit }) => {
   const [stockCri, setStockCri] = useState("10");
+  const [filterStockCriticoData ,setFilterStockCriticoData] = useState([]);
+  const { productos, getProductos } = useProductos();
+
   
+
+  useEffect(()=>{
+    getProductos()
+  },[])
   const handleChangeStockCritico = (e) => {
     setStockCri(e.target.value);
   };

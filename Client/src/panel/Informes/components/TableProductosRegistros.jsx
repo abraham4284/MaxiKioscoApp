@@ -12,12 +12,12 @@ export const TableProductosRegistros = ({ data, setDataToEdit }) => {
       <td>{tipoProducto}</td>
       <td>
         <button
-          className="btn btn-primary"
+          className="btn btn-warning"
           data-bs-toggle="modal"
-          data-bs-target="#modalModificarCantidadProducto"
-          onClick={() => setDataToEdit(data)}
+          data-bs-target="#exampleModalProductos"
+          onClick={()=> setDataToEdit(data)}
         >
-          <i className="fa-solid fa-plus"></i>
+          Editar
         </button>
       </td>
     </tr>

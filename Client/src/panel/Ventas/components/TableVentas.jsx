@@ -21,7 +21,6 @@ export const TableVentas = ({
   setInputProductos,
   setInputDNI,
   setDataToEdit,
-  dataAll,
 }) => {
   /*
     0- Sin nada
@@ -87,10 +86,7 @@ export const TableVentas = ({
     }
     setEstadoVenta(1);
     try {
-      const { data } = await createRegistracionesRequest({
-        ventas: carrito,
-        idClientes: dataAll?.idClientes || null,
-      });
+      const { data } = await createRegistracionesRequest(carrito);
       if (data.message === "Venta registrada") {
         setRegistraciones([...registraciones, data]);
         setLoading(false);
@@ -121,6 +117,8 @@ export const TableVentas = ({
       console.log(error);
     }
   };
+
+  console.log(carrito)
 
   if (estadoVenta === 0) {
     false;

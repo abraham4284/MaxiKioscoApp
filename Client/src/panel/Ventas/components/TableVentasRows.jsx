@@ -1,11 +1,6 @@
 import React from "react";
 
-export const TableVentasRows = ({
-  carrito,
-  handleEliminarCarrito,
-  setDataToEdit,
-  estadoVenta,
-}) => {
+export const TableVentasRows = ({ carrito, handleEliminarCarrito, setDataToEdit }) => {
   const { idProductos, CodeBar, Descripcion, Precio, Cantidad, SubTotal } =
     carrito;
 
@@ -20,7 +15,6 @@ export const TableVentasRows = ({
         <button
           className="btn btn-outline-danger"
           onClick={() => handleEliminarCarrito(idProductos)}
-         
         >
           <i className="fa-solid fa-trash"></i>
         </button>
@@ -28,8 +22,7 @@ export const TableVentasRows = ({
           className="btn btn-outline-primary"
           data-bs-toggle="modal"
           data-bs-target="#ModalCantidad"
-          onClick={() => setDataToEdit(carrito)}
-         
+          onClick={()=> setDataToEdit(carrito)}
         >
           <i className="fa-solid fa-plus"></i>
         </button>

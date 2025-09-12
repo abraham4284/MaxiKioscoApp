@@ -5,20 +5,23 @@ import { CardTableProductos } from "../components/CardTableProductos.jsx";
 import { useProductos } from "../../../context/ProductosContext.jsx";
 
 export const ListarProductosPage = () => {
+
   const [dataToEdit, setDataToEdit] = useState(null);
-  const { productos, getProductos } = useProductos();
+  const { productos , getProductos } = useProductos();
   const [filterProductos, setFilterProductos] = useState([]);
 
+
+
   useEffect(() => {
-    getProductos();
+    getProductos()
   }, []);
 
   const handleInput = (e) => {
     e.preventDefault();
     const searchInput = e.target.value.toLocaleLowerCase();
     if (searchInput === "") {
-      getProductos();
-      setFilterProductos([]);
+       getProductos()
+       setFilterProductos([])
     } else {
       const filterProductos = productos.filter((datos) => {
         return datos.Descripcion.toLocaleLowerCase().includes(searchInput);
@@ -29,14 +32,21 @@ export const ListarProductosPage = () => {
 
   let productosFinal = filterProductos.length > 0 ? filterProductos : productos;
 
+  
+
   return (
-    <div className="container">
-      <CardProductos
-        handleInput={handleInput}
-        dataToEdit={dataToEdit}
-        setDataToEdit={setDataToEdit}
-      />
-      <CardTableProductos data={productosFinal} setDataToEdit={setDataToEdit} />
-    </div>
+    <>
+      <div className="container">
+        <CardProductos
+          handleInput={handleInput}
+          dataToEdit={dataToEdit}
+          setDataToEdit={setDataToEdit}
+        />
+        <CardTableProductos
+          data = {productosFinal}
+          setDataToEdit={setDataToEdit}
+        />
+      </div>
+    </>
   );
 };
