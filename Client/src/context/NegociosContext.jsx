@@ -21,7 +21,6 @@ export const NegociosProvider = ({ children }) => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
-
   const getNegocios = async () => {
     try {
       const { data } = await getNegociosRequest();
@@ -39,44 +38,53 @@ export const NegociosProvider = ({ children }) => {
     }
   };
 
-  const createNegocio = async (data) => {
+  const createNegocio = async (dataNegocio) => {
     try {
-      const { data: dataNegocio } = await createNegociosRequest(data);
-      if (!dataNegocio) {
-        setNegocios([]);
+      const { data } = await createNegociosRequest(dataNegocio);
+      if (data.status === "OK") {
+        setNegocios([...negocios, dataNegocio]);
         setLoading(false);
-        setError(dataNegocio);
+        setError(null);
+        return { success: true, message: data.message };
+      } else {
+        setLoading(false);
+        setError(data.message);
+        return { success: false, message: data.message };
       }
-      setNegocios([...negocios, dataNegocio]);
-      setLoading(false);
-      setError(null);
     } catch (error) {
       console.log({
         error: error.message,
         errorCompleto: error,
         message: "Errore en CreateNegocio ",
       });
+      const { response: { data: { message } } = {} } = error;
+      console.log(error, "Error en createNegocio ClientesContext");
+      return { success: false, message: message || "Error del servidor" };
     }
   };
 
-  const updateNegocios = async (id,data) => {
+  const updateNegocios = async (id, dataNegocio) => {
     try {
-      const { data: dataNegocio } = await updateNegociosRequest(id,data);
-      if (!dataNegocio) {
+      const { data } = await updateNegociosRequest(id, dataNegocio);
+      if (data.status === "OK") {
+        let newData = negocios.map((el) =>
+          el.idNegocios === id ? dataNegocio : el
+        );
+        setNegocios(newData);
+        setLoading(false);
+        setError(null);
+        return { success: true, message: data.message };
+      } else {
         setNegocios([]);
         setLoading(false);
-        setError(dataNegocio);
+        setError(data.message);
+        return { success: false, message: data.message };
       }
-
-      let newData = negocios.map((el) =>
-        el.idNegocios === id ? data : el
-      );
-      setNegocios(newData);
-      setLoading(false);
-      setError(null);
     } catch (error) {
       console.log(error);
-      setLoading(false);
+      const { response: { data: { message } } = {} } = error;
+      console.log(error, "Error en updateNegocios ClientesContext");
+      return { success: false, message: message || "Error del servidor" };
     }
   };
 

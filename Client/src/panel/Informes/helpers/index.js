@@ -1,0 +1,1 @@
+export { renderIconoMovimiento} from './renderIconoMovimiento'

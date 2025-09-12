@@ -24,8 +24,6 @@ export const ClientesProvider = ({ children }) => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
- 
-
   const getClientes = async () => {
     try {
       const { data } = await getClientesRequest();
@@ -50,16 +48,10 @@ export const ClientesProvider = ({ children }) => {
   const buscarClientesPorDNI = async (CUIT) => {
     try {
       let busqueda = clientes.find((el) => el.CUIT === CUIT);
-      console.log(busqueda, "Soy la busquedael resultado");
       if (busqueda) {
         setClienteEncontrado(busqueda);
-        console.log(clienteEncontrado, "Soy el cliente encontrado");
       } else {
         setClienteEncontrado("Consumidor Final");
-        console.log(
-          clienteEncontrado,
-          "Soy el cliente encontrado por si no se encuentra"
-        );
       }
     } catch (error) {
       console.log({
@@ -78,17 +70,20 @@ export const ClientesProvider = ({ children }) => {
     setClientes([]);
   };
 
-  const createClientes = async (data) => {
+  const createClientes = async (dataCliente) => {
     try {
-      const { data: dataClientes } = await createClientesRequest(data);
-      if (!dataClientes) {
+      const { data } = await createClientesRequest(dataCliente);
+      if (data.status === "OK") {
+        setClientes([...clientes, data.data]);
+        setLoading(false);
+        setError(null);
+        return { success: true, message: data.message };
+      } else {
         setClientes(null);
         setLoading(false);
         setError(null);
+        return { success: false, message: data.message };
       }
-      setClientes([...clientes, dataClientes]);
-      setLoading(false);
-      setError(null);
     } catch (error) {
       console.log({
         error: error.message,
@@ -98,19 +93,22 @@ export const ClientesProvider = ({ children }) => {
     }
   };
 
-  const updateClientes = async (id, data) => {
+  const updateClientes = async (id, dataClientes) => {
     try {
-      const { data: dataClientes } = await updateClientesRequest(id, data);
-      if (!dataClientes) {
-        setClientes(null);
+      const { data } = await updateClientesRequest(id, dataClientes);
+      if (data.status === "OK") {
+        let newData = clientes.map((el) =>
+          el.idClientes === id ? dataClientes : el
+        );
+        setClientes(newData);
         setLoading(false);
         setError(null);
+        return { success: true, message: data.message };
+      } else {
+        setLoading(false);
+        setError(null);
+        return { success: false, message: data.message };
       }
-
-      let newData = clientes.map((el) => (el.idClientes === id ? data : el));
-      setClientes(newData);
-      setLoading(false);
-      setError(null);
     } catch (error) {
       console.log({
         error: error.message,

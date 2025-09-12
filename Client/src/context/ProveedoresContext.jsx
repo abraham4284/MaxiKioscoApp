@@ -65,18 +65,19 @@ export const ProveedoresProvider = ({ children }) => {
     }
   };
 
-  const createProveedores = async (data) => {
+  const createProveedores = async (dataProveedores) => {
     try {
-      const { data: dataProveedores } = await createProveedoresRequest(data);
-      if (!dataProveedores) {
-        setProveedores(null);
+      const { data } = await createProveedoresRequest(dataProveedores);
+      if (data.status === "OK") {
+        setProveedores([...proveedores, data.data]);
         setLoading(false);
-        setError(dataProveedores);
+        setError(null);
+        return { success: true, message: data.message };
+      } else {
+        setLoading(false);
+        setError(data.message);
+        return { success: false, message: data.message };
       }
-
-      setProveedores([...proveedores, dataProveedores]);
-      setLoading(false);
-      setError(null);
     } catch (error) {
       console.log({
         error: error.message,
@@ -86,23 +87,24 @@ export const ProveedoresProvider = ({ children }) => {
     }
   };
 
-  const updateProveedores = async (id, data) => {
+  const updateProveedores = async (id, dataProveedores) => {
     try {
-      const { data: dataProveedores } = await updateProveedoresRequest(
-        id,
-        data
-      );
-      if (!dataProveedores) {
+      console.log(id,dataProveedores,'lo que llega')
+      const { data } = await updateProveedoresRequest(id, dataProveedores);
+      if (data.status === "OK") {
+        let newData = proveedores.map((el) =>
+          el.idProveedores === id ? dataProveedores : el
+        );
+        setProveedores(newData);
+        setLoading(false);
+        setError(null);
+        return { success: true, message: data.message };
+      } else {
         setProveedores(null);
         setLoading(false);
-        setError(dataProveedores);
+        setError(data.message);
+        return { success: false, message: data.message };
       }
-      let newData = proveedores.map((el) =>
-        el.idProveedores === id ? data : el
-      );
-      setProveedores(newData);
-      setLoading(false);
-      setError(null);
     } catch (error) {
       console.log({
         error: error.message,
@@ -125,16 +127,18 @@ export const ProveedoresProvider = ({ children }) => {
       }).then(async (result) => {
         if (result.isConfirmed) {
           const { data } = await deleteProveedoresRequest(id);
-          if (!data) {
+          if (data.status === "OK") {
+            let newData = proveedores.filter((el) => el.idProveedores !== id);
+            setProveedores(newData);
+            setLoading(false);
+            setError(null);
+            return { success: true, message: data.message };
+          } else {
             setProveedores(null);
             setLoading(false);
             setError(null);
+            return { success: false, message: data.message };
           }
-
-          let newData = clientes.filter((el) => el.idProveedores !== id);
-          setProveedores(newData);
-          setLoading(false);
-          setError(null);
         }
       });
     } catch (error) {
@@ -143,6 +147,9 @@ export const ProveedoresProvider = ({ children }) => {
         errorCompleto: error,
         message: "Error en deleteProveedores ClientesContext.jsx",
       });
+      const mensaje =
+        error.response?.data?.message || error.message || "Error desconocido";
+      return { success: false, message: mensaje };
     }
   };
 
@@ -157,7 +164,7 @@ export const ProveedoresProvider = ({ children }) => {
         getIdProveedores,
         createProveedores,
         updateProveedores,
-        deleteProveedores
+        deleteProveedores,
       }}
     >
       {children}

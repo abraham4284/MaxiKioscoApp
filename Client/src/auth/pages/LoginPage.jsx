@@ -3,7 +3,6 @@ import "../style/Form.css";
 import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "../../context/AuthContext";
 import Swal from "sweetalert2";
-import { NavbarSocial } from "../../components/NavbarSocial";
 import { Spiner } from "../../components/Spiner";
 
 export const LoginPage = () => {

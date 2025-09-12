@@ -4,6 +4,7 @@ import {
   getProductosRequest,
   createProductosRequest,
   updateProductosRequest,
+  updateStockProductosRequest,
   deleteProductosRequest,
 } from "../api/productos/productos.api.js";
 import Swal from "sweetalert2";
@@ -23,7 +24,6 @@ export const ProductosProvider = ({ children }) => {
   const [productoEncontrado, setProductoEncontrado] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-
 
   const getProductos = async () => {
     try {
@@ -63,18 +63,20 @@ export const ProductosProvider = ({ children }) => {
     setProductoEncontrado([]);
   };
 
-  const createProductos = async (data) => {
+  const createProductos = async (dataProductos) => {
     try {
-      const { data: dataProductos } = await createProductosRequest(data);
-      if (!dataProductos) {
+      const { data } = await createProductosRequest(dataProductos);
+      if (data.status === "OK") {
+        setProductos([...productos, data.data]);
+        setLoading(false);
+        setError(null);
+        return { success: true, message: data.message };
+      } else {
         setProductos(null);
         setLoading(false);
-        setError(dataProductos);
+        setError(data.message);
+        return { success: false, message: data.message };
       }
-
-      setProductos([...productos, dataProductos]);
-      setLoading(false);
-      setError(null);
     } catch (error) {
       console.log(error);
       setLoading(false);
@@ -82,21 +84,45 @@ export const ProductosProvider = ({ children }) => {
     }
   };
 
-  const updateProductos = async (id,data) => {
+  const updateProductos = async (id, dataProductos) => {
     try {
-      const { data: dataProductos } = await updateProductosRequest(id,data);
-      if (!dataProductos) {
-        setProductos(null);
+      const { data } = await updateProductosRequest(id, dataProductos);
+      if (data.status === "OK") {
+        let newData = productos.map((el) =>
+          el.idProductos === id ? dataProductos : el
+        );
+        setProductos(newData);
         setLoading(false);
-        setError(dataProductos);
+        setError(null);
+        return { success: true, message: data.message };
+      } else {
+        setLoading(false);
+        setError(data.message);
+        return { success: false, message: data.message };
       }
-
-      let newData = productos.map((el) =>
-        el.idProductos === id ? data : el
-      );
-      setProductos(newData);
+    } catch (error) {
+      console.log(error);
+      setError(error.message);
       setLoading(false);
-      setError(null);
+    }
+  };
+
+  const updateStockProductos = async (id, dataProductos) => {
+    try {
+      const { data } = await updateStockProductosRequest(id, dataProductos);
+      if (data.status === "OK") {
+        let newData = productos.map((el) =>
+          el.idProductos === id ? dataProductos : el
+        );
+        setProductos(newData);
+        setLoading(false);
+        setError(null);
+        return { success: true, message: data.message };
+      } else {
+        setLoading(false);
+        setError(data.message);
+        return { success: false, message: data.message };
+      }
     } catch (error) {
       console.log(error);
       setError(error.message);
@@ -141,6 +167,10 @@ export const ProductosProvider = ({ children }) => {
     }
   };
 
+  const resetProductos = () =>{
+    setProductos([]);
+  }
+
   return (
     <ProductosContext.Provider
       value={{
@@ -150,11 +180,13 @@ export const ProductosProvider = ({ children }) => {
         getProductos,
         createProductos,
         updateProductos,
+        updateStockProductos,
         deleteProductos,
 
         productoEncontrado,
         busquedaProducto,
         resetProductoEncontrado,
+        resetProductos
       }}
     >
       {children}

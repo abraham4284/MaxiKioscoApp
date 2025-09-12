@@ -33,19 +33,30 @@ export const FormNegocios = () => {
     setForm(initialForm);
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     if (!form.Nombre || !form.Rubro || !form.Descripcion || !form.img) {
       Swal.fire({
         title: "Los campos no pueden ir vacios",
-        text: "Los campos usuarios y password son obligatorios",
+        text: "todos los campos son obligatorios",
         icon: "warning",
       });
       return;
     }
-    createNegocio(form);
-    navigate("/panel/ventas");
-    handleReset();
+    const { success, message } = await createNegocio(form);
+    if (success) {
+      Swal.fire({
+        title: message,
+        icon: "success",
+      });
+      navigate("/panel/ventas");
+      handleReset();
+    } else {
+      Swal.fire({
+        title: message,
+        icon: "error",
+      });
+    }
 
     // console.log(form)
   };
@@ -74,7 +85,6 @@ export const FormNegocios = () => {
             <form
               onSubmit={handleSubmit}
               className="m-auto mt-3 form-negocio border border-1"
-             
             >
               <div className="mb-3">
                 <label form="exampleInputEmail1" className="form-label">
@@ -109,7 +119,6 @@ export const FormNegocios = () => {
                   <option value="MaxiKioscos">MaxiKioscos</option>
                   <option value="Otros">Otros</option>
                 </select>
-               
               </div>
               <div className="mb-3">
                 <label form="exampleInputEmail1" className="form-label">
@@ -122,7 +131,6 @@ export const FormNegocios = () => {
                   value={form.Descripcion}
                   onChange={handleChange}
                 />
-                
               </div>
               <div className="mb-3">
                 <label form="exampleInputEmail1" className="form-label">
