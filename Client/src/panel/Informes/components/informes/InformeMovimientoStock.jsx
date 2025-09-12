@@ -2,36 +2,9 @@ import React, { useEffect, useState } from "react";
 import { Spiner } from "../../../../components/Spiner";
 import { TableMovientosStockRegistros } from "../TableMovientosStockRegistros";
 import { getMovimientosRequest } from "../../../../api/movimientos/movimientos.api";
+import { renderIconoMovimiento } from "../../helpers";
 
-export const InformeMovimientoStock = () => {
-  const [movimientos, setMovimientos] = useState([]);
-  const [error, setError] = useState(null);
-  const [loadingMovimientos, setLoadingMovimientos] = useState(true);
-  const getMovimientos = async () => {
-    try {
-      const { data } = await getMovimientosRequest();
-      if (!data) {
-        setMovimientos(null);
-        setLoadingMovimientos(false);
-        setError(data);
-      }
-      setMovimientos(data);
-      setLoadingMovimientos(false);
-      setError(null);
-    } catch (error) {
-      console.log({
-        error: error,
-        errorCompleto: error,
-        message: "Error en getMovimientos InformesStockCritico.jsx",
-      });
-    }
-  };
-
-  useEffect(() => {
-    getMovimientos();
-  }, []);
-
-  
+export const InformeMovimientoStock = ({ movimientos, loading }) => {
   return (
     <div className="col-sm-12 mt-3">
       <div className="card">
@@ -48,6 +21,7 @@ export const InformeMovimientoStock = () => {
                 <table className="table">
                   <thead>
                     <tr>
+                      <th>IMG</th>
                       <th>Fecha</th>
                       <th>CodeBar</th>
                       <th>Descripcion</th>
@@ -56,7 +30,7 @@ export const InformeMovimientoStock = () => {
                     </tr>
                   </thead>
                   <tbody className="table-group-divider">
-                    {loadingMovimientos ? (
+                    {loading ? (
                       <tr>
                         <td colSpan="3">
                           {" "}
@@ -68,6 +42,7 @@ export const InformeMovimientoStock = () => {
                         <TableMovientosStockRegistros
                           key={datos.idMovimientoStock}
                           data={datos}
+                          renderIconoMovimiento={renderIconoMovimiento}
                         />
                       ))
                     ) : (

@@ -167,6 +167,10 @@ export const ProductosProvider = ({ children }) => {
     }
   };
 
+  const resetProductos = () =>{
+    setProductos([]);
+  }
+
   return (
     <ProductosContext.Provider
       value={{
@@ -182,6 +186,7 @@ export const ProductosProvider = ({ children }) => {
         productoEncontrado,
         busquedaProducto,
         resetProductoEncontrado,
+        resetProductos
       }}
     >
       {children}

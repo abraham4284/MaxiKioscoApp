@@ -1,5 +1,6 @@
 import React, { useEffect } from "react";
 import { useForm } from "../../../hooks";
+import { motivosMovimientoStock } from "../../const";
 import Swal from "sweetalert2";
 
 const initialForm = {
@@ -11,6 +12,7 @@ export const ModalReposicionStock = ({
   dataToEdit,
   setDataToEdit,
   updateStockProductos,
+  getMovimientos,
 }) => {
   const { Stock, Motivo, formSate, onInputChange, onResetForm, setFormSate } =
     useForm(initialForm);
@@ -35,7 +37,7 @@ export const ModalReposicionStock = ({
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    if (!Stock && !Motivo) {
+    if (!Stock || !Motivo) {
       Swal.fire({
         title: "Los campos no se pueden enviar vacios",
         text: "Todos los campos son obligatorios",
@@ -54,7 +56,7 @@ export const ModalReposicionStock = ({
       dataToEdit.idProductos,
       data
     );
-
+    success ? getMovimientos() : null;
     Swal.fire({
       title: message,
       icon: success ? "success" : "error",
@@ -117,33 +119,9 @@ export const ModalReposicionStock = ({
                   <option value="">
                     Seleccione una opcion de modificacion
                   </option>
-                  <option value="+/-Cambio de precio">
-                    +/-Cambio de precio
-                  </option>
-                  <option value="+Compra de Mercaderia">
-                    +Compra de Mercaderia
-                  </option>
-                  <option value="-Venta no Registrada<">
-                    -Venta no Registrada
-                  </option>
-                  <option value="+/-Ajuste Manual de Stock">
-                    +/-Ajuste Manual de Stock
-                  </option>
-                  <option value="+Reposicion de Proveedor">
-                    +Reposicion de Proveedor
-                  </option>
-                  <option value="-Devolucion a Proveedor">
-                    -Devolucion a Proveedor
-                  </option>
-                  <option value="+Devolucion de Cliente">
-                    +Devolucion de Cliente
-                  </option>
-                  <option value="-Reposicion a Cliente">
-                    -Reposicion a Cliente
-                  </option>
-                  <option value="-Rotura/Daño/Vencimiento">
-                    -Rotura/Daño/Vencimiento
-                  </option>
+                  {motivosMovimientoStock.map((el) => (
+                    <option value={el.value}>{el.label}</option>
+                  ))}
                 </select>
               </div>
 

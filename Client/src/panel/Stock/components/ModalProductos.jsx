@@ -1,7 +1,10 @@
 import React, { useEffect, useState } from "react";
 import { useProveedores } from "../../../context/ProveedoresContext";
 import { useProductos } from "../../../context/ProductosContext";
+import { formatearTotal } from "../../../helpers";
+import { motivosMovimientoStock } from "../../const";
 import Swal from "sweetalert2";
+import Big from "big.js";
 
 const initialForm = {
   idProductos: null,
@@ -79,6 +82,7 @@ export const ModalProductos = ({ dataToEdit, setDataToEdit }) => {
     if (
       !form.CodeBar ||
       !form.Descripcion ||
+      !form.precioCosto ||
       !form.Precio ||
       !form.Stock ||
       !form.Familia ||
@@ -91,6 +95,21 @@ export const ModalProductos = ({ dataToEdit, setDataToEdit }) => {
       });
       return;
     }
+    const precioCostoBig = new Big(form.precioCosto);
+    const precioVentaBig = new Big(form.Precio);
+
+    if (precioCostoBig.gte(precioVentaBig)) {
+      return Swal.fire({
+        title: "Verifique los datos ingresados",
+        text: `El precio de costo ${formatearTotal(
+          precioCostoBig.toString()
+        )} no pude ser mayor o igual al precio de venta ${formatearTotal(
+          precioVentaBig.toString()
+        )}`,
+        icon: "question",
+      });
+    }
+
     if (form.idProductos === null) {
       form.Stock = parseFloat(form.Stock);
       const { success, message } = await createProductos(form);
@@ -101,6 +120,12 @@ export const ModalProductos = ({ dataToEdit, setDataToEdit }) => {
       });
     } else {
       form.Motivo = dataToEdit ? form.Motivo : null;
+      if (!form.Motivo) {
+        return Swal.fire({
+          title: "El motivo es obligatorio",
+          icon: "warning",
+        });
+      }
       const { success, message } = await updateProductos(
         dataToEdit.idProductos,
         form
@@ -239,33 +264,9 @@ export const ModalProductos = ({ dataToEdit, setDataToEdit }) => {
                     <option value="">
                       Seleccione una opcion de modificacion
                     </option>
-                    <option value="+/-Cambio de precio">
-                      +/-Cambio de precio
-                    </option>
-                    <option value="+Compra de Mercaderia">
-                      +Compra de Mercaderia
-                    </option>
-                    <option value="-Venta no Registrada<">
-                      -Venta no Registrada
-                    </option>
-                    <option value="+/-Ajuste Manual de Stock">
-                      +/-Ajuste Manual de Stock
-                    </option>
-                    <option value="+Reposicion de Proveedor">
-                      +Reposicion de Proveedor
-                    </option>
-                    <option value="-Devolucion a Proveedor">
-                      -Devolucion a Proveedor
-                    </option>
-                    <option value="+Devolucion de Cliente">
-                      +Devolucion de Cliente
-                    </option>
-                    <option value="-Reposicion a Cliente">
-                      -Reposicion a Cliente
-                    </option>
-                    <option value="-Rotura/Daño/Vencimiento">
-                      -Rotura/Daño/Vencimiento
-                    </option>
+                    {motivosMovimientoStock.map((el) => (
+                      <option value={el.value}>{el.label}</option>
+                    ))}
                   </select>
                 ) : (
                   <select
