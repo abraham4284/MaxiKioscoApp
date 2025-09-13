@@ -61,6 +61,7 @@ export const ModalReposicionStock = ({
       title: message,
       icon: success ? "success" : "error",
     });
+    handleReset();
   };
   return (
     <div

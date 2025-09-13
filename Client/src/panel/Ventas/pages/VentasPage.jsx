@@ -32,6 +32,7 @@ export const VentasPage = () => {
   const [inputDNI, setInputDNI] = useState("");
   const [dataToEdit, setDataToEdit] = useState(null);
   const [dataAll, setDataAll] = useState(null);
+  const [cantidad, setCantidad] = useState("");
 
   // Ref
   const btnAgregar = useRef(null);
@@ -139,7 +140,7 @@ export const VentasPage = () => {
                   setLoading={setLoading}
                   sumarTotalCarrito={sumarTotalCarrito}
                   totalCarrito={totalCarrito}
-                  resetClientesEncontrado = {resetClientesEncontrado}
+                  resetClientesEncontrado={resetClientesEncontrado}
                 />
                 {/* End Tabla de ventas */}
               </div>
@@ -161,8 +162,16 @@ export const VentasPage = () => {
             </div>
           </div>
         </div>
-        <ModalCantidadProducto dataToEdit={dataToEdit} />
-        <ModalSearchProductos inputBuscarProducto={inputBuscarProducto} />
+        <ModalCantidadProducto
+          dataToEdit={dataToEdit}
+          cantidad={cantidad}
+          setCantidad={setCantidad}
+        />
+        <ModalSearchProductos
+          inputBuscarProducto={inputBuscarProducto}
+          cantidad={cantidad}
+          setCantidad={setCantidad}
+        />
         <ModalTableClientes
           loading={loading}
           data={clientes}

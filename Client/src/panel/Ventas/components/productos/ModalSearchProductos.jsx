@@ -2,7 +2,11 @@ import React, { useEffect, useState } from "react";
 import { useProductos } from "../../../../context/ProductosContext";
 import { TableProductosVentas } from "./TableProductosVentas";
 
-export const ModalSearchProductos = ({ inputBuscarProducto }) => {
+export const ModalSearchProductos = ({
+  inputBuscarProducto,
+  cantidad,
+  setCantidad,
+}) => {
   const { productos } = useProductos();
   const [filterProductos, setFilterProductos] = useState([]);
   const [inputSearch, setInputSearch] = useState("");
@@ -20,7 +24,6 @@ export const ModalSearchProductos = ({ inputBuscarProducto }) => {
         datos.CodeBar.toLocaleLowerCase().includes(searchInput)
       );
     });
-    console.log(filterProductos);
     setFilterProductos(filterProductosData);
   };
 
@@ -71,31 +74,14 @@ export const ModalSearchProductos = ({ inputBuscarProducto }) => {
                 aria-label="Close"
               ></button>
             </div>
-            <div className="modal-body">
-              <input
-                type="text"
-                className="form form-control"
-                placeholder="Buscar por nombre o CodeBar"
-                value={inputSearch}
-                onChange={handleInputSearch}
-                ref={inputBuscarProducto}
-              />
-              <table className="table mt-4">
-                <thead>
-                  <tr>
-                    <th>CodeBar</th>
-                    <th>Img</th>
-                    <th>Nombre</th>
-                    <th>Precio</th>
-                    <th>Stock</th>
-                    <th>Acciones</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  <TableProductosVentas data={productosFinalPrueba} />
-                </tbody>
-              </table>
-            </div>
+            <TableProductosVentas
+              data={productosFinalPrueba}
+              inputBuscarProducto={inputBuscarProducto}
+              inputSearch={inputSearch}
+              handleInputSearch={handleInputSearch}
+              cantidades={cantidad}
+              setCantidades={setCantidad}
+            />
           </div>
         </div>
       </div>

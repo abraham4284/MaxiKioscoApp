@@ -4,6 +4,7 @@ import { TableVentasRows } from "./TableVentasRows";
 import { formatearTotal } from "../../../helpers/formatearTotal";
 import { Spiner } from "../../../components/Spiner";
 import { useNavigate } from "react-router-dom";
+import { descargarTiket } from "../../../helpers";
 
 
 export const TableVentas = ({

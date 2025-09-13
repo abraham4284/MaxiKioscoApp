@@ -2,9 +2,12 @@ import React, { useEffect, useRef, useState } from "react";
 import { useCarrito } from "../../../../context/CarritoContext";
 import Swal from "sweetalert2";
 
-export const ModalCantidadProducto = ({ dataToEdit }) => {
+export const ModalCantidadProducto = ({
+  dataToEdit,
+  cantidad,
+  setCantidad,
+}) => {
   const modalRef = useRef(null);
-  const [cantidad, setCantidad] = useState("");
   const { updateCantidadProducto } = useCarrito();
 
   useEffect(() => {
