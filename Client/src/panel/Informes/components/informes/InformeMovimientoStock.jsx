@@ -5,6 +5,7 @@ import { getMovimientosRequest } from "../../../../api/movimientos/movimientos.a
 import { renderIconoMovimiento } from "../../helpers";
 
 export const InformeMovimientoStock = ({ movimientos, loading }) => {
+ 
   return (
     <div className="col-sm-12 mt-3">
       <div className="card">

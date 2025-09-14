@@ -9,10 +9,13 @@ export const getMovimientosStock = async (req, res) => {
     WHERE ms.idUsuarios = ?
     `;
     const [result] = await pool.query(query, [user.idUsuarios]);
-    if (result[0].length === 0) {
+    
+   
+    if (result.length === 0) {
       return res.status(200).json({
         status: "ERROR",
         message: "No se encontraron movimientos de stock para este usuario",
+        data: [],
       });
     }
     return res.status(200).json({

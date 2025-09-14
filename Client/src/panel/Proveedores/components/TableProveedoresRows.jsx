@@ -5,7 +5,7 @@ export const TableProveedoresRows = ({ data, setDataToEdit, deleteData }) => {
     data;
 
   return (
-    <tr>
+    <tr key={idProveedores}>
       <th>{CUIT}</th>
       <td>{Nombre}</td>
       <td> {Correo} </td>

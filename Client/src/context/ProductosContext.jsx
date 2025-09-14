@@ -111,8 +111,9 @@ export const ProductosProvider = ({ children }) => {
     try {
       const { data } = await updateStockProductosRequest(id, dataProductos);
       if (data.status === "OK") {
+        const productoActualizado = data.data
         let newData = productos.map((el) =>
-          el.idProductos === id ? dataProductos : el
+          el.idProductos === id ? productoActualizado : el
         );
         setProductos(newData);
         setLoading(false);
@@ -134,7 +135,7 @@ export const ProductosProvider = ({ children }) => {
     try {
       Swal.fire({
         title: "Estas seguro?",
-        text: `Eliminaras al provedor con el id: ${id}`,
+        text: "Esta accion no se puede revertir!",
         icon: "warning",
         showCancelButton: true,
         confirmButtonColor: "#3085d6",

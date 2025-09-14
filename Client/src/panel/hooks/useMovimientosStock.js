@@ -14,7 +14,6 @@ export const useMovimientosStock = () => {
         setLoading(false);
         setError(null);
       } else {
-        setMovimientos(null);
         setLoading(false);
         setError(data.message);
       }

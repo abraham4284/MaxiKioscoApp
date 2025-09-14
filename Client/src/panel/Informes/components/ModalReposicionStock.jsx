@@ -1,11 +1,15 @@
 import React, { useEffect } from "react";
 import { useForm } from "../../../hooks";
-import { motivosMovimientoStock } from "../../const";
+import { motivosStockSuma, motivosStockRestaOAjuste } from "../../const";
+import { ProductoSeleccionado } from "./";
+import Big from "big.js";
 import Swal from "sweetalert2";
 
 const initialForm = {
   Stock: "",
+  newStock: "",
   Motivo: "",
+  afectedStock: "",
 };
 
 export const ModalReposicionStock = ({
@@ -14,8 +18,16 @@ export const ModalReposicionStock = ({
   updateStockProductos,
   getMovimientos,
 }) => {
-  const { Stock, Motivo, formSate, onInputChange, onResetForm, setFormSate } =
-    useForm(initialForm);
+  const {
+    Stock,
+    Motivo,
+    newStock,
+    afectedStock,
+    formSate,
+    onInputChange,
+    onResetForm,
+    setFormSate,
+  } = useForm(initialForm);
 
   useEffect(() => {
     if (dataToEdit) {
@@ -30,10 +42,24 @@ export const ModalReposicionStock = ({
     });
   };
 
+  const handleSelectedAfectedStock = (e) => {
+    setFormSate({
+      ...formSate,
+      afectedStock: e.target.value,
+    });
+  };
+
   const handleReset = () => {
     onResetForm();
     setDataToEdit(null);
   };
+
+  const stockBig = new Big(Number(Stock) || 0);
+  const newStockBig = new Big(Number(newStock) || 0);
+  const resultado =
+    afectedStock === "suma"
+      ? newStockBig.plus(stockBig)
+      : stockBig.minus(newStockBig);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -46,22 +72,38 @@ export const ModalReposicionStock = ({
       return;
     }
 
+    if (newStockBig.lte(0)) {
+      return Swal.fire({
+        title: "El nuevo stock debe ser mayor a 0",
+        icon: "warning",
+      });
+    }
+
     const data = {
       CodeBar: dataToEdit?.CodeBar,
       Descripcion: dataToEdit?.Descripcion,
-      Stock,
+      Stock: newStockBig.toString(),
+      newStock: newStockBig.toString(),
       Motivo,
+      afectedStock,
     };
     const { success, message } = await updateStockProductos(
       dataToEdit.idProductos,
       data
     );
-    success ? getMovimientos() : null;
-    Swal.fire({
-      title: message,
-      icon: success ? "success" : "error",
-    });
-    handleReset();
+    if (success) {
+      Swal.fire({
+        title: message,
+        icon: "success",
+      });
+      handleReset();
+      getMovimientos();
+    } else {
+      Swal.fire({
+        title: message,
+        icon: "error  ",
+      });
+    }
   };
   return (
     <div
@@ -73,58 +115,162 @@ export const ModalReposicionStock = ({
       aria-labelledby="exampleModalLabel"
       aria-hidden="true"
     >
-      <div className="modal-dialog">
+      <div className="modal-dialog modal-lg">
         <div className="modal-content">
           <div
             className="modal-header"
             style={{ backgroundColor: "#4e73df", color: "white" }}
           >
             <h1 className="modal-title fs-5" id="exampleModalLabel">
-              Modificar cantidad
+              Modificar stock
             </h1>
             <button
               type="button"
               className="btn-close"
               data-bs-dismiss="modal"
               aria-label="Close"
+              onClick={handleReset}
             ></button>
           </div>
           <div className="modal-body">
+            <div>
+              <ProductoSeleccionado dataToEdit={dataToEdit} />
+            </div>
             <form onSubmit={handleSubmit}>
               <div className="form-outline mb-4">
-                <label className="form-label" htmlFor="form3Example3cg">
-                  Stock <i className="fa-solid fa-cart-shopping"></i>
-                </label>
-                <input
-                  type="number"
-                  className="form-control "
-                  placeholder="Ingrese Stock"
-                  name="Stock"
-                  value={Stock}
-                  onChange={onInputChange}
-                />
-              </div>
-
-              <div className="form-outline mb-4">
                 <label className="form-label" htmlFor="form3Example4cg">
-                  Motivo de modificacion
+                  Entrada
                   <i className="fa-solid fa-share-nodes"></i>
                 </label>
                 <select
                   className="form-select"
                   aria-label="Default select example"
                   name="Familia"
-                  value={Motivo}
-                  onChange={handleSelectedMotivo}
+                  value={afectedStock}
+                  onChange={handleSelectedAfectedStock}
                 >
-                  <option value="">
-                    Seleccione una opcion de modificacion
-                  </option>
-                  {motivosMovimientoStock.map((el) => (
-                    <option value={el.value}>{el.label}</option>
-                  ))}
+                  <option value="">Seleccione una opción</option>
+                  <option value="suma">📈Entrada de stock</option>
+                  <option value="resta">📉Baja de stock</option>
                 </select>
               </div>
+
+              {afectedStock === "suma" && (
+                <div className="form-outline mb-4">
+                  <div className="form-outline mb-4">
+                    <label className="form-label" htmlFor="form3Example3cg">
+                      Nuevo Stock 📈
+                    </label>
+                    <input
+                      type="number"
+                      className="form-control "
+                      placeholder="Ingrese Stock"
+                      name="newStock"
+                      min={0}
+                      value={newStock || ""}
+                      onChange={onInputChange}
+                      onKeyDown={(e) => {
+                        if (e.key === "-" || e.key === "e" || e.key === "+") {
+                          e.preventDefault();
+                        }
+                      }}
+                    />
+                    {newStockBig.lt(0) && (
+                      <div className="form-text text-danger">
+                        El nuevo stock debe ser mayor a 0
+                      </div>
+                    )}
+                  </div>
+
+                  <div className="form-outline mb-4">
+                    <label className="form-label" htmlFor="form3Example3cg">
+                      Resultado <i className="fa-solid fa-cart-shopping"></i>
+                    </label>
+                    <div className="alert alert-info" role="alert">
+                      {resultado.toString()}
+                    </div>
+                  </div>
+
+                  <div className="form-outline mb-4">
+                    <label className="form-label" htmlFor="form3Example4cg">
+                      Motivo de ingreso de stock 📈
+                    </label>
+                    <select
+                      className="form-select"
+                      aria-label="Default select example"
+                      name="Familia"
+                      value={Motivo}
+                      onChange={handleSelectedMotivo}
+                    >
+                      <option value="">Seleccione una opción</option>
+                      {motivosStockSuma.map((el, index) => (
+                        <option key={index} value={el.value}>
+                          {el.label}
+                        </option>
+                      ))}
+                    </select>
+                  </div>
+                </div>
+              )}
+
+              {afectedStock === "resta" && (
+                <div className="form-outline mb-4">
+                  <div className="form-outline mb-4">
+                    <label className="form-label" htmlFor="form3Example3cg">
+                      Baja de stock 📉
+                    </label>
+                    <input
+                      type="number"
+                      className="form-control "
+                      placeholder="Ingrese Stock"
+                      name="newStock"
+                      min={0}
+                      value={newStock || ""}
+                      onChange={onInputChange}
+                      onKeyDown={(e) => {
+                        if (e.key === "-" || e.key === "e" || e.key === "+") {
+                          e.preventDefault();
+                        }
+                      }}
+                    />
+                    {newStockBig.lt(0) && (
+                      <div className="form-text text-danger">
+                        El stock de baja debe ser mayor a 0
+                      </div>
+                    )}
+                  </div>
+
+                  <div className="form-outline mb-4">
+                    <label className="form-label" htmlFor="form3Example3cg">
+                      Resultado <i className="fa-solid fa-cart-shopping"></i>
+                    </label>
+                    <div className="alert alert-info" role="alert">
+                      {resultado.toString()}
+                    </div>
+                  </div>
+
+                  <div className="form-outline mb-4">
+                    <label className="form-label" htmlFor="form3Example4cg">
+                      Motivo de baja de stock
+                      <i className="fa-solid fa-share-nodes"></i>
+                    </label>
+                    <select
+                      className="form-select"
+                      aria-label="Default select example"
+                      name="Familia"
+                      value={Motivo}
+                      onChange={handleSelectedMotivo}
+                    >
+                      <option value="">Seleccione una opcion</option>
+                      {motivosStockRestaOAjuste.map((el, index) => (
+                        <option key={index} value={el.value}>
+                          {el.label}
+                        </option>
+                      ))}
+                    </select>
+                  </div>
+                </div>
+              )}
 
               <div className="modal-footer">
                 <button
@@ -136,14 +282,6 @@ export const ModalReposicionStock = ({
                     {" "}
                     <i className="fa-regular fa-pen-to-square"></i> Confirmar
                   </span>
-                </button>
-                <button
-                  type="reset"
-                  className="btn btn-danger"
-                  onClick={() => handleReset()}
-                >
-                  {" "}
-                  <i className="fa-solid fa-xmark"></i> Cancelar
                 </button>
               </div>
             </form>

@@ -119,13 +119,6 @@ export const ModalProductos = ({ dataToEdit, setDataToEdit }) => {
         icon: success ? "success" : "error",
       });
     } else {
-      form.Motivo = dataToEdit ? form.Motivo : null;
-      if (!form.Motivo) {
-        return Swal.fire({
-          title: "El motivo es obligatorio",
-          icon: "warning",
-        });
-      }
       const { success, message } = await updateProductos(
         dataToEdit.idProductos,
         form
@@ -250,38 +243,30 @@ export const ModalProductos = ({ dataToEdit, setDataToEdit }) => {
 
               <div className="form-outline mb-4">
                 <label className="form-label" htmlFor="form3Example4cg">
-                  {dataToEdit ? "Motivo de modificacion" : "Familia"}{" "}
+                  Familia
                   <i className="fa-solid fa-share-nodes"></i>
                 </label>
-                {dataToEdit ? (
-                  <select
-                    className="form-select"
-                    aria-label="Default select example"
-                    name="Familia"
-                    value={form.Motivo}
-                    onChange={handleSelectedMotivo}
-                  >
-                    <option value="">
-                      Seleccione una opcion de modificacion
-                    </option>
-                    {motivosMovimientoStock.map((el) => (
-                      <option value={el.value}>{el.label}</option>
-                    ))}
-                  </select>
-                ) : (
-                  <select
-                    className="form-select"
-                    aria-label="Default select example"
-                    name="Familia"
-                    value={form.Familia}
-                    onChange={handleSelectedFamiliaChange}
-                  >
-                    <option value="">Seleccione una Familia</option>
-                    <option value="Bebidas">Bebidas</option>
-                    <option value="Comida">Comida</option>
-                    <option value="Limpieza">Limpieza</option>
-                  </select>
-                )}
+                <select
+                  className="form-select"
+                  aria-label="Default select example"
+                  name="Familia"
+                  value={form.Familia}
+                  onChange={handleSelectedFamiliaChange}
+                >
+                  <option value="">Seleccione una Familia</option>
+                  <option value="Bebidas">Bebidas</option>
+                  <option value="Comida">Comida</option>
+                  <option value="Limpieza">Limpieza</option>
+                  <option value="Medicamentos">Medicamentos</option>
+                  <option value="Otros">Otros</option>
+                  <option value="Snacks">Snacks</option>
+                  <option value="Dulces y Golosinas">Dulces y Golosinas</option>
+                  <option value="Panificados">Panificados</option>
+                  <option value="Lácteos">Lácteos</option>
+                  <option value="Artículos de Oficina">
+                    Artículos de Oficina
+                  </option>
+                </select>
               </div>
 
               <div className="form-outline mb-4">
