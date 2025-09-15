@@ -9,6 +9,7 @@ import { ModalCantidadProducto } from "../components/productos/ModalCantidadProd
 import { ModalSearchProductos } from "../components/productos/ModalSearchProductos.jsx";
 import { ModalTableClientes } from "../components/productos/ModalTableClientes.jsx";
 import { useCarrito } from "../../../context/CarritoContext.jsx";
+import { ConsultarPrecioProductos } from "../../../components/ConsultarPrecioProductos.jsx";
 
 export const VentasPage = () => {
   const { getClientes, clientes, loading } = useClientes();
@@ -40,6 +41,7 @@ export const VentasPage = () => {
   const btnConfirmarVenta = useRef(null);
   const btnAnularVenta = useRef(null);
   const btnBuscarProducto = useRef(null);
+ 
 
   const inputCodeBarRef = useRef(null);
   const inputCantidadRef = useRef(null);
@@ -93,6 +95,7 @@ export const VentasPage = () => {
     window.addEventListener("keydown", handleBtnConfirmarVenta);
     window.addEventListener("keydown", handleBtnAnularVenta);
     window.addEventListener("keydown", handleBtnSearchProducto);
+
     return () => {
       window.removeEventListener("keydown", handleBtnAgregar);
       window.removeEventListener("keydown", handleBtnAnular);

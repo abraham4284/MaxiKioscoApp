@@ -23,6 +23,7 @@ export const TableProductosVentas = ({
   const agregarCarritoData = (producto) => {
     const {
       idProductos,
+      img,
       CodeBar,
       precioCosto,
       Descripcion,
@@ -75,6 +76,7 @@ export const TableProductosVentas = ({
 
     const newData = {
       idProductos,
+      img,
       CodeBar,
       Descripcion,
       precioCosto,

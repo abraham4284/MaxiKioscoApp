@@ -6,12 +6,20 @@ export const TableVentasRows = ({
   setDataToEdit,
   estadoVenta,
 }) => {
-  const { idProductos, CodeBar, Descripcion, Precio, Cantidad, SubTotal } =
+  const { idProductos, img, Descripcion, Precio, Cantidad, SubTotal } =
     carrito;
-
   return (
     <tr>
-      <td>{CodeBar}</td>
+      <img
+        src={img}
+        alt={Descripcion}
+        style={{
+          width: "50px",
+          height: "50px",
+          objectFit: "cover",
+          borderRadius: "1.5rem",
+        }}
+      />
       <td> {Descripcion}</td>
       <td> {Precio} </td>
       <td>{Cantidad}</td>
@@ -21,7 +29,6 @@ export const TableVentasRows = ({
           className="btn btn-outline-danger"
           onClick={() => handleEliminarCarrito(idProductos)}
           disabled={estadoVenta}
-         
         >
           <i className="fa-solid fa-trash"></i>
         </button>
@@ -31,7 +38,6 @@ export const TableVentasRows = ({
           data-bs-target="#ModalCantidad"
           disabled={estadoVenta}
           onClick={() => setDataToEdit(carrito)}
-         
         >
           <i className="fa-solid fa-plus"></i>
         </button>

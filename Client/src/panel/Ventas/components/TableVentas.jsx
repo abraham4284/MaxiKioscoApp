@@ -164,7 +164,7 @@ export const TableVentas = ({
             <table className="table">
               <thead>
                 <tr>
-                  <th scope="col">CodeBar</th>
+                  <th scope="col">Img</th>
                   <th scope="col">Producto</th>
                   <th scope="col">Precio</th>
                   <th scope="col">Cantidad</th>

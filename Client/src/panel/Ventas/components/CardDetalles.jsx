@@ -14,6 +14,7 @@ export const CardDetalles = ({
 }) => {
   const {
     idProductos,
+    img = "",
     CodeBar,
     Descripcion = "",
     Stock = "",
@@ -117,6 +118,7 @@ export const CardDetalles = ({
         idProductos,
         idClientes: clienteEncontrado.idClientes,
         CodeBar,
+        img,
         Descripcion,
         Stock,
         precioCosto: parseFloat(precioCosto),
