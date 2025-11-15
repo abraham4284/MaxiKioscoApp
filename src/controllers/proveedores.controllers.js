@@ -14,7 +14,7 @@ export const getProvedores = async (req, res) => {
     FROM proveedores p
     LEFT JOIN productos pr
     ON p.idProveedores = pr.idProveedores
-    WHERE p.idUsuarios = 25
+    WHERE p.idUsuarios = ?
     GROUP BY p.idProveedores
     `;
     const proveedores = await pool.query(query, [user.idUsuarios]);
