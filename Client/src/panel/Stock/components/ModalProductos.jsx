@@ -98,16 +98,18 @@ export const ModalProductos = ({ dataToEdit, setDataToEdit }) => {
     const precioCostoBig = new Big(form.precioCosto);
     const precioVentaBig = new Big(form.Precio);
 
-    if (precioCostoBig.gte(precioVentaBig)) {
-      return Swal.fire({
-        title: "Verifique los datos ingresados",
-        text: `El precio de costo ${formatearTotal(
-          precioCostoBig.toString()
-        )} no pude ser mayor o igual al precio de venta ${formatearTotal(
-          precioVentaBig.toString()
-        )}`,
-        icon: "question",
-      });
+    if (form.tipoProducto === "Unidad") {
+      if (precioCostoBig.gte(precioVentaBig)) {
+        return Swal.fire({
+          title: "Verifique los datos ingresados",
+          text: `El precio de costo ${formatearTotal(
+            precioCostoBig.toString()
+          )} no pude ser mayor o igual al precio de venta ${formatearTotal(
+            precioVentaBig.toString()
+          )}`,
+          icon: "question",
+        });
+      }
     }
 
     if (form.idProductos === null) {
